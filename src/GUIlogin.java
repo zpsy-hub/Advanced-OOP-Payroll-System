@@ -42,7 +42,7 @@ public class GUIlogin {
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialize the contents of the frame. GUI starts here.
 	 */
 	private void initialize() {
 		loginScreen = new JFrame();
