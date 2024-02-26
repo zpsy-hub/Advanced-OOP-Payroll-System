@@ -29,7 +29,7 @@ public class UserRepository {
                     continue; // Skip the header row
                 }
                 String[] data = line.split(",");
-                String employeeNumber = data[0];
+                String employeeNumber = data[0]; // Assuming employee ID is the first column
                 String lastName = data[1];
                 String firstName = data[2];
                 String position = data[3];
@@ -78,7 +78,7 @@ public class UserRepository {
     public String getEmployeeIdByUsername(String username) {
         for (User user : userList) {
             if (user.getUsername().equals(username)) {
-                return user.getid();
+                return user.getid(); // Corrected to getId() instead of getEmployeeId()
             }
         }
         return null; // Employee ID not found

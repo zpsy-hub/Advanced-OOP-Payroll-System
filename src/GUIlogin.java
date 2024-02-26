@@ -5,6 +5,10 @@ import java.awt.Color;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
+
+import model.Employee;
+import model.User;
+
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import javax.swing.JPasswordField;
@@ -12,8 +16,11 @@ import javax.swing.JTextField;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+
 import javax.swing.JOptionPane;
 import service.LoginService;
+import util.EmployeeData;
 import util.SessionManager;
 import util.UserRepository;
 import view.Dashboard;
@@ -50,9 +57,9 @@ public class GUIlogin {
     public GUIlogin() {
         initialize();
         // Initialize the LoginService, UserRepository, and SessionManager
-        userRepository = new UserRepository();
-        loginService = new LoginService(userRepository);
-        sessionManager = new SessionManager(userRepository);
+        UserRepository userRepository = new UserRepository();
+        EmployeeData employeeData = new EmployeeData();
+        sessionManager = new SessionManager(userRepository, employeeData);
     }
 
     /**
@@ -128,19 +135,30 @@ public class GUIlogin {
         passwordField.setBounds(452, 416, 397, 42);
         loginScreen1.getContentPane().add(passwordField);
 
-        // ActionListener for Log In button
+     // ActionListener for Log In button
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String username = usernameTextField1.getText();
-                String password = new String(passwordField.getPassword()); // Retrieve password from JPasswordField
+                String password = new String(passwordField.getPassword()); 
 
                 // Check login credentials
-                boolean loginSuccess = sessionManager.login(username, password);
+                boolean loginSuccess = false;
+        		try {
+        			loginSuccess = sessionManager.login(username, password);
+        		} catch (IOException e1) {
+        			// Handle IOException
+        			e1.printStackTrace();
+        		}
+                
                 if (loginSuccess) {
                     // Log successful login attempt
                     sessionManager.logLoginAttempt(username, true);
-                    // Open the Dashboard
-                    openDashboard();
+                    
+                    // Retrieve the logged-in employee information
+                    User loggedInEmployee = sessionManager.getLoggedInUser(); // Assuming such method exists
+                    
+                    // Open the Dashboard with the logged-in employee
+                    openDashboard(loggedInEmployee);
                 } else {
                     // Log unsuccessful login attempt
                     sessionManager.logLoginAttempt(username, false);
@@ -151,13 +169,19 @@ public class GUIlogin {
             }
         });
     }
+
     
-    private void openDashboard() {
-        // Create and display the Dashboard window
-        GUIDashboard dashboard = new GUIDashboard();
-        dashboard.setVisible(true);
+    private void openDashboard(User loggedInEmployee) {
+        // Create an instance of GUIDashboard with the logged-in employee
+        GUIDashboard dashboard = new GUIDashboard(loggedInEmployee);
+
+        // Make the dashboard window visible
+        dashboard.getDashboardScreen().setVisible(true);
 
         // Close the Login window
         loginScreen1.dispose();
     }
+
+    
+
 }

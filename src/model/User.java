@@ -8,6 +8,7 @@ public class User {
     private String firstName;
     private String position;
     private UserRole role;
+    private Employee employee;
 
     // Constructor
     public User(String username, String password, String id, String lastName, String firstName, String position, UserRole role) {
@@ -75,6 +76,18 @@ public class User {
 
     public void setRole(UserRole role) {
         this.role = role;
+    }
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+    
+    @Override
+    public String toString() {
+        return "Employee ID: " + id;
     }
 }
 

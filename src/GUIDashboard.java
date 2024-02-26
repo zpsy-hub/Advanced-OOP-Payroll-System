@@ -1,44 +1,67 @@
 import java.awt.EventQueue;
 import java.awt.Font;
-
 import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.Toolkit;
+import java.io.IOException;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.border.LineBorder;
+
+import model.Employee;
+import model.User;
+import util.EmployeeData;
+
 import javax.swing.ImageIcon;
 
 public class GUIDashboard {
 
 	private JFrame dashboardScreen;
+    private User loggedInEmployee;   
+    private JLabel employeeNameLabel;
+    private JLabel empIDLabel;
+    private JLabel empPositionLabel;
+    private JLabel immediateSupervisorLabel;
+    private JLabel empStatusLabel;
+    private JLabel empBdayLabel;
+    private JLabel empAddressLabel;
+    private JLabel empTINLabel;
+    private JLabel empSSSLabel;
+    private JLabel empPhilhealthLabel;
+    private JLabel empPagibigLabel;
+    private JLabel employeeFirstNameLabel;
+        private EmployeeData employeeData;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GUIDashboard window = new GUIDashboard();
-					window.dashboardScreen.setVisible(true);
-					window.dashboardScreen.setLocationRelativeTo(null); 
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    GUIDashboard window = new GUIDashboard(null);
+                    window.dashboardScreen.setVisible(true);
+                    window.dashboardScreen.setLocationRelativeTo(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 	/**
 	 * Create the application.
 	 */
-	public GUIDashboard() {
-		initialize();
-	}
+    public GUIDashboard(User loggedInEmployee) {
+        this.loggedInEmployee = loggedInEmployee;
+        this.employeeData = new EmployeeData();
+        loadData();
+        initialize();
+    }
+
+    public JFrame getDashboardScreen() {
+        return dashboardScreen;
+    }
+
 
 	/**
 	 * Initialize the contents of the frame.
@@ -129,55 +152,25 @@ public class GUIDashboard {
 		nameLabel.setBounds(158, 22, 45, 13);
 		employeeinfoPanel.add(nameLabel);
 		
-		JLabel employeeName = new JLabel("Sample Name here period");
-		employeeName.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		employeeName.setBounds(158, 34, 228, 23);
-		employeeinfoPanel.add(employeeName);
-		
-		JLabel empID = new JLabel("ID here");
-		empID.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empID.setBounds(158, 89, 119, 23);
-		employeeinfoPanel.add(empID);
-		
 		JLabel idLabel = new JLabel("Employee ID");
 		idLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
 		idLabel.setBounds(158, 77, 98, 13);
 		employeeinfoPanel.add(idLabel);
 		
-		JLabel empPosition = new JLabel("Sample Position here");
-		empPosition.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empPosition.setBounds(158, 134, 228, 23);
-		employeeinfoPanel.add(empPosition);
-		
 		JLabel positionLabel = new JLabel("Position");
 		positionLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
 		positionLabel.setBounds(158, 122, 69, 13);
 		employeeinfoPanel.add(positionLabel);
-		
-		JLabel immediateSupervisor = new JLabel("Sample Name here period");
-		immediateSupervisor.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		immediateSupervisor.setBounds(158, 192, 228, 23);
-		employeeinfoPanel.add(immediateSupervisor);
-		
+
 		JLabel supervisorLabel = new JLabel("Immediate Supervisor");
 		supervisorLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
 		supervisorLabel.setBounds(158, 180, 171, 13);
 		employeeinfoPanel.add(supervisorLabel);
 		
-		JLabel empStatus = new JLabel("Status here");
-		empStatus.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empStatus.setBounds(407, 34, 113, 23);
-		employeeinfoPanel.add(empStatus);
-		
 		JLabel statusLabel = new JLabel("Status");
 		statusLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
 		statusLabel.setBounds(407, 22, 98, 13);
 		employeeinfoPanel.add(statusLabel);
-		
-		JLabel empBday = new JLabel("February 32, 1876");
-		empBday.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empBday.setBounds(407, 89, 160, 23);
-		employeeinfoPanel.add(empBday);
 		
 		JLabel bdayLabel = new JLabel("Birthday");
 		bdayLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
@@ -189,45 +182,20 @@ public class GUIDashboard {
 		addressLabel.setBounds(407, 180, 98, 13);
 		employeeinfoPanel.add(addressLabel);
 		
-		JLabel empAddress = new JLabel("7 Jupiter Avenue cor. F. Sandoval Jr., Bagong Nayon, Quezon City");
-		empAddress.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empAddress.setBounds(407, 192, 506, 23);
-		employeeinfoPanel.add(empAddress);
-		
-		JLabel empTIN = new JLabel("123-002-087-3244");
-		empTIN.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empTIN.setBounds(407, 134, 171, 23);
-		employeeinfoPanel.add(empTIN);
-		
 		JLabel tinLabel = new JLabel("TIN");
 		tinLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
 		tinLabel.setBounds(407, 122, 98, 13);
 		employeeinfoPanel.add(tinLabel);
-		
-		JLabel empSSS = new JLabel("12-32352341");
-		empSSS.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empSSS.setBounds(615, 34, 171, 23);
-		employeeinfoPanel.add(empSSS);
 		
 		JLabel sssLabel = new JLabel("SSS");
 		sssLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
 		sssLabel.setBounds(615, 22, 98, 13);
 		employeeinfoPanel.add(sssLabel);
 		
-		JLabel empPhilhealth = new JLabel("14-53533543");
-		empPhilhealth.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empPhilhealth.setBounds(615, 89, 171, 23);
-		employeeinfoPanel.add(empPhilhealth);
-		
 		JLabel philhealthLabel = new JLabel("Philhealth");
 		philhealthLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
 		philhealthLabel.setBounds(615, 77, 98, 13);
 		employeeinfoPanel.add(philhealthLabel);
-		
-		JLabel empPagibig = new JLabel("14-53533543");
-		empPagibig.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empPagibig.setBounds(615, 134, 171, 23);
-		employeeinfoPanel.add(empPagibig);
 		
 		JLabel pagibigLabel = new JLabel("Pag-ibig");
 		pagibigLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
@@ -275,13 +243,96 @@ public class GUIDashboard {
 		signoutButton.setBounds(1160, 36, 103, 31);
 		mainPanel.add(signoutButton);
 		
-		JLabel employeeFirstName = new JLabel("FirstName here");
-		employeeFirstName.setFont(new Font("Tw Cen MT", Font.BOLD, 40));
-		employeeFirstName.setBounds(512, 103, 323, 33);
-		mainPanel.add(employeeFirstName);
-		
-		
-		
-		
+		// Initialize JLabels with empty strings
+		employeeFirstNameLabel = new JLabel("");
+		employeeFirstNameLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 40));
+		employeeFirstNameLabel.setBounds(512, 103, 323, 33);
+		mainPanel.add(employeeFirstNameLabel);
+
+		employeeNameLabel = new JLabel("");
+		employeeNameLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		employeeNameLabel.setBounds(158, 34, 228, 23);
+		employeeinfoPanel.add(employeeNameLabel);
+
+		empIDLabel = new JLabel("");
+		empIDLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		empIDLabel.setBounds(158, 89, 119, 23);
+		employeeinfoPanel.add(empIDLabel);
+
+		empPositionLabel = new JLabel("");
+		empPositionLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		empPositionLabel.setBounds(158, 134, 228, 23);
+		employeeinfoPanel.add(empPositionLabel);
+
+		immediateSupervisorLabel = new JLabel("");
+		immediateSupervisorLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		immediateSupervisorLabel.setBounds(158, 192, 228, 23);
+		employeeinfoPanel.add(immediateSupervisorLabel);
+
+		empStatusLabel = new JLabel("");
+		empStatusLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		empStatusLabel.setBounds(407, 34, 113, 23);
+		employeeinfoPanel.add(empStatusLabel);
+
+		empBdayLabel = new JLabel("");
+		empBdayLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		empBdayLabel.setBounds(407, 89, 160, 23);
+		employeeinfoPanel.add(empBdayLabel);
+
+		empAddressLabel = new JLabel("");
+		empAddressLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		empAddressLabel.setBounds(407, 192, 506, 23);
+		employeeinfoPanel.add(empAddressLabel);
+
+		empTINLabel = new JLabel("");
+		empTINLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		empTINLabel.setBounds(615, 34, 171, 23);
+		employeeinfoPanel.add(empTINLabel);
+
+		empSSSLabel = new JLabel("");
+		empSSSLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		empSSSLabel.setBounds(407, 134, 171, 23);
+		employeeinfoPanel.add(empSSSLabel);
+
+		empPhilhealthLabel = new JLabel("");
+		empPhilhealthLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		empPhilhealthLabel.setBounds(615, 89, 171, 23);
+		employeeinfoPanel.add(empPhilhealthLabel);
+
+		empPagibigLabel = new JLabel("");
+		empPagibigLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		empPagibigLabel.setBounds(615, 134, 171, 23);
+		employeeinfoPanel.add(empPagibigLabel);
+
+		// Set employee info
+        if (loggedInEmployee != null) {
+            setEmployeeInfo(employeeData.getEmployee(loggedInEmployee.getid())); // Use getId() to retrieve employee ID
+        }
 	}
-}
+
+	public void setEmployeeInfo(Employee loggedInEmployeeInfo) {
+	    if (loggedInEmployeeInfo != null) {
+	        employeeFirstNameLabel.setText(loggedInEmployeeInfo.getFirstName());
+	        employeeNameLabel.setText(loggedInEmployeeInfo.getFirstName() + " " + loggedInEmployeeInfo.getLastName());
+	        empIDLabel.setText(loggedInEmployeeInfo.getId());
+	        empPositionLabel.setText(loggedInEmployeeInfo.getPosition());
+	        immediateSupervisorLabel.setText(loggedInEmployeeInfo.getImmediateSupervisor());
+	        empStatusLabel.setText(loggedInEmployeeInfo.getStatus());
+	        empBdayLabel.setText(loggedInEmployeeInfo.getBirthday());
+	        empAddressLabel.setText(loggedInEmployeeInfo.getAddress());
+	        empTINLabel.setText(loggedInEmployeeInfo.getTinNumber());
+	        empSSSLabel.setText(loggedInEmployeeInfo.getSssNumber());
+	        empPhilhealthLabel.setText(loggedInEmployeeInfo.getPhilhealthNumber());
+	        empPagibigLabel.setText(loggedInEmployeeInfo.getPagibigNumber());
+	    }
+	}
+	    
+	    private void loadData() {
+	        try {
+	            // Load employee data from CSV file
+	            employeeData.loadFromCSV("src/data/Employee Database.csv");
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
