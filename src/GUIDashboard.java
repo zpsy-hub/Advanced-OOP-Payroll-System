@@ -25,7 +25,7 @@ public class GUIDashboard {
 				try {
 					GUIDashboard window = new GUIDashboard();
 					window.dashboardScreen.setVisible(true);
-					window.dashboardScreen.setLocationRelativeTo(null); // this method displays the login screen at the center of the screen. slay!
+					window.dashboardScreen.setLocationRelativeTo(null); 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

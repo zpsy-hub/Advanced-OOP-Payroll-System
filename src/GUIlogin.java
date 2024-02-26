@@ -9,13 +9,14 @@ import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
+import javax.swing.JPasswordField;
 
 public class GUIlogin {
 
 	private JFrame loginScreen;
 	private JTextField usernameTextField;
-	private JTextField passwordTextField;
 	private JTextField passwordtextField;
+	private JPasswordField passwordField;
 
 	/**
 	 * Launch the application.
@@ -84,13 +85,6 @@ public class GUIlogin {
 		passwordLabel.setBounds(452, 385, 107, 33);
 		loginScreen.getContentPane().add(passwordLabel);
 		
-		passwordTextField = new JTextField();
-		passwordTextField.setForeground(new Color(30, 55, 101));
-		passwordTextField.setFont(new Font("Tw Cen MT", Font.BOLD, 25));
-		passwordTextField.setColumns(10);
-		passwordTextField.setBounds(452, 414, 397, 42);
-		loginScreen.getContentPane().add(passwordTextField);
-		
 		JButton loginButton = new JButton("Log In");
 		loginButton.setForeground(new Color(30, 55, 101));
 		loginButton.setBackground(new Color(255, 255, 255));
@@ -113,5 +107,10 @@ public class GUIlogin {
 		motorphIcon.setIcon(new ImageIcon("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Logo.png"));
 		motorphIcon.setBounds(526, 42, 232, 95);
 		loginScreen.getContentPane().add(motorphIcon);
+		
+		passwordField = new JPasswordField();
+		passwordField.setFont(new Font("Tw Cen MT", Font.BOLD, 25));
+		passwordField.setBounds(452, 416, 397, 42);
+		loginScreen.getContentPane().add(passwordField);
 	}
 }
