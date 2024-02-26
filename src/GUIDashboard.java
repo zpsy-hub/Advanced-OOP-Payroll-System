@@ -18,6 +18,7 @@ import model.User;
 import util.EmployeeData;
 
 import javax.swing.ImageIcon;
+import java.awt.Cursor;
 
 public class GUIDashboard {
 
@@ -98,12 +99,15 @@ public class GUIDashboard {
 		sidePanel.add(motorphLabel);
 		
 		JButton dashboardButton = new JButton("Dashboard");
+		dashboardButton.setEnabled(false);
+		dashboardButton.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		dashboardButton.setBackground(new Color(255, 255, 255));
 		dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		dashboardButton.setBounds(37, 95, 227, 31);
 		sidePanel.add(dashboardButton);
 		
 		JButton timeInOutButton = new JButton("Time In/Out");
+		timeInOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		timeInOutButton.setBackground(Color.WHITE);
 		timeInOutButton.setBounds(37, 155, 227, 31);
@@ -124,17 +128,51 @@ public class GUIDashboard {
 		});
 			
 		JButton payslipButton = new JButton("Payslip");
+		payslipButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        openPayslip(loggedInEmployee);
+		        dashboardScreen.dispose(); // Optionally dispose the current window
+		    }
+
+		    // Define the openPayslip method here within the ActionListener class
+		    private void openPayslip(User loggedInEmployee) {
+		        // Create an instance of GUIPayslip with the loggedInEmployee
+		        GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
+
+		        // Make the payslip window visible
+		        payslip.openWindow();
+		    }
+		});
+
+		payslipButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		payslipButton.setBackground(Color.WHITE);
 		payslipButton.setBounds(37, 216, 227, 31);
 		sidePanel.add(payslipButton);
 		
 		JButton leaverequestButton = new JButton("Leave Request");
+		leaverequestButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		leaverequestButton.setBackground(Color.WHITE);
 		leaverequestButton.setBounds(37, 277, 227, 31);
 		sidePanel.add(leaverequestButton);
-		
+
+		leaverequestButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        openLeaveRequest(loggedInEmployee);
+		        dashboardScreen.dispose(); // Optionally dispose the current window
+		    }
+
+		    // Define the openLeaveRequest method here within the ActionListener class
+		    private void openLeaveRequest(User loggedInEmployee) {
+		        // Create an instance of GUILeaveRequest with the loggedInEmployee
+		        GUILeaveRequest leaveRequest = new GUILeaveRequest(loggedInEmployee);
+
+		        // Make the leave request window visible
+		        leaveRequest.openWindow();
+		    }
+		});
+						
 		JButton helpButton = new JButton("Help & Support");
 		helpButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		helpButton.setBackground(Color.WHITE);

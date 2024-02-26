@@ -4,6 +4,9 @@ import java.awt.Font;
 import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.JLabel;
@@ -14,36 +17,52 @@ import javax.swing.DefaultComboBoxModel;
 import java.awt.GridLayout;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import model.Leave;
+import model.User;
+import util.LeaveData;
+
 import javax.swing.JScrollPane;
+import java.awt.Cursor;
+import javax.swing.JTextField;
 
 public class GUILeaveRequest {
 
 	private JFrame leaverequestScreen;
 	private JTable leavehistoryTable;
+    private User loggedInEmployee;
+    private JLabel leaveTotal;
+    private JLabel vacationTotal;
+    private JLabel sickTotal;
+    private JLabel emergencyTotal;
+    private JTextField textField_ComputedDays;
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GUILeaveRequest window = new GUILeaveRequest();
-					window.leaverequestScreen.setVisible(true);
-					window.leaverequestScreen.setLocationRelativeTo(null); 
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    // Pass the loggedInEmployee when creating GUILeaveRequest instance
+                    User loggedInEmployee = new User(); // Replace with actual loggedInEmployee
+                    GUILeaveRequest window = new GUILeaveRequest(loggedInEmployee);
+                    window.leaverequestScreen.setVisible(true);
+                    window.leaverequestScreen.setLocationRelativeTo(null);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
 	/**
 	 * Create the application.
 	 */
-	public GUILeaveRequest() {
-		initialize();
-	}
+    public GUILeaveRequest(User loggedInEmployee) {
+        this.loggedInEmployee = loggedInEmployee;
+        initialize();
+    }
 
 	/**
 	 * Initialize the contents of the frame.
@@ -77,28 +96,94 @@ public class GUILeaveRequest {
 		sidePanel.add(motorphLabel);
 		
 		JButton dashboardButton = new JButton("Dashboard");
+		dashboardButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		dashboardButton.setBackground(new Color(255, 255, 255));
 		dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		dashboardButton.setBounds(37, 95, 227, 31);
 		sidePanel.add(dashboardButton);
 		
+		dashboardButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                openDashboard(loggedInEmployee);
+                leaverequestScreen.dispose(); // Optionally dispose the current window
+            }
+
+            // Define the openDashboard method here within the ActionListener class
+            private void openDashboard(User loggedInEmployee) {
+                // Create an instance of GUIDashboard with the logged-in employee
+                GUIDashboard dashboard = new GUIDashboard(loggedInEmployee);
+
+                // Make the dashboard window visible
+                dashboard.getDashboardScreen().setVisible(true);
+            }
+        });
+		
 		JButton timeInOutButton = new JButton("Time In/Out");
+		timeInOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		timeInOutButton.setBackground(Color.WHITE);
 		timeInOutButton.setBounds(37, 155, 227, 31);
 		sidePanel.add(timeInOutButton);
 		
+		// Define action listener for the timeInOutButton
+				timeInOutButton.addActionListener(new ActionListener() {
+				    public void actionPerformed(ActionEvent e) {
+				        // Open GUITimeInOut with the logged-in employee
+				        GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
+				        timeInOut.openWindow();
+
+				        // Close the current dashboard window after
+				        if (leaverequestScreen != null) {
+				        	leaverequestScreen.dispose();
+				        }
+				    }
+				});
+		
 		JButton payslipButton = new JButton("Payslip");
+		payslipButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		payslipButton.setBackground(Color.WHITE);
 		payslipButton.setBounds(37, 216, 227, 31);
 		sidePanel.add(payslipButton);
 		
+		payslipButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        openPayslip(loggedInEmployee);
+		        leaverequestScreen.dispose(); // Optionally dispose the current window
+		    }
+
+		    // Define the openPayslip method here within the ActionListener class
+		    private void openPayslip(User loggedInEmployee) {
+		        // Create an instance of GUIPayslip with the loggedInEmployee
+		        GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
+
+		        // Make the payslip window visible
+		        payslip.openWindow();
+		    }
+		});		
+		
 		JButton leaverequestButton = new JButton("Leave Request");
+		leaverequestButton.setEnabled(false);
 		leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		leaverequestButton.setBackground(Color.WHITE);
 		leaverequestButton.setBounds(37, 277, 227, 31);
 		sidePanel.add(leaverequestButton);
+		
+		leaverequestButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        openLeaveRequest(loggedInEmployee);
+		        leaverequestScreen.dispose(); // Optionally dispose the current window
+		    }
+
+		    // Define the openLeaveRequest method here within the ActionListener class
+		    private void openLeaveRequest(User loggedInEmployee) {
+		        // Create an instance of GUILeaveRequest with the loggedInEmployee
+		        GUILeaveRequest leaveRequest = new GUILeaveRequest(loggedInEmployee);
+
+		        // Make the leave request window visible
+		        leaveRequest.openWindow();
+		    }
+		});
 		
 		JButton helpButton = new JButton("Help & Support");
 		helpButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
@@ -124,12 +209,12 @@ public class GUILeaveRequest {
 		totalleavesLabel.setBounds(10, 23, 196, 13);
 		leavesPanel.add(totalleavesLabel);
 		
-		JLabel leaveTotal = new JLabel("20");
-		leaveTotal.setForeground(new Color(12, 143, 15));
-		leaveTotal.setHorizontalAlignment(SwingConstants.CENTER);
-		leaveTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
-		leaveTotal.setBounds(10, 63, 196, 43);
-		leavesPanel.add(leaveTotal);
+		leaveTotal = new JLabel();
+        leaveTotal.setForeground(new Color(12, 143, 15));
+        leaveTotal.setHorizontalAlignment(SwingConstants.CENTER);
+        leaveTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
+        leaveTotal.setBounds(10, 63, 196, 43);
+        leavesPanel.add(leaveTotal);
 		
 		JPanel vacationPanel = new JPanel();
 		vacationPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -144,12 +229,12 @@ public class GUILeaveRequest {
 		vacationLabel.setBounds(10, 23, 196, 13);
 		vacationPanel.add(vacationLabel);
 		
-		JLabel vacationTotal = new JLabel("10");
-		vacationTotal.setHorizontalAlignment(SwingConstants.CENTER);
-		vacationTotal.setForeground(new Color(0, 0, 0));
-		vacationTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
-		vacationTotal.setBounds(10, 61, 196, 43);
-		vacationPanel.add(vacationTotal);
+        vacationTotal = new JLabel();
+        vacationTotal.setHorizontalAlignment(SwingConstants.CENTER);
+        vacationTotal.setForeground(new Color(0, 0, 0));
+        vacationTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
+        vacationTotal.setBounds(10, 61, 196, 43);
+        vacationPanel.add(vacationTotal);
 		
 		JPanel sickPanel = new JPanel();
 		sickPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -164,12 +249,12 @@ public class GUILeaveRequest {
 		sickleavesLabel.setBounds(10, 24, 196, 13);
 		sickPanel.add(sickleavesLabel);
 		
-		JLabel sickTotal = new JLabel("5");
-		sickTotal.setHorizontalAlignment(SwingConstants.CENTER);
-		sickTotal.setForeground(Color.BLACK);
-		sickTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
-		sickTotal.setBounds(10, 59, 196, 43);
-		sickPanel.add(sickTotal);
+        sickTotal = new JLabel();
+        sickTotal.setHorizontalAlignment(SwingConstants.CENTER);
+        sickTotal.setForeground(Color.BLACK);
+        sickTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
+        sickTotal.setBounds(10, 59, 196, 43);
+        sickPanel.add(sickTotal);
 		
 		JPanel emergencyPanel = new JPanel();
 		emergencyPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -184,13 +269,16 @@ public class GUILeaveRequest {
 		emergencyleavesLabel.setBounds(10, 22, 196, 13);
 		emergencyPanel.add(emergencyleavesLabel);
 		
-		JLabel emergencyTotal = new JLabel("5");
-		emergencyTotal.setHorizontalAlignment(SwingConstants.CENTER);
-		emergencyTotal.setForeground(Color.BLACK);
-		emergencyTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
-		emergencyTotal.setBounds(10, 56, 196, 43);
-		emergencyPanel.add(emergencyTotal);
-		
+        emergencyTotal = new JLabel();
+        emergencyTotal.setHorizontalAlignment(SwingConstants.CENTER);
+        emergencyTotal.setForeground(Color.BLACK);
+        emergencyTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
+        emergencyTotal.setBounds(10, 56, 196, 43);
+        emergencyPanel.add(emergencyTotal);
+
+     // Update leave totals
+        updateLeaveData();
+    		
 		JLabel leaveapplicationLabel = new JLabel("Leave Application");
 		leaveapplicationLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
 		leaveapplicationLabel.setBounds(340, 273, 280, 33);
@@ -209,32 +297,32 @@ public class GUILeaveRequest {
 		
 		JLabel lblStartDate = new JLabel("Start Date:");
 		lblStartDate.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		lblStartDate.setBounds(340, 413, 100, 21);
+		lblStartDate.setBounds(340, 399, 100, 21);
 		mainPanel.add(lblStartDate);
 		
-		JComboBox leaveComboBox = new JComboBox();
-		leaveComboBox.setBackground(new Color(255, 255, 255));
-		leaveComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "Vacation Leave", "Sick Leave", "Emergency Leave"}));
-		leaveComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		leaveComboBox.setBounds(510, 331, 200, 32);
-		mainPanel.add(leaveComboBox);
+		JComboBox leaveTypeComboBox = new JComboBox();
+		leaveTypeComboBox.setBackground(new Color(255, 255, 255));
+		leaveTypeComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "Vacation Leave", "Sick Leave", "Emergency Leave"}));
+		leaveTypeComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		leaveTypeComboBox.setBounds(510, 331, 200, 32);
+		mainPanel.add(leaveTypeComboBox);
 		
 		JComboBox startmonthComboBox = new JComboBox();
 		startmonthComboBox.setBackground(new Color(255, 255, 255));
 		startmonthComboBox.setMaximumRowCount(13);
 		startmonthComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}));
 		startmonthComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		startmonthComboBox.setBounds(510, 407, 200, 32);
+		startmonthComboBox.setBounds(510, 393, 200, 32);
 		mainPanel.add(startmonthComboBox);
 		
 		JLabel lblMonth = new JLabel("Month:");
 		lblMonth.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		lblMonth.setBounds(439, 413, 53, 21);
+		lblMonth.setBounds(439, 399, 53, 21);
 		mainPanel.add(lblMonth);
 		
 		JLabel lblDay = new JLabel("Day:");
 		lblDay.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		lblDay.setBounds(439, 455, 53, 21);
+		lblDay.setBounds(439, 441, 53, 21);
 		mainPanel.add(lblDay);
 		
 		JComboBox startdayComboBox = new JComboBox();
@@ -242,29 +330,29 @@ public class GUILeaveRequest {
 		startdayComboBox.setMaximumRowCount(32);
 		startdayComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"}));
 		startdayComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		startdayComboBox.setBounds(510, 449, 53, 32);
+		startdayComboBox.setBounds(510, 435, 53, 32);
 		mainPanel.add(startdayComboBox);
 		
 		JLabel lblYear = new JLabel("Year:");
 		lblYear.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		lblYear.setBounds(576, 455, 44, 21);
+		lblYear.setBounds(576, 441, 44, 21);
 		mainPanel.add(lblYear);
 		
 		JComboBox startyearComboBox = new JComboBox();
 		startyearComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "2022", "2023", "2024"}));
 		startyearComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		startyearComboBox.setBackground(Color.WHITE);
-		startyearComboBox.setBounds(628, 449, 82, 32);
+		startyearComboBox.setBounds(628, 435, 82, 32);
 		mainPanel.add(startyearComboBox);
 		
 		JLabel lblEndDate = new JLabel("End Date:");
 		lblEndDate.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		lblEndDate.setBounds(340, 533, 100, 21);
+		lblEndDate.setBounds(340, 505, 100, 21);
 		mainPanel.add(lblEndDate);
 		
 		JLabel lblMonth_1 = new JLabel("Month:");
 		lblMonth_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		lblMonth_1.setBounds(439, 533, 53, 21);
+		lblMonth_1.setBounds(439, 505, 53, 21);
 		mainPanel.add(lblMonth_1);
 		
 		JComboBox endmonthComboBox = new JComboBox();
@@ -272,7 +360,7 @@ public class GUILeaveRequest {
 		endmonthComboBox.setMaximumRowCount(13);
 		endmonthComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		endmonthComboBox.setBackground(Color.WHITE);
-		endmonthComboBox.setBounds(510, 527, 200, 32);
+		endmonthComboBox.setBounds(510, 499, 200, 32);
 		mainPanel.add(endmonthComboBox);
 		
 		JComboBox enddayComboBox = new JComboBox();
@@ -280,24 +368,24 @@ public class GUILeaveRequest {
 		enddayComboBox.setMaximumRowCount(32);
 		enddayComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		enddayComboBox.setBackground(Color.WHITE);
-		enddayComboBox.setBounds(510, 569, 53, 32);
+		enddayComboBox.setBounds(510, 541, 53, 32);
 		mainPanel.add(enddayComboBox);
 		
 		JLabel lblYear_1 = new JLabel("Year:");
 		lblYear_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		lblYear_1.setBounds(576, 575, 44, 21);
+		lblYear_1.setBounds(576, 547, 44, 21);
 		mainPanel.add(lblYear_1);
 		
 		JComboBox endyearComboBox = new JComboBox();
 		endyearComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "2022", "2023", "2024"}));
 		endyearComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		endyearComboBox.setBackground(Color.WHITE);
-		endyearComboBox.setBounds(628, 569, 82, 32);
+		endyearComboBox.setBounds(628, 541, 82, 32);
 		mainPanel.add(endyearComboBox);
 		
 		JLabel lblDay_1 = new JLabel("Day:");
 		lblDay_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		lblDay_1.setBounds(439, 575, 53, 21);
+		lblDay_1.setBounds(439, 547, 53, 21);
 		mainPanel.add(lblDay_1);
 		
 		JButton sendleaveButton = new JButton("Send Leave Request");
@@ -360,5 +448,50 @@ public class GUILeaveRequest {
 		signoutButton.setBackground(Color.WHITE);
 		signoutButton.setBounds(1160, 36, 103, 31);
 		mainPanel.add(signoutButton);
+		
+		JLabel employeeNameLabel = new JLabel("");
+		employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		employeeNameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
+		employeeNameLabel.setBounds(746, 36, 400, 33);
+		mainPanel.add(employeeNameLabel);
+		
+		JLabel lblTotalDays = new JLabel("Total Days: ");
+		lblTotalDays.setHorizontalAlignment(SwingConstants.LEFT);
+		lblTotalDays.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		lblTotalDays.setBounds(340, 600, 120, 21);
+		mainPanel.add(lblTotalDays);
+		
+		textField_ComputedDays = new JTextField();
+		textField_ComputedDays.setBounds(510, 594, 200, 32);
+		mainPanel.add(textField_ComputedDays);
+		textField_ComputedDays.setColumns(10);
+		
+		// Set employee name dynamically
+        if (loggedInEmployee != null) {
+            employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
+        }
 	}
+	
+	// Method to fetch and update leave data for the logged-in employee
+    private void updateLeaveData() {
+        try {
+            // Fetch leave data for the logged-in employee
+            Leave leave = LeaveData.getLeaveDataByEmployeeId(loggedInEmployee.getid());
+
+            // Update labels with leave data
+            if (leave != null) {
+                int totalLeaves = leave.getVacationLeaveDays() + leave.getSickLeaveDays() + leave.getEmergencyLeaveDays();
+                leaveTotal.setText(String.valueOf(totalLeaves));
+                vacationTotal.setText(String.valueOf(leave.getVacationLeaveDays()));
+                sickTotal.setText(String.valueOf(leave.getSickLeaveDays()));
+                emergencyTotal.setText(String.valueOf(leave.getEmergencyLeaveDays()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+	
+    public void openWindow() {
+        leaverequestScreen.setVisible(true);
+    }
 }

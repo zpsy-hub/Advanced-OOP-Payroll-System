@@ -26,6 +26,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.JScrollPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Cursor;
 
 public class GUITimeInOut {
 
@@ -36,8 +37,9 @@ public class GUITimeInOut {
     private JTable table;
     private AttendanceData attendanceData;
     private TimeInOutHandler timeInOutHandler;
+    private boolean timeOutRecorded = false;
 
-    // Constructor with loggedInEmployee parameter
+    // Constructor 
     public GUITimeInOut(User loggedInEmployee) {
         this.loggedInEmployee = loggedInEmployee;
         this.employeeData = new EmployeeData();
@@ -104,28 +106,79 @@ public class GUITimeInOut {
         sidePanel.add(motorphLabel);
 
         JButton dashboardButton = new JButton("Dashboard");
+        dashboardButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         dashboardButton.setBackground(new Color(255, 255, 255));
         dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
         dashboardButton.setBounds(37, 95, 227, 31);
         sidePanel.add(dashboardButton);
+        
+        dashboardButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                openDashboard(loggedInEmployee);
+                timeinoutScreen.dispose(); // Optionally dispose the current window
+            }
+
+            // Define the openDashboard method here within the ActionListener class
+            private void openDashboard(User loggedInEmployee) {
+                // Create an instance of GUIDashboard with the logged-in employee
+                GUIDashboard dashboard = new GUIDashboard(loggedInEmployee);
+
+                // Make the dashboard window visible
+                dashboard.getDashboardScreen().setVisible(true);
+            }
+        });
 
         JButton timeInOutButton = new JButton("Time In/Out");
+        timeInOutButton.setEnabled(false);
         timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
         timeInOutButton.setBackground(Color.WHITE);
         timeInOutButton.setBounds(37, 155, 227, 31);
         sidePanel.add(timeInOutButton);
 
         JButton payslipButton = new JButton("Payslip");
+        payslipButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
         payslipButton.setBackground(Color.WHITE);
         payslipButton.setBounds(37, 216, 227, 31);
         sidePanel.add(payslipButton);
+        
+        payslipButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        openPayslip(loggedInEmployee);
+		        timeinoutScreen.dispose(); // 
+		    }
+
+		    // Define the openPayslip method here within the ActionListener class
+		    private void openPayslip(User loggedInEmployee) {
+		        // Create an instance of GUIPayslip with the loggedInEmployee
+		        GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
+		        // Make the payslip window visible
+		        payslip.openWindow();
+		    }
+		});
 
         JButton leaverequestButton = new JButton("Leave Request");
+        leaverequestButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
         leaverequestButton.setBackground(Color.WHITE);
         leaverequestButton.setBounds(37, 277, 227, 31);
         sidePanel.add(leaverequestButton);
+        
+		leaverequestButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        openLeaveRequest(loggedInEmployee);
+		        timeinoutScreen.dispose(); // Optionally dispose the current window
+		    }
+
+		    // Define the openLeaveRequest method here within the ActionListener class
+		    private void openLeaveRequest(User loggedInEmployee) {
+		        // Create an instance of GUILeaveRequest with the loggedInEmployee
+		        GUILeaveRequest leaveRequest = new GUILeaveRequest(loggedInEmployee);
+
+		        // Make the leave request window visible
+		        leaveRequest.openWindow();
+		    }
+		});
 
         JButton helpButton = new JButton("Help & Support");
         helpButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
@@ -146,6 +199,7 @@ public class GUITimeInOut {
         timeinoutPanel.setLayout(null);
 
         JButton timeInButton = new JButton("TIME IN");
+        timeInButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         timeInButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -154,8 +208,7 @@ public class GUITimeInOut {
                     // Refresh the table after logging time in
                     populateTable();
                 } catch (Exception ex) {
-                    // Handle any exceptions that may occur during time in
-                    ex.printStackTrace(); // This is just an example, handle exceptions appropriately in your application
+                    ex.printStackTrace(); 
                 }
             }
         });
@@ -166,6 +219,7 @@ public class GUITimeInOut {
         timeinoutPanel.add(timeInButton);      
         
         JButton timeOutButton = new JButton("TIME OUT");
+        timeOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         timeOutButton.setFont(new Font("Tahoma", Font.BOLD, 35));
         timeOutButton.setBackground(Color.WHITE);
         timeOutButton.setBounds(640, 55, 239, 102);
@@ -180,19 +234,39 @@ public class GUITimeInOut {
                     // Refresh the table after logging time out
                     populateTable();
                 } catch (Exception ex) {
-                    // Handle any exceptions that may occur during time out
-                    ex.printStackTrace(); // This is just an example, handle exceptions appropriately in your application
+                    ex.printStackTrace(); 
                 }
             }
         });
 
-        JLabel empStatus = new JLabel("OUT"); // sample only
-        empStatus.setForeground(new Color(255, 0, 0));
+        JLabel empStatus = new JLabel("OFF"); // Default status is OFF
+        empStatus.setForeground(new Color(255, 0, 0)); // Default color is red
         empStatus.setHorizontalAlignment(SwingConstants.CENTER);
         empStatus.setFont(new Font("Tw Cen MT", Font.BOLD, 28));
         empStatus.setBounds(291, 102, 339, 39);
         timeinoutPanel.add(empStatus);
-            
+
+        // BUG NEED TO FIX THE TIME IN/OUT STATUS
+        timeInButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                empStatus.setText("IN");
+                empStatus.setForeground(new Color(0, 255, 0)); // Change color to green
+                timeInButton.setEnabled(false); // Disable the Time In button
+                timeOutButton.setEnabled(true); // Enable the Time Out button
+            }
+        });
+
+        timeOutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                empStatus.setText("OUT");
+                empStatus.setForeground(new Color(255, 0, 0)); // Change color back to red
+                timeOutButton.setEnabled(false); // Disable the Time Out button
+                timeInButton.setEnabled(false); // Disable the Time In button
+            }
+        });
+             
         JLabel currentstatusLabel = new JLabel("Current Status:");
         currentstatusLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 28));
         currentstatusLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -266,9 +340,6 @@ public class GUITimeInOut {
         // Set the table model
         table.setModel(model);
     }
-
-
-
 
     public void openWindow() {
         timeinoutScreen.setVisible(true);

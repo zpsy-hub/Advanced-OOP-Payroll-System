@@ -62,10 +62,8 @@ public class GUIlogin {
         sessionManager = new SessionManager(userRepository, employeeData);
     }
 
-    /**
-     * Initialize the contents of the frame. GUI starts here.
-     * @param <usernameTextField1>
-     */
+    //Initialize the contents of the frame. GUI starts here.
+
     private <usernameTextField1> void initialize() {
         loginScreen1 = new JFrame();
         loginScreen1.setBackground(new Color(255, 255, 255));

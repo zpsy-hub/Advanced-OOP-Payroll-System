@@ -3,6 +3,9 @@ import java.awt.Font;
 
 import javax.swing.JFrame;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -12,8 +15,12 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.LineBorder;
+
+import model.User;
+
 import java.awt.GridLayout;
 import javax.swing.JTable;
+import java.awt.Cursor;
 
 public class GUIPayslip {
 
@@ -21,6 +28,7 @@ public class GUIPayslip {
 	private JTable earningsTable;
 	private JTable deductionsTable;
 	private JTable netpayTable;
+	private static User loggedInEmployee;
 
 	/**
 	 * Launch the application.
@@ -29,7 +37,7 @@ public class GUIPayslip {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUIPayslip window = new GUIPayslip();
+					GUIPayslip window = new GUIPayslip(loggedInEmployee);
 					window.payslipScreen.setVisible(true);
 					window.payslipScreen.setLocationRelativeTo(null);
 				} catch (Exception e) {
@@ -42,9 +50,10 @@ public class GUIPayslip {
 	/**
 	 * Create the application.
 	 */
-	public GUIPayslip() {
-		initialize();
-	}
+	public GUIPayslip(User loggedInEmployee) {
+        this.loggedInEmployee = loggedInEmployee;
+        initialize();
+    }
 
 	/**
 	 * Initialize the contents of the frame.
@@ -77,28 +86,94 @@ public class GUIPayslip {
 		sidePanel.add(motorphLabel);
 		
 		JButton dashboardButton = new JButton("Dashboard");
+		dashboardButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		dashboardButton.setBackground(new Color(255, 255, 255));
 		dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		dashboardButton.setBounds(37, 95, 227, 31);
 		sidePanel.add(dashboardButton);
 		
+		dashboardButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                openDashboard(loggedInEmployee);
+                payslipScreen.dispose(); // Optionally dispose the current window
+            }
+
+            // Define the openDashboard method here within the ActionListener class
+            private void openDashboard(User loggedInEmployee) {
+                // Create an instance of GUIDashboard with the logged-in employee
+                GUIDashboard dashboard = new GUIDashboard(loggedInEmployee);
+
+                // Make the dashboard window visible
+                dashboard.getDashboardScreen().setVisible(true);
+            }
+        });
+		
 		JButton timeInOutButton = new JButton("Time In/Out");
+		timeInOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		timeInOutButton.setBackground(Color.WHITE);
 		timeInOutButton.setBounds(37, 155, 227, 31);
 		sidePanel.add(timeInOutButton);
 		
+		// Define action listener for the timeInOutButton
+		timeInOutButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        // Open GUITimeInOut with the logged-in employee
+		        GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
+		        timeInOut.openWindow();
+
+		        // Close the current dashboard window after
+		        if (payslipScreen != null) {
+		        	payslipScreen.dispose();
+		        }
+		    }
+		});
+		
 		JButton payslipButton = new JButton("Payslip");
+		payslipButton.setEnabled(false);
 		payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		payslipButton.setBackground(Color.WHITE);
 		payslipButton.setBounds(37, 216, 227, 31);
 		sidePanel.add(payslipButton);
 		
+		payslipButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        openPayslip(loggedInEmployee);
+		        payslipScreen.dispose(); // Optionally dispose the current window
+		    }
+
+		    // Define the openPayslip method here within the ActionListener class
+		    private void openPayslip(User loggedInEmployee) {
+		        // Create an instance of GUIPayslip with the loggedInEmployee
+		        GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
+
+		        // Make the payslip window visible
+		        payslip.openWindow();
+		    }
+		});
+		
 		JButton leaverequestButton = new JButton("Leave Request");
+		leaverequestButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		leaverequestButton.setBackground(Color.WHITE);
 		leaverequestButton.setBounds(37, 277, 227, 31);
 		sidePanel.add(leaverequestButton);
+		
+		leaverequestButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        openLeaveRequest(loggedInEmployee);
+		        payslipScreen.dispose(); // Optionally dispose the current window
+		    }
+
+		    // Define the openLeaveRequest method here within the ActionListener class
+		    private void openLeaveRequest(User loggedInEmployee) {
+		        // Create an instance of GUILeaveRequest with the loggedInEmployee
+		        GUILeaveRequest leaveRequest = new GUILeaveRequest(loggedInEmployee);
+
+		        // Make the leave request window visible
+		        leaveRequest.openWindow();
+		    }
+		});
 		
 		JButton helpButton = new JButton("Help & Support");
 		helpButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
@@ -172,10 +247,20 @@ public class GUIPayslip {
 		requestpayslipButton.setBounds(843, 637, 420, 75);
 		mainPanel.add(requestpayslipButton);
 		
-		JLabel employeeNameLabel = new JLabel("\" Name \"");
+		JLabel employeeNameLabel = new JLabel("");
 		employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		employeeNameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
-		employeeNameLabel.setBounds(930, 36, 205, 33);
+		employeeNameLabel.setBounds(750, 36, 400, 33);
 		mainPanel.add(employeeNameLabel);
+		
+		// Set employee name dynamically
+        if (loggedInEmployee != null) {
+            employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
+        }
 	}
+
+	public void openWindow() {
+	    payslipScreen.setVisible(true);
+	}
+
 }
