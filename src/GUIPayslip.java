@@ -171,5 +171,11 @@ public class GUIPayslip {
 		requestpayslipButton.setBackground(Color.WHITE);
 		requestpayslipButton.setBounds(843, 637, 420, 75);
 		mainPanel.add(requestpayslipButton);
+		
+		JLabel employeeNameLabel = new JLabel("\" Name \"");
+		employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		employeeNameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
+		employeeNameLabel.setBounds(930, 36, 205, 33);
+		mainPanel.add(employeeNameLabel);
 	}
 }

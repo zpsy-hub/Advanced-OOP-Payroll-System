@@ -3,6 +3,8 @@ import java.awt.Font;
 import javax.swing.JFrame;
 import java.awt.Color;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -20,7 +22,8 @@ import javax.swing.ImageIcon;
 public class GUIDashboard {
 
 	private JFrame dashboardScreen;
-    private User loggedInEmployee;   
+    private User loggedInEmployee;
+    private EmployeeData employeeData;
     private JLabel employeeNameLabel;
     private JLabel empIDLabel;
     private JLabel empPositionLabel;
@@ -33,7 +36,7 @@ public class GUIDashboard {
     private JLabel empPhilhealthLabel;
     private JLabel empPagibigLabel;
     private JLabel employeeFirstNameLabel;
-        private EmployeeData employeeData;
+
 
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -106,6 +109,20 @@ public class GUIDashboard {
 		timeInOutButton.setBounds(37, 155, 227, 31);
 		sidePanel.add(timeInOutButton);
 		
+		// Define action listener for the timeInOutButton
+		timeInOutButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        // Open GUITimeInOut with the logged-in employee
+		        GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
+		        timeInOut.openWindow();
+
+		        // Close the current dashboard window after
+		        if (dashboardScreen != null) {
+		            dashboardScreen.dispose();
+		        }
+		    }
+		});
+			
 		JButton payslipButton = new JButton("Payslip");
 		payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		payslipButton.setBackground(Color.WHITE);

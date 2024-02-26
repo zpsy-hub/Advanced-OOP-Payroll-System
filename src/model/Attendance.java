@@ -11,8 +11,8 @@ public class Attendance {
     private LocalTime timeIn;
     private LocalTime timeOut;
 
-    public Attendance(String employeeId, String lastName, String firstName, LocalDate date, LocalTime timeIn, LocalTime timeOut) {
-        this.id = employeeId;
+    public Attendance(String id, String lastName, String firstName, LocalDate date, LocalTime timeIn, LocalTime timeOut) {
+        this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
         this.date = date;
@@ -21,12 +21,12 @@ public class Attendance {
     }
 
     // Getters and setters
-    public String getEmployeeId() {
+    public String getid() {
         return id;
     }
 
-    public void setEmployeeId(String employeeId) {
-        this.id = employeeId;
+    public void setEmployeeId(String id) {
+        this.id = id;
     }
 
     public String getLastName() {
