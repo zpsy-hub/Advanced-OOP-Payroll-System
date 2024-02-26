@@ -1,5 +1,4 @@
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import java.awt.Toolkit;
 import java.awt.Color;
@@ -9,6 +8,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.ImageIcon;
+<<<<<<< Updated upstream
 import javax.swing.JPasswordField;
 
 public class GUIlogin {
@@ -17,6 +17,25 @@ public class GUIlogin {
 	private JTextField usernameTextField;
 	private JTextField passwordtextField;
 	private JPasswordField passwordField;
+=======
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
+import model.UserRole;
+import service.LoginService;
+import util.SessionManager;
+import util.UserRepository;
+import view.Dashboard;
+
+public class GUIlogin {
+
+	 private JFrame loginScreen;
+	    private JTextField usernameTextField;
+	    private JTextField passwordTextField;
+	    private LoginService loginService;
+	    private SessionManager sessionManager;
+	    private UserRepository userRepository;
+>>>>>>> Stashed changes
 
 	/**
 	 * Launch the application.
@@ -38,9 +57,13 @@ public class GUIlogin {
 	/**
 	 * Create the application.
 	 */
-	public GUIlogin() {
-		initialize();
-	}
+    public GUIlogin() {
+        initialize();
+        // Initialize the LoginService, UserRepository, and SessionManager
+        userRepository = new UserRepository();
+        loginService = new LoginService(userRepository);
+        sessionManager = new SessionManager(userRepository);
+    }
 
 	/**
 	 * Initialize the contents of the frame. GUI starts here.
@@ -108,9 +131,43 @@ public class GUIlogin {
 		motorphIcon.setBounds(526, 42, 232, 95);
 		loginScreen.getContentPane().add(motorphIcon);
 		
+<<<<<<< Updated upstream
 		passwordField = new JPasswordField();
 		passwordField.setFont(new Font("Tw Cen MT", Font.BOLD, 25));
 		passwordField.setBounds(452, 416, 397, 42);
 		loginScreen.getContentPane().add(passwordField);
+=======
+		// ActionListener for Log In button
+		loginButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        String username = usernameTextField.getText();
+		        String password = passwordTextField.getText();
+
+		        // Check login credentials
+		        boolean loginSuccess = sessionManager.login(username, password);
+		        if (loginSuccess) {
+		            // Log successful login attempt
+		            sessionManager.logLoginAttempt(username, true);
+		            // Open the Dashboard
+		            openDashboard();
+		        } else {
+		            // Log unsuccessful login attempt
+		            sessionManager.logLoginAttempt(username, false);
+		            // Show error message
+		            JOptionPane.showMessageDialog(loginScreen,
+		                    "Invalid username or password. Please try again.");
+		        }
+		    }
+		});
+>>>>>>> Stashed changes
 	}
+	
+	private void openDashboard() {
+        // Create and display the Dashboard window
+        Dashboard dashboard = new Dashboard();
+        dashboard.setVisible(true);
+
+        // Close the Login window
+        loginScreen.dispose();
+    }
 }
