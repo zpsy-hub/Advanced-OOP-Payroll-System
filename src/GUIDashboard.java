@@ -108,7 +108,7 @@ public class GUIDashboard {
 		
 		JLabel welcomeLabel = new JLabel("Welcome, ");
 		welcomeLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 40));
-		welcomeLabel.setBounds(340, 103, 240, 33);
+		welcomeLabel.setBounds(340, 103, 177, 33);
 		mainPanel.add(welcomeLabel);
 		
 		JPanel employeeinfoPanel = new JPanel();
@@ -274,6 +274,11 @@ public class GUIDashboard {
 		signoutButton.setBackground(Color.WHITE);
 		signoutButton.setBounds(1160, 36, 103, 31);
 		mainPanel.add(signoutButton);
+		
+		JLabel employeeFirstName = new JLabel("FirstName here");
+		employeeFirstName.setFont(new Font("Tw Cen MT", Font.BOLD, 40));
+		employeeFirstName.setBounds(512, 103, 323, 33);
+		mainPanel.add(employeeFirstName);
 		
 		
 		
