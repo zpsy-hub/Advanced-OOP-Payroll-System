@@ -11,10 +11,16 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.border.LineBorder;
+import java.awt.GridLayout;
+import javax.swing.JTable;
 
 public class GUIPayslip {
 
 	private JFrame payslipScreen;
+	private JTable earningsTable;
+	private JTable deductionsTable;
+	private JTable netpayTable;
 
 	/**
 	 * Launch the application.
@@ -58,6 +64,7 @@ public class GUIPayslip {
 		mainPanel.setLayout(null);
 		
 		JPanel sidePanel = new JPanel();
+		sidePanel.setBackground(new Color(255, 255, 255));
 		sidePanel.setBounds(0, 0, 299, 733);
 		mainPanel.add(sidePanel);
 		sidePanel.setLayout(null);
@@ -125,5 +132,44 @@ public class GUIPayslip {
 		signoutButton.setBackground(Color.WHITE);
 		signoutButton.setBounds(1160, 36, 103, 31);
 		mainPanel.add(signoutButton);
+		
+		JPanel earningsPanel = new JPanel();
+		earningsPanel.setBackground(new Color(255, 255, 255));
+		earningsPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		earningsPanel.setBounds(340, 194, 420, 417);
+		mainPanel.add(earningsPanel);
+		earningsPanel.setLayout(new GridLayout(1, 0, 0, 0));
+		
+		earningsTable = new JTable();
+		earningsTable.setBorder(null);
+		earningsPanel.add(earningsTable);
+		
+		JPanel deductionsPanel = new JPanel();
+		deductionsPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		deductionsPanel.setBackground(Color.WHITE);
+		deductionsPanel.setBounds(843, 194, 420, 417);
+		mainPanel.add(deductionsPanel);
+		deductionsPanel.setLayout(new GridLayout(1, 0, 0, 0));
+		
+		deductionsTable = new JTable();
+		deductionsTable.setBorder(null);
+		deductionsPanel.add(deductionsTable);
+		
+		JPanel netpayPanel = new JPanel();
+		netpayPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		netpayPanel.setBackground(Color.WHITE);
+		netpayPanel.setBounds(340, 637, 420, 75);
+		mainPanel.add(netpayPanel);
+		netpayPanel.setLayout(new GridLayout(1, 0, 0, 0));
+		
+		netpayTable = new JTable();
+		netpayTable.setBorder(null);
+		netpayPanel.add(netpayTable);
+		
+		JButton requestpayslipButton = new JButton("Request Payslip");
+		requestpayslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
+		requestpayslipButton.setBackground(Color.WHITE);
+		requestpayslipButton.setBounds(843, 637, 420, 75);
+		mainPanel.add(requestpayslipButton);
 	}
 }

@@ -111,7 +111,7 @@ public class GUIlogin {
         blobLeft.setBounds(-231, -17, 602, 446);
         loginScreen1.getContentPane().add(blobLeft);
         
-        JLabel blobRight = new JLabel("New label");
+        JLabel blobRight = new JLabel("");
         blobRight.setIcon(new ImageIcon("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\Login_blobRight.png"));
         blobRight.setBounds(1018, 289, 397, 516);
         loginScreen1.getContentPane().add(blobRight);

@@ -12,11 +12,15 @@ import javax.swing.border.LineBorder;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.ListSelectionModel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.GridLayout;
 
 public class GUITimeInOut {
 
 	private JFrame timeinoutScreen;
 	private JTable timeTable;
+	private JTable table;
 
 	/**
 	 * Launch the application.
@@ -61,6 +65,7 @@ public class GUITimeInOut {
 		mainPanel.setLayout(null);
 		
 		JPanel sidePanel = new JPanel();
+		sidePanel.setBackground(new Color(255, 255, 255));
 		sidePanel.setBounds(0, 0, 299, 733);
 		mainPanel.add(sidePanel);
 		sidePanel.setLayout(null);
@@ -73,6 +78,10 @@ public class GUITimeInOut {
 		sidePanel.add(motorphLabel);
 		
 		JButton dashboardButton = new JButton("Dashboard");
+		dashboardButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		dashboardButton.setBackground(new Color(255, 255, 255));
 		dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		dashboardButton.setBounds(37, 95, 227, 31);
@@ -110,7 +119,7 @@ public class GUITimeInOut {
 		JPanel timeinoutPanel = new JPanel();
 		timeinoutPanel.setBackground(new Color(255, 255, 255));
 		timeinoutPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		timeinoutPanel.setBounds(340, 79, 923, 242);
+		timeinoutPanel.setBounds(340, 79, 923, 226);
 		mainPanel.add(timeinoutPanel);
 		timeinoutPanel.setLayout(null);
 		
@@ -144,6 +153,22 @@ public class GUITimeInOut {
 		signoutButton.setBackground(Color.WHITE);
 		signoutButton.setBounds(1160, 36, 103, 31);
 		mainPanel.add(signoutButton);
+		
+		JPanel timePanel = new JPanel();
+		timePanel.setBounds(340, 338, 923, 371);
+		mainPanel.add(timePanel);
+		timePanel.setLayout(new GridLayout(1, 0, 0, 0));
+		
+		timeTable = new JTable();
+		timeTable.setBorder(new LineBorder(new Color(0, 0, 0)));
+		timeTable.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
+		timeTable.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+			}
+		));
+		timePanel.add(timeTable);
 		
 		
 	}
