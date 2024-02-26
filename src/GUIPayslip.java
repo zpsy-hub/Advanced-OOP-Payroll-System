@@ -1,22 +1,20 @@
 import java.awt.EventQueue;
+import java.awt.Font;
 
 import javax.swing.JFrame;
 import java.awt.Toolkit;
-import java.awt.Color;
 import javax.swing.JPanel;
-import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import java.awt.Font;
+
+import java.awt.Color;
+import javax.swing.JLabel;
 import javax.swing.JButton;
-import javax.swing.border.LineBorder;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.ListSelectionModel;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
-public class GUITimeInOut {
+public class GUIPayslip {
 
-	private JFrame timeinoutScreen;
-	private JTable timeTable;
+	private JFrame payslipScreen;
 
 	/**
 	 * Launch the application.
@@ -25,9 +23,9 @@ public class GUITimeInOut {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUITimeInOut window = new GUITimeInOut();
-					window.timeinoutScreen.setVisible(true);
-					window.timeinoutScreen.setLocationRelativeTo(null); 
+					GUIPayslip window = new GUIPayslip();
+					window.payslipScreen.setVisible(true);
+					window.payslipScreen.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -38,7 +36,7 @@ public class GUITimeInOut {
 	/**
 	 * Create the application.
 	 */
-	public GUITimeInOut() {
+	public GUIPayslip() {
 		initialize();
 	}
 
@@ -46,18 +44,17 @@ public class GUITimeInOut {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		timeinoutScreen = new JFrame();
-		timeinoutScreen.setBackground(new Color(255, 255, 255));
-		timeinoutScreen.setTitle("MotorPH Payroll System");
-		timeinoutScreen.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
-		timeinoutScreen.setBounds(100, 100, 1315, 770);
-		timeinoutScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		timeinoutScreen.getContentPane().setLayout(null);
+		payslipScreen = new JFrame();
+		payslipScreen.setTitle("MotorPH Payroll System");
+		payslipScreen.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
+		payslipScreen.setBounds(100, 100, 1315, 770);
+		payslipScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		payslipScreen.getContentPane().setLayout(null);
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBackground(new Color(255, 255, 255));
 		mainPanel.setBounds(0, 0, 1301, 733);
-		timeinoutScreen.getContentPane().add(mainPanel);
+		payslipScreen.getContentPane().add(mainPanel);
 		mainPanel.setLayout(null);
 		
 		JPanel sidePanel = new JPanel();
@@ -102,49 +99,31 @@ public class GUITimeInOut {
 		helpButton.setBounds(37, 669, 227, 31);
 		sidePanel.add(helpButton);
 		
-		JLabel timeinoutLabel = new JLabel("Time In/Out");
-		timeinoutLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
-		timeinoutLabel.setBounds(340, 36, 205, 33);
-		mainPanel.add(timeinoutLabel);
+		JLabel payslipLabel = new JLabel("Payslip");
+		payslipLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
+		payslipLabel.setBounds(340, 36, 205, 33);
+		mainPanel.add(payslipLabel);
 		
-		JPanel timeinoutPanel = new JPanel();
-		timeinoutPanel.setBackground(new Color(255, 255, 255));
-		timeinoutPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		timeinoutPanel.setBounds(340, 79, 923, 242);
-		mainPanel.add(timeinoutPanel);
-		timeinoutPanel.setLayout(null);
+		JLabel salarydetailsLabel = new JLabel("Salary Details");
+		salarydetailsLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 30));
+		salarydetailsLabel.setBounds(340, 96, 205, 44);
+		mainPanel.add(salarydetailsLabel);
 		
-		JButton timeInButton = new JButton("TIME IN");
-		timeInButton.setBackground(new Color(255, 255, 255));
-		timeInButton.setFont(new Font("Tahoma", Font.BOLD, 35));
-		timeInButton.setBounds(42, 55, 239, 102);
-		timeinoutPanel.add(timeInButton);
+		JLabel payperiodLabel = new JLabel("Pay Period");
+		payperiodLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 22));
+		payperiodLabel.setBounds(340, 138, 98, 33);
+		mainPanel.add(payperiodLabel);
 		
-		JButton timeOutButton = new JButton("TIME OUT");
-		timeOutButton.setFont(new Font("Tahoma", Font.BOLD, 35));
-		timeOutButton.setBackground(Color.WHITE);
-		timeOutButton.setBounds(640, 55, 239, 102);
-		timeinoutPanel.add(timeOutButton);
-		
-		JLabel currentstatusLabel = new JLabel("Current Status:");
-		currentstatusLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 28));
-		currentstatusLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		currentstatusLabel.setBounds(291, 69, 339, 39);
-		timeinoutPanel.add(currentstatusLabel);
-		
-		JLabel empStatus = new JLabel("OUT"); // sample only
-		empStatus.setForeground(new Color(255, 0, 0));
-		empStatus.setHorizontalAlignment(SwingConstants.CENTER);
-		empStatus.setFont(new Font("Tw Cen MT", Font.BOLD, 28));
-		empStatus.setBounds(291, 102, 339, 39);
-		timeinoutPanel.add(empStatus);
+		JComboBox dateComboBox = new JComboBox();
+		dateComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+		dateComboBox.setModel(new DefaultComboBoxModel(new String[] {"Date"}));
+		dateComboBox.setBounds(449, 138, 250, 30);
+		mainPanel.add(dateComboBox);
 		
 		JButton signoutButton = new JButton("Sign Out");
 		signoutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
 		signoutButton.setBackground(Color.WHITE);
 		signoutButton.setBounds(1160, 36, 103, 31);
 		mainPanel.add(signoutButton);
-		
-		
 	}
 }
