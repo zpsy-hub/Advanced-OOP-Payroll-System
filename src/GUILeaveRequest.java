@@ -6,10 +6,15 @@ import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Calendar;
+import java.util.concurrent.TimeUnit;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.border.LineBorder;
 import javax.swing.JComboBox;
@@ -17,14 +22,14 @@ import javax.swing.DefaultComboBoxModel;
 import java.awt.GridLayout;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JScrollPane;
+import java.awt.Cursor;
+import javax.swing.JTextField;
 
 import model.Leave;
 import model.User;
 import util.LeaveData;
-
-import javax.swing.JScrollPane;
-import java.awt.Cursor;
-import javax.swing.JTextField;
+import service.LeaveRequestService;
 
 public class GUILeaveRequest {
 
@@ -36,6 +41,14 @@ public class GUILeaveRequest {
     private JLabel sickTotal;
     private JLabel emergencyTotal;
     private JTextField textField_ComputedDays;
+    private JComboBox<String> startmonthComboBox;
+    private JComboBox<String> startdayComboBox;
+    private JComboBox<String> startyearComboBox;
+    private JComboBox<String> endmonthComboBox;
+    private JComboBox<String> enddayComboBox;
+    private JComboBox<String> endyearComboBox;
+    private JLabel textField;
+
 
 	/**
 	 * Launch the application.
@@ -307,13 +320,20 @@ public class GUILeaveRequest {
 		leaveTypeComboBox.setBounds(510, 331, 200, 32);
 		mainPanel.add(leaveTypeComboBox);
 		
-		JComboBox startmonthComboBox = new JComboBox();
+		startmonthComboBox = new JComboBox<String>();
 		startmonthComboBox.setBackground(new Color(255, 255, 255));
 		startmonthComboBox.setMaximumRowCount(13);
 		startmonthComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}));
 		startmonthComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		startmonthComboBox.setBounds(510, 393, 200, 32);
 		mainPanel.add(startmonthComboBox);
+		
+		// Add action listener to the startmonthComboBox
+		startmonthComboBox.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        calculateTotalDays();
+		    }
+		});
 		
 		JLabel lblMonth = new JLabel("Month:");
 		lblMonth.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
@@ -325,7 +345,7 @@ public class GUILeaveRequest {
 		lblDay.setBounds(439, 441, 53, 21);
 		mainPanel.add(lblDay);
 		
-		JComboBox startdayComboBox = new JComboBox();
+		startdayComboBox = new JComboBox<String>();
 		startdayComboBox.setBackground(new Color(255, 255, 255));
 		startdayComboBox.setMaximumRowCount(32);
 		startdayComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"}));
@@ -333,17 +353,30 @@ public class GUILeaveRequest {
 		startdayComboBox.setBounds(510, 435, 53, 32);
 		mainPanel.add(startdayComboBox);
 		
+		// Add action listener to the startdayComboBox
+		startdayComboBox.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        calculateTotalDays();
+		    }
+		});
+		
 		JLabel lblYear = new JLabel("Year:");
 		lblYear.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		lblYear.setBounds(576, 441, 44, 21);
 		mainPanel.add(lblYear);
 		
-		JComboBox startyearComboBox = new JComboBox();
+		startyearComboBox = new JComboBox<String>();
 		startyearComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "2022", "2023", "2024"}));
 		startyearComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		startyearComboBox.setBackground(Color.WHITE);
 		startyearComboBox.setBounds(628, 435, 82, 32);
 		mainPanel.add(startyearComboBox);
+		
+		startyearComboBox.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        calculateTotalDays();
+		    }
+		});
 		
 		JLabel lblEndDate = new JLabel("End Date:");
 		lblEndDate.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
@@ -355,7 +388,7 @@ public class GUILeaveRequest {
 		lblMonth_1.setBounds(439, 505, 53, 21);
 		mainPanel.add(lblMonth_1);
 		
-		JComboBox endmonthComboBox = new JComboBox();
+		endmonthComboBox = new JComboBox<String>();
 		endmonthComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}));
 		endmonthComboBox.setMaximumRowCount(13);
 		endmonthComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
@@ -363,7 +396,14 @@ public class GUILeaveRequest {
 		endmonthComboBox.setBounds(510, 499, 200, 32);
 		mainPanel.add(endmonthComboBox);
 		
-		JComboBox enddayComboBox = new JComboBox();
+		// Add action listener to the endmonthComboBox
+		endmonthComboBox.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        calculateTotalDays();
+		    }
+		});
+		
+		enddayComboBox = new JComboBox<String>();
 		enddayComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"}));
 		enddayComboBox.setMaximumRowCount(32);
 		enddayComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
@@ -371,17 +411,31 @@ public class GUILeaveRequest {
 		enddayComboBox.setBounds(510, 541, 53, 32);
 		mainPanel.add(enddayComboBox);
 		
+		// Add action listener to the enddayComboBox
+		enddayComboBox.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        calculateTotalDays();
+		    }
+		});
+		
 		JLabel lblYear_1 = new JLabel("Year:");
 		lblYear_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		lblYear_1.setBounds(576, 547, 44, 21);
 		mainPanel.add(lblYear_1);
 		
-		JComboBox endyearComboBox = new JComboBox();
+		endyearComboBox = new JComboBox<String>();
 		endyearComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "2022", "2023", "2024"}));
 		endyearComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		endyearComboBox.setBackground(Color.WHITE);
 		endyearComboBox.setBounds(628, 541, 82, 32);
 		mainPanel.add(endyearComboBox);
+		
+		// Add action listener to the endyearComboBox
+		endyearComboBox.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        calculateTotalDays();
+		    }
+		});
 		
 		JLabel lblDay_1 = new JLabel("Day:");
 		lblDay_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
@@ -389,10 +443,43 @@ public class GUILeaveRequest {
 		mainPanel.add(lblDay_1);
 		
 		JButton sendleaveButton = new JButton("Send Leave Request");
-		sendleaveButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
+		sendleaveButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 21));
 		sendleaveButton.setBackground(Color.WHITE);
-		sendleaveButton.setBounds(340, 652, 370, 60);
+		sendleaveButton.setBounds(510, 652, 200, 60);
 		mainPanel.add(sendleaveButton);
+
+		// Add ActionListener to sendleaveButton
+		sendleaveButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        // Get input values
+		        String leaveType = (String) leaveTypeComboBox.getSelectedItem();
+		        String startDate = (String) startyearComboBox.getSelectedItem() + "-" + (String) startmonthComboBox.getSelectedItem() + "-" + (String) startdayComboBox.getSelectedItem();
+		        String endDate = (String) endyearComboBox.getSelectedItem() + "-" + (String) endmonthComboBox.getSelectedItem() + "-" + (String) enddayComboBox.getSelectedItem();
+
+		        // Check if the start date is before the end date
+		        try {
+		            LocalDate parsedStartDate = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MMMM-dd"));
+		            LocalDate parsedEndDate = LocalDate.parse(endDate, DateTimeFormatter.ofPattern("yyyy-MMMM-dd"));
+		            if (parsedStartDate.isAfter(parsedEndDate)) {
+		                JOptionPane.showMessageDialog(null, "Start date must be before end date.", "Date Error", JOptionPane.ERROR_MESSAGE);
+		                return; // Exit the method if the start date is after the end date
+		            }
+		        } catch (DateTimeParseException ex) {
+		            JOptionPane.showMessageDialog(null, "Invalid date format.", "Date Error", JOptionPane.ERROR_MESSAGE);
+		            return; // Exit the method if there's an invalid date format
+		        }
+
+		        // Call the submitLeaveRequest method of LeaveRequestService
+		        boolean requestSubmitted = LeaveRequestService.submitLeaveRequest(loggedInEmployee, leaveType, startDate, endDate);
+
+		        // Optionally, update leave data after submitting the request if the request was successful
+		        if (requestSubmitted) {
+		            updateLeaveData();
+		        }
+		    }
+		});
+
+
 		
 		JPanel LineSeparator_1 = new JPanel();
 		LineSeparator_1.setBorder(new LineBorder(new Color(30, 55, 101), 0));
@@ -462,9 +549,23 @@ public class GUILeaveRequest {
 		mainPanel.add(lblTotalDays);
 		
 		textField_ComputedDays = new JTextField();
+		textField_ComputedDays.setHorizontalAlignment(SwingConstants.CENTER);
+		textField_ComputedDays.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
 		textField_ComputedDays.setBounds(510, 594, 200, 32);
 		mainPanel.add(textField_ComputedDays);
 		textField_ComputedDays.setColumns(10);
+		
+		textField = new JLabel();
+		textField.setHorizontalAlignment(SwingConstants.CENTER);
+		textField.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
+		textField.setBounds(300, 594, 200, 32);
+		mainPanel.add(textField);
+		
+		JButton ClearFormButton = new JButton("Clear Form");
+		ClearFormButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 21));
+		ClearFormButton.setBackground(Color.WHITE);
+		ClearFormButton.setBounds(330, 652, 170, 60);
+		mainPanel.add(ClearFormButton);
 		
 		// Set employee name dynamically
         if (loggedInEmployee != null) {
@@ -494,4 +595,47 @@ public class GUILeaveRequest {
     public void openWindow() {
         leaverequestScreen.setVisible(true);
     }
+    
+    // Method to calculate total days based on selected start and end dates
+    private void calculateTotalDays() {
+        try {
+            // Get selected start date
+            String startDate = getFormattedDate(startyearComboBox, startmonthComboBox, startdayComboBox);
+
+            // Get selected end date
+            String endDate = getFormattedDate(endyearComboBox, endmonthComboBox, enddayComboBox);
+
+            // Calculate total days using the static method from LeaveRequestService class
+            long totalDays = LeaveRequestService.calculateTotalDays(startDate, endDate);
+
+            // Get the leave balance of the logged-in user
+            String leaveType = (String) leaveTypeComboBox.getSelectedItem();
+            User loggedInEmployee = getCurrentUser(); // Implement this method to get the currently logged-in user
+            String loggedInUserId = loggedInEmployee.getid();
+            boolean leaveBalanceExceeded = !LeaveRequestService.checkLeaveBalance(loggedInUserId, leaveType, totalDays);
+
+            // Display error message if computed days exceed the leave balance
+            if (leaveBalanceExceeded) {
+                JOptionPane.showMessageDialog(null, "Error: Computed days exceed leave balance for " + leaveType,
+                        "Leave Request Error", JOptionPane.ERROR_MESSAGE);
+                textField_ComputedDays.setText("");
+            } else {
+                // Populate textField_ComputedDays with the total number of days
+                textField_ComputedDays.setText(String.valueOf(totalDays));
+            }
+        } catch (NumberFormatException ex) {
+            // Handle NumberFormatException
+            JOptionPane.showMessageDialog(null, "Error: Invalid input format", "Input Error", JOptionPane.ERROR_MESSAGE);
+            textField_ComputedDays.setText("");
+        }
+    }
+
+    // Method to get formatted date from combo boxes
+    private String getFormattedDate(JComboBox<String> yearComboBox, JComboBox<String> monthComboBox, JComboBox<String> dayComboBox) {
+        int year = Integer.parseInt((String) yearComboBox.getSelectedItem());
+        int month = monthComboBox.getSelectedIndex() + 1; // Month is zero-based
+        int day = Integer.parseInt((String) dayComboBox.getSelectedItem());
+        return year + "-" + String.format("%02d", month) + "-" + String.format("%02d", day);
+    }
+
 }

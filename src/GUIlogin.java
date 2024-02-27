@@ -112,18 +112,18 @@ public class GUIlogin {
         loginScreen1.getContentPane().add(loginButton);
         
         JLabel blobLeft = new JLabel("");
-        blobLeft.setIcon(new ImageIcon("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\Login_blobLeft.png"));
+        blobLeft.setIcon(new ImageIcon("E:\\Downloads\\Documents\\shaneabrasaldo-IT110-OOP-MotorPH-Payroll\\Icons\\Login_blobLeft.png"));
         blobLeft.setBounds(-231, -17, 602, 446);
         loginScreen1.getContentPane().add(blobLeft);
         
         JLabel blobRight = new JLabel("");
-        blobRight.setIcon(new ImageIcon("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\Login_blobRight.png"));
+        blobRight.setIcon(new ImageIcon("E:\\Downloads\\Documents\\shaneabrasaldo-IT110-OOP-MotorPH-Payroll\\Icons\\Login_blobRight.png"));
         blobRight.setBounds(1018, 289, 397, 516);
         loginScreen1.getContentPane().add(blobRight);
         
         JLabel motorphIcon = new JLabel("");
         motorphIcon.setHorizontalAlignment(SwingConstants.CENTER);
-        motorphIcon.setIcon(new ImageIcon("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Logo.png"));
+        motorphIcon.setIcon(new ImageIcon("E:\\Downloads\\Documents\\shaneabrasaldo-IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Logo.png"));
         motorphIcon.setBounds(526, 42, 232, 95);
         loginScreen1.getContentPane().add(motorphIcon);
         

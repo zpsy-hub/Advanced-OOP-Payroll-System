@@ -78,7 +78,7 @@ public class UserRepository {
     public String getEmployeeIdByUsername(String username) {
         for (User user : userList) {
             if (user.getUsername().equals(username)) {
-                return user.getid(); // Corrected to getId() instead of getEmployeeId()
+                return user.getid(); 
             }
         }
         return null; // Employee ID not found
