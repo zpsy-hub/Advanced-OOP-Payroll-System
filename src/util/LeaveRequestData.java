@@ -3,9 +3,12 @@ package util;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JOptionPane;
+
 import model.Leave;
 
-public class LeaveData {
+public class LeaveRequestData {
 
     // Read Leave data from a CSV file and return a list of leaves
     public static List<Leave> readLeaveCsv() throws IOException {
@@ -85,4 +88,56 @@ public class LeaveData {
         }
         return null; // Employee ID not found
     }
+
+    // Update leave balance based on leave type
+    public static void updateLeaveBalance(Leave leave, String leaveType, long totalDays) {
+        switch (leaveType) {
+            case "Sick Leave":
+                leave.setSickLeaveDays(leave.getSickLeaveDays() - (int) totalDays);
+                break;
+            case "Vacation Leave":
+                leave.setVacationLeaveDays(leave.getVacationLeaveDays() - (int) totalDays);
+                break;
+            case "Emergency Leave":
+                leave.setEmergencyLeaveDays(leave.getEmergencyLeaveDays() - (int) totalDays);
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "Invalid leave type.", "Leave Request Error", JOptionPane.ERROR_MESSAGE);
+                break;
+        }
+    }
+    
+    // Retrieve the leave tally balance for a specific employee and leave type
+    public static int getLeaveTallyBalance(String employeeId, String leaveType) {
+        try {
+            // Retrieve leave data for the employee
+            Leave leave = LeaveRequestData.getLeaveDataByEmployeeId(employeeId);
+
+            // Check if leave data is found
+            if (leave != null) {
+                // Determine the leave balance based on the leave type
+                switch (leaveType) {
+                    case "Sick Leave":
+                        return leave.getSickLeaveDays();
+                    case "Vacation Leave":
+                        return leave.getVacationLeaveDays();
+                    case "Emergency Leave":
+                        return leave.getEmergencyLeaveDays();
+                    default:
+                        // Handle invalid leave type
+                        JOptionPane.showMessageDialog(null, "Invalid leave type.", "Leave Request Error", JOptionPane.ERROR_MESSAGE);
+                        return 0;
+                }
+            } else {
+                // Handle case where employee ID is not found
+                JOptionPane.showMessageDialog(null, "Employee ID not found.", "Leave Request Error", JOptionPane.ERROR_MESSAGE);
+                return 0;
+            }
+        } catch (Exception e) {
+            // Handle any exceptions
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 }

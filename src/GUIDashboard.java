@@ -166,7 +166,13 @@ public class GUIDashboard {
 		    // Define the openLeaveRequest method here within the ActionListener class
 		    private void openLeaveRequest(User loggedInEmployee) {
 		        // Create an instance of GUILeaveRequest with the loggedInEmployee
-		        GUILeaveRequest leaveRequest = new GUILeaveRequest(loggedInEmployee);
+		        GUILeaveRequest leaveRequest = null;
+				try {
+					leaveRequest = new GUILeaveRequest(loggedInEmployee);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 		        // Make the leave request window visible
 		        leaveRequest.openWindow();
