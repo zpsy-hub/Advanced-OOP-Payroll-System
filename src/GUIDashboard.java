@@ -15,6 +15,7 @@ import javax.swing.border.LineBorder;
 
 import model.Employee;
 import model.User;
+import model.UserRole;
 import util.EmployeeData;
 
 import javax.swing.ImageIcon;
@@ -85,18 +86,18 @@ public class GUIDashboard {
 		dashboardScreen.getContentPane().add(mainPanel);
 		mainPanel.setLayout(null);
 		
-		JPanel sidePanel = new JPanel();
-		sidePanel.setBackground(new Color(255, 255, 255));
-		sidePanel.setBounds(0, 0, 299, 733);
-		mainPanel.add(sidePanel);
-		sidePanel.setLayout(null);
+		JPanel sidebarPanel = new JPanel();
+		sidebarPanel.setBackground(new Color(255, 255, 255));
+		sidebarPanel.setBounds(0, 0, 299, 733);
+		mainPanel.add(sidebarPanel);
+		sidebarPanel.setLayout(null);
 		
 		JLabel motorphLabel = new JLabel("MotorPH");
 		motorphLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		motorphLabel.setForeground(new Color(30, 55, 101));
 		motorphLabel.setFont(new Font("Franklin Gothic Demi", Font.BOLD, 28));
 		motorphLabel.setBounds(10, 30, 279, 45);
-		sidePanel.add(motorphLabel);
+		sidebarPanel.add(motorphLabel);
 		
 		JButton dashboardButton = new JButton("Dashboard");
 		dashboardButton.setEnabled(false);
@@ -104,14 +105,14 @@ public class GUIDashboard {
 		dashboardButton.setBackground(new Color(255, 255, 255));
 		dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		dashboardButton.setBounds(37, 95, 227, 31);
-		sidePanel.add(dashboardButton);
+		sidebarPanel.add(dashboardButton);
 		
 		JButton timeInOutButton = new JButton("Time In/Out");
 		timeInOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		timeInOutButton.setBackground(Color.WHITE);
-		timeInOutButton.setBounds(37, 155, 227, 31);
-		sidePanel.add(timeInOutButton);
+		timeInOutButton.setBounds(37, 154, 227, 31);
+		sidebarPanel.add(timeInOutButton);
 		
 		// Define action listener for the timeInOutButton
 		timeInOutButton.addActionListener(new ActionListener() {
@@ -148,14 +149,14 @@ public class GUIDashboard {
 		payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		payslipButton.setBackground(Color.WHITE);
 		payslipButton.setBounds(37, 216, 227, 31);
-		sidePanel.add(payslipButton);
+		sidebarPanel.add(payslipButton);
 		
 		JButton leaverequestButton = new JButton("Leave Request");
 		leaverequestButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		leaverequestButton.setBackground(Color.WHITE);
 		leaverequestButton.setBounds(37, 277, 227, 31);
-		sidePanel.add(leaverequestButton);
+		sidebarPanel.add(leaverequestButton);
 
 		leaverequestButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
@@ -183,8 +184,72 @@ public class GUIDashboard {
 		helpButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		helpButton.setBackground(Color.WHITE);
 		helpButton.setBounds(37, 669, 227, 31);
-		sidePanel.add(helpButton);
+		sidebarPanel.add(helpButton);
 		
+		JButton HR_EmpMngmntButton = new JButton("Employee management");
+		HR_EmpMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		HR_EmpMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		HR_EmpMngmntButton.setBackground(Color.WHITE);
+		HR_EmpMngmntButton.setBounds(37, 383, 227, 31);
+		sidebarPanel.add(HR_EmpMngmntButton);
+		
+		JButton Payro_EmpMngmntButton_1 = new JButton("Employee management");
+		
+		JButton HR_AttendanceMngmntButton = new JButton("Attendance management");
+		HR_AttendanceMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		HR_AttendanceMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		HR_AttendanceMngmntButton.setBackground(Color.WHITE);
+		HR_AttendanceMngmntButton.setBounds(37, 438, 227, 31);
+		sidebarPanel.add(HR_AttendanceMngmntButton);
+		
+		JButton HR_LeaveMngmntButton = new JButton("Leave management");
+		HR_LeaveMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		HR_LeaveMngmntButton.setBackground(Color.WHITE);
+		HR_LeaveMngmntButton.setBounds(37, 491, 227, 31);
+		sidebarPanel.add(HR_LeaveMngmntButton);
+		
+		JButton Payroll_SalaryCalculationButton = new JButton("Salary Calculation");
+		Payroll_SalaryCalculationButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		Payroll_SalaryCalculationButton.setBackground(Color.WHITE);
+		Payroll_SalaryCalculationButton.setBounds(37, 383, 227, 31);
+		sidebarPanel.add(Payroll_SalaryCalculationButton);
+		
+		JButton Payroll_MonthlyReportsButton = new JButton("Monthly Summary Reports");
+		Payroll_MonthlyReportsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
+		Payroll_MonthlyReportsButton.setBackground(Color.WHITE);
+		Payroll_MonthlyReportsButton.setBounds(37, 438, 227, 31);
+		sidebarPanel.add(Payroll_MonthlyReportsButton);
+		
+		// Check the user role
+		UserRole userRole = loggedInEmployee != null ? loggedInEmployee.getRole() : null;
+
+		// Check the user role and set button visibility accordingly
+		if (userRole == UserRole.HR) {
+		    // If the user is HR, make the HR management buttons visible
+		    HR_EmpMngmntButton.setVisible(true);
+		    HR_AttendanceMngmntButton.setVisible(true);
+		    HR_LeaveMngmntButton.setVisible(true);
+		    // Hide payroll buttons
+		    Payroll_SalaryCalculationButton.setVisible(false);
+		    Payroll_MonthlyReportsButton.setVisible(false);
+		} else if (userRole == UserRole.PAYROLL) {
+		    // If the user is in the payroll department, make the payroll buttons visible
+		    Payroll_SalaryCalculationButton.setVisible(true);
+		    Payroll_MonthlyReportsButton.setVisible(true);
+		    // Hide HR management buttons
+		    HR_EmpMngmntButton.setVisible(false);
+		    HR_AttendanceMngmntButton.setVisible(false);
+		    HR_LeaveMngmntButton.setVisible(false);
+		} else {
+		    // If the user is not in HR or payroll, hide all management buttons
+		    HR_EmpMngmntButton.setVisible(false);
+		    HR_AttendanceMngmntButton.setVisible(false);
+		    HR_LeaveMngmntButton.setVisible(false);
+		    Payroll_SalaryCalculationButton.setVisible(false);
+		    Payroll_MonthlyReportsButton.setVisible(false);
+		}
+
 		JLabel dashboardLabel = new JLabel("Dashboard");
 		dashboardLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
 		dashboardLabel.setBounds(340, 36, 205, 33);
@@ -203,14 +268,14 @@ public class GUIDashboard {
 		employeeinfoPanel.setLayout(null);
 		
 		JLabel employeeIcon = new JLabel("");
-		employeeIcon.setIcon(new ImageIcon("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\Employee Icon.png"));
+		employeeIcon.setIcon(new ImageIcon("E:\\Downloads\\Documents\\shaneabrasaldo-IT110-OOP-MotorPH-Payroll\\Icons\\Employee Icon.png"));
 		employeeIcon.setHorizontalAlignment(SwingConstants.CENTER);
 		employeeIcon.setBounds(-21, 10, 204, 222);
 		employeeinfoPanel.add(employeeIcon);
 		
 		JLabel nameLabel = new JLabel("Name");
 		nameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
-		nameLabel.setBounds(158, 22, 45, 13);
+		nameLabel.setBounds(158, 32, 45, 13);
 		employeeinfoPanel.add(nameLabel);
 		
 		JLabel idLabel = new JLabel("Employee ID");
@@ -225,12 +290,12 @@ public class GUIDashboard {
 
 		JLabel supervisorLabel = new JLabel("Immediate Supervisor");
 		supervisorLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
-		supervisorLabel.setBounds(158, 180, 171, 13);
+		supervisorLabel.setBounds(158, 168, 171, 13);
 		employeeinfoPanel.add(supervisorLabel);
 		
 		JLabel statusLabel = new JLabel("Status");
 		statusLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
-		statusLabel.setBounds(407, 22, 98, 13);
+		statusLabel.setBounds(407, 32, 98, 13);
 		employeeinfoPanel.add(statusLabel);
 		
 		JLabel bdayLabel = new JLabel("Birthday");
@@ -240,7 +305,7 @@ public class GUIDashboard {
 		
 		JLabel addressLabel = new JLabel("Address");
 		addressLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
-		addressLabel.setBounds(407, 180, 98, 13);
+		addressLabel.setBounds(407, 168, 98, 13);
 		employeeinfoPanel.add(addressLabel);
 		
 		JLabel tinLabel = new JLabel("TIN");
@@ -250,7 +315,7 @@ public class GUIDashboard {
 		
 		JLabel sssLabel = new JLabel("SSS");
 		sssLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 15));
-		sssLabel.setBounds(615, 22, 98, 13);
+		sssLabel.setBounds(615, 32, 98, 13);
 		employeeinfoPanel.add(sssLabel);
 		
 		JLabel philhealthLabel = new JLabel("Philhealth");
@@ -312,7 +377,7 @@ public class GUIDashboard {
 
 		employeeNameLabel = new JLabel("");
 		employeeNameLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		employeeNameLabel.setBounds(158, 34, 228, 23);
+		employeeNameLabel.setBounds(158, 44, 228, 23);
 		employeeinfoPanel.add(employeeNameLabel);
 
 		empIDLabel = new JLabel("");
@@ -327,12 +392,12 @@ public class GUIDashboard {
 
 		immediateSupervisorLabel = new JLabel("");
 		immediateSupervisorLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		immediateSupervisorLabel.setBounds(158, 192, 228, 23);
+		immediateSupervisorLabel.setBounds(158, 180, 228, 23);
 		employeeinfoPanel.add(immediateSupervisorLabel);
 
 		empStatusLabel = new JLabel("");
 		empStatusLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empStatusLabel.setBounds(407, 34, 113, 23);
+		empStatusLabel.setBounds(407, 44, 113, 23);
 		employeeinfoPanel.add(empStatusLabel);
 
 		empBdayLabel = new JLabel("");
@@ -342,12 +407,12 @@ public class GUIDashboard {
 
 		empAddressLabel = new JLabel("");
 		empAddressLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empAddressLabel.setBounds(407, 192, 506, 23);
+		empAddressLabel.setBounds(407, 180, 506, 23);
 		employeeinfoPanel.add(empAddressLabel);
 
 		empTINLabel = new JLabel("");
 		empTINLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
-		empTINLabel.setBounds(615, 34, 171, 23);
+		empTINLabel.setBounds(615, 44, 171, 23);
 		employeeinfoPanel.add(empTINLabel);
 
 		empSSSLabel = new JLabel("");

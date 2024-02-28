@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import model.User;
 import model.UserRole;
 
@@ -35,7 +34,7 @@ public class UserRepository {
                 String position = data[3];
                 String username = data[4];
                 String password = data[5];
-                UserRole role = determineUserRole(Integer.parseInt(employeeNumber));
+                UserRole role = determineUserRole(position);
                 User user = new User(username, password, employeeNumber, lastName, firstName, position, role);
                 userList.add(user);
             }
@@ -43,12 +42,17 @@ public class UserRepository {
             e.printStackTrace();
         }
     }
-
-    private UserRole determineUserRole(int employeeNumber) {
-        if (employeeNumber >= 6 && employeeNumber <= 9) {
-            return UserRole.HR;
-        } else if (employeeNumber >= 10 && employeeNumber <= 14) {
+    
+    private UserRole determineUserRole(String position) {
+        if (position.equalsIgnoreCase("Payroll Manager") || 
+            position.equalsIgnoreCase("Payroll Team Leader") || 
+            position.equalsIgnoreCase("Payroll Rank and File") ||
+            position.equalsIgnoreCase("Accounting Head")) {
             return UserRole.PAYROLL;
+        } else if (position.equalsIgnoreCase("HR Manager") || 
+                   position.equalsIgnoreCase("HR Team Leader") || 
+                   position.equalsIgnoreCase("HR Rank and File")) {
+            return UserRole.HR;
         } else {
             return UserRole.EMPLOYEE;
         }
@@ -82,5 +86,15 @@ public class UserRepository {
             }
         }
         return null; // Employee ID not found
+    }
+
+    // Get user role based on the logged-in user's username
+    public UserRole getUserRoleByUsername(String username) {
+        for (User user : userList) {
+            if (user.getUsername().equals(username)) {
+                return user.getRole(); 
+            }
+        }
+        return null; // User role not found
     }
 }

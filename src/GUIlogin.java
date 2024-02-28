@@ -24,6 +24,7 @@ import util.EmployeeData;
 import util.SessionManager;
 import util.UserRepository;
 import view.Dashboard;
+import java.awt.Cursor;
 
 public class GUIlogin {
 
@@ -105,6 +106,7 @@ public class GUIlogin {
         loginScreen1.getContentPane().add(passwordLabel);
         
         JButton loginButton = new JButton("Log In");
+        loginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         loginButton.setForeground(new Color(30, 55, 101));
         loginButton.setBackground(new Color(255, 255, 255));
         loginButton.setFont(new Font("Tw Cen MT", Font.BOLD, 30));

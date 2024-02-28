@@ -439,6 +439,7 @@ public class GUILeaveRequest {
 		mainPanel.add(lblTotalDays);
 		
 		textField_ComputedDays = new JTextField();
+		textField_ComputedDays.setEditable(false);
 		textField_ComputedDays.setHorizontalAlignment(SwingConstants.CENTER);
 		textField_ComputedDays.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
 		textField_ComputedDays.setBounds(510, 594, 200, 32);
@@ -618,9 +619,6 @@ public class GUILeaveRequest {
             JOptionPane.showMessageDialog(leaverequestScreen, "Insufficient leave balance. Maximum allowed days: " + leaveTallyBalance, "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        // Update the total days field
-        textField_ComputedDays.setText(Integer.toString(totalDays));
     }
     
     // Method to populate the leave history table with leave request history

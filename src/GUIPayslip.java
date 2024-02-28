@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -161,12 +162,17 @@ public class GUIPayslip {
 		
 		leaverequestButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        openLeaveRequest(loggedInEmployee);
+		        try {
+					openLeaveRequest(loggedInEmployee);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 		        payslipScreen.dispose(); // Optionally dispose the current window
 		    }
 
 		    // Define the openLeaveRequest method here within the ActionListener class
-		    private void openLeaveRequest(User loggedInEmployee) {
+		    private void openLeaveRequest(User loggedInEmployee) throws IOException {
 		        // Create an instance of GUILeaveRequest with the loggedInEmployee
 		        GUILeaveRequest leaveRequest = new GUILeaveRequest(loggedInEmployee);
 
