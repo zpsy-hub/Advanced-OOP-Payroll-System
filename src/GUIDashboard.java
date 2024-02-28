@@ -1,4 +1,3 @@
-import java.awt.EventQueue;
 import java.awt.Font;
 import javax.swing.JFrame;
 import java.awt.Color;
@@ -192,9 +191,23 @@ public class GUIDashboard {
 		HR_EmpMngmntButton.setBackground(Color.WHITE);
 		HR_EmpMngmntButton.setBounds(37, 383, 227, 31);
 		sidebarPanel.add(HR_EmpMngmntButton);
-		
-		JButton Payro_EmpMngmntButton_1 = new JButton("Employee management");
-		
+
+		// Add action listener to HR_EmpMngmntButton
+		HR_EmpMngmntButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        openEmployeeManagement();
+		    }
+
+		    // Define the openEmployeeManagement method
+		    private void openEmployeeManagement() {
+		        // Create an instance of GUI_HREmployeeManagement
+		        GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(loggedInEmployee);
+
+		        // Make the employee management window visible
+		        employeeManagement.setVisible(true);
+		    }
+		});
+
 		JButton HR_AttendanceMngmntButton = new JButton("Attendance management");
 		HR_AttendanceMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_AttendanceMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));

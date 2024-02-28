@@ -5,7 +5,9 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import model.Employee;
@@ -67,7 +69,9 @@ public class EmployeeData {
         }
     }
 
-
+    public List<Employee> getEmployees() {
+        return new ArrayList<>(employeeMap.values());
+    }
 
     public void saveToCSV(String filePath) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
