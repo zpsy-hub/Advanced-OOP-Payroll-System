@@ -171,11 +171,33 @@ public class GUI_HREmployeeManagement extends JFrame {
 	    mainPanel.add(employeeNameLabel);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(340, 90, 935, 300);
+		scrollPane.setBounds(340, 95, 935, 541);
 		mainPanel.add(scrollPane);
 		
 		table = new JTable();
 		scrollPane.setViewportView(table);		
+		
+		JButton viewdetailsButton = new JButton("View Details");
+		viewdetailsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		viewdetailsButton.setBackground(Color.WHITE);
+		viewdetailsButton.setBounds(340, 654, 154, 51);
+		mainPanel.add(viewdetailsButton);
+		
+		JButton updatedataButton = new JButton("Update Data");
+		updatedataButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		updatedataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		updatedataButton.setBackground(Color.WHITE);
+		updatedataButton.setBounds(528, 654, 154, 51);
+		mainPanel.add(updatedataButton);
+		
+		JButton deletesataButton = new JButton("Delete Data");
+		deletesataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		deletesataButton.setBackground(Color.WHITE);
+		deletesataButton.setBounds(717, 654, 154, 51);
+		mainPanel.add(deletesataButton);
 		
         // Set employee name dynamically
         if (loggedInEmployee != null) {
@@ -243,6 +265,5 @@ public class GUI_HREmployeeManagement extends JFrame {
             e.printStackTrace();
         }
     }
-    
 }
 

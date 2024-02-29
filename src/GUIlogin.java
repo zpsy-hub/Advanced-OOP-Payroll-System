@@ -28,7 +28,7 @@ import java.awt.Cursor;
 
 public class GUIlogin {
 
-    private JFrame loginScreen1;
+    JFrame loginScreen1;
     private JTextField usernameTextField1;
     private LoginService loginService;
     private SessionManager sessionManager;

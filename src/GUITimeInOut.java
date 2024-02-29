@@ -279,6 +279,13 @@ public class GUITimeInOut {
         timeinoutPanel.add(currentstatusLabel);
 
         JButton signoutButton = new JButton("Sign Out");
+        signoutButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		GUIlogin login = new GUIlogin();
+        		login.loginScreen1.setVisible(true);
+        		timeinoutScreen.dispose();
+        	}
+        });
         signoutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
         signoutButton.setBackground(Color.WHITE);
         signoutButton.setBounds(1160, 36, 103, 31);
@@ -292,12 +299,12 @@ public class GUITimeInOut {
         
         JPanel panel = new JPanel();
         panel.setBorder(new TitledBorder(null, "Attendance Records", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        panel.setBounds(334, 375, 935, 341);
+        panel.setBounds(340, 341, 923, 371);
         mainPanel.add(panel);
         panel.setLayout(null);
         
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(6, 15, 923, 320);
+        scrollPane.setBounds(6, 15, 923, 346);
         panel.add(scrollPane);
 
         table = new JTable();

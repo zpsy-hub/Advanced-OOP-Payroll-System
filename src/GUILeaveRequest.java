@@ -421,6 +421,13 @@ public class GUILeaveRequest {
 		leavehistoryTable.setBorder(new LineBorder(new Color(0, 0, 0)));
 		
 		JButton signoutButton = new JButton("Sign Out");
+		signoutButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GUIlogin login = new GUIlogin();
+				login.loginScreen1.setVisible(true);
+				leaverequestScreen.dispose();
+			}
+		});
 		signoutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
 		signoutButton.setBackground(Color.WHITE);
 		signoutButton.setBounds(1160, 36, 103, 31);
