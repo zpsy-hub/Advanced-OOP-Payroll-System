@@ -98,6 +98,8 @@ public class GUIDashboard {
 		motorphLabel.setBounds(10, 30, 279, 45);
 		sidebarPanel.add(motorphLabel);
 		
+		
+		//Sidebar buttons
 		JButton dashboardButton = new JButton("Dashboard");
 		dashboardButton.setEnabled(false);
 		dashboardButton.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

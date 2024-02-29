@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
 import model.Employee;
 import model.User;
 import util.EmployeeData;
+import java.awt.Cursor;
 
 public class GUI_HREmployeeManagement extends JFrame {
 
@@ -130,12 +131,14 @@ public class GUI_HREmployeeManagement extends JFrame {
 		sidebarPanel.add(HR_EmpMngmntButton);
 		
 		JButton HR_AttendanceMngmntButton = new JButton("Attendance management");
+		HR_AttendanceMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_AttendanceMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_AttendanceMngmntButton.setBackground(Color.WHITE);
 		HR_AttendanceMngmntButton.setBounds(37, 438, 227, 31);
 		sidebarPanel.add(HR_AttendanceMngmntButton);
 		
 		JButton HR_LeaveMngmntButton = new JButton("Leave management");
+		HR_LeaveMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_LeaveMngmntButton.setBackground(Color.WHITE);
 		HR_LeaveMngmntButton.setBounds(37, 491, 227, 31);
@@ -152,6 +155,16 @@ public class GUI_HREmployeeManagement extends JFrame {
 		Payroll_MonthlyReportsButton.setBackground(Color.WHITE);
 		Payroll_MonthlyReportsButton.setBounds(37, 438, 227, 31);
 		sidebarPanel.add(Payroll_MonthlyReportsButton);
+		
+		JPanel separator = new JPanel();
+		separator.setBackground(new Color(30, 55, 101));
+		separator.setBounds(37, 350, 130, 3);
+		sidebarPanel.add(separator);
+		
+		JLabel HRaccessLabel = new JLabel("HR Access");
+		HRaccessLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 22));
+		HRaccessLabel.setBounds(177, 332, 100, 33);
+		sidebarPanel.add(HRaccessLabel);
 		
 		JLabel lblEmployeeManagement = new JLabel("Employee Management");
 		lblEmployeeManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
