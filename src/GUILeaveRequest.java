@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 import java.awt.Cursor;
 import javax.swing.JTextField;
 
+import model.Employee;
 import model.Leave;
 import model.LeaveLog;
 import model.User;
@@ -391,6 +392,34 @@ public class GUILeaveRequest {
 		sendleaveButton.setBounds(510, 652, 200, 60);
 		mainPanel.add(sendleaveButton);
 		
+		sendleaveButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        String leaveType = (String) leaveTypeComboBox.getSelectedItem();
+		        String startDate = (String) startmonthComboBox.getSelectedItem() + "/" +
+		                           (String) startdayComboBox.getSelectedItem() + "/" +
+		                           (String) startyearComboBox.getSelectedItem();
+		        String endDate = (String) endmonthComboBox.getSelectedItem() + "/" +
+		                         (String) enddayComboBox.getSelectedItem() + "/" +
+		                         (String) endyearComboBox.getSelectedItem();
+		        int totalDays = Integer.parseInt(textField_ComputedDays.getText());
+		        int remainingBalance = 0; // Assuming you get this value from somewhere
+
+		        // Assuming loggedInEmployee is accessible here
+		        User loggedInUser = GUILeaveRequest.this.loggedInEmployee;
+
+		        // Assuming LeaveLogData.addLeaveRequest() method accepts User
+		        LeaveLogData.addLeaveRequest(loggedInUser, leaveType, startDate, endDate, totalDays, remainingBalance);
+		        JOptionPane.showMessageDialog(leaverequestScreen, "Leave request sent successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+		        
+		        // Repopulate the table with the updated leave history
+		        try {
+		            populateLeaveHistoryTable();
+		        } catch (IOException ex) {
+		            ex.printStackTrace();
+		        }
+		    }
+		});
+		
 		JPanel LineSeparator_1 = new JPanel();
 		LineSeparator_1.setBorder(new LineBorder(new Color(30, 55, 101), 0));
 		LineSeparator_1.setBackground(new Color(30, 55, 101));
@@ -590,10 +619,13 @@ public class GUILeaveRequest {
     }
    
     private void calculateTotalDays() {
+        // Clear the total days text field
+        textField_ComputedDays.setText("");
         if (isAnyComboBoxAtDefaultSelection()) {
             // If any combo box is at default selection, exit the method
             return;
-        }    	        
+        }    
+
         String startYear = (String) startyearComboBox.getSelectedItem();
         String startMonth = (String) startmonthComboBox.getSelectedItem();
         String startDay = (String) startdayComboBox.getSelectedItem();
@@ -626,7 +658,11 @@ public class GUILeaveRequest {
             JOptionPane.showMessageDialog(leaverequestScreen, "Insufficient leave balance. Maximum allowed days: " + leaveTallyBalance, "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
+        // Set the calculated total days in the text field
+        textField_ComputedDays.setText(String.valueOf(totalDays));
     }
+
     
     // Method to populate the leave history table with leave request history
     private void populateLeaveHistoryTable() throws IOException {

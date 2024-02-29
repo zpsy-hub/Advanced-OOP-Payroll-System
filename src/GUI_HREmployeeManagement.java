@@ -4,22 +4,33 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EventObject;
+import java.util.List;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 import model.Employee;
 import model.User;
 import util.EmployeeData;
 import java.awt.Cursor;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.JOptionPane;
 
 public class GUI_HREmployeeManagement extends JFrame {
 
@@ -29,6 +40,10 @@ public class GUI_HREmployeeManagement extends JFrame {
     private EmployeeData employeeData;
     private JLabel employeeNameLabel;
     private JTable table;
+    private JButton editButton;
+    private JButton deleteButton;
+    private JButton btnSaveChanges;
+    private JButton signoutButton;
 
     /**
      * Launch the application.
@@ -37,7 +52,7 @@ public class GUI_HREmployeeManagement extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    User loggedInEmployee = null; // Set the logged-in user here
+                    User loggedInEmployee = null; 
                     GUI_HREmployeeManagement window = new GUI_HREmployeeManagement(loggedInEmployee);
                     window.setVisible(true);
                 } catch (Exception e) {
@@ -49,8 +64,9 @@ public class GUI_HREmployeeManagement extends JFrame {
 
     /**
      * Create the frame.
+     * @throws IOException 
      */
-    public GUI_HREmployeeManagement(User loggedInEmployee) {
+    public GUI_HREmployeeManagement(User loggedInEmployee) throws IOException {
         this.loggedInEmployee = loggedInEmployee;
         this.employeeData = new EmployeeData();
         loadData();
@@ -87,6 +103,7 @@ public class GUI_HREmployeeManagement extends JFrame {
         motorphLabel.setBounds(10, 30, 279, 45);
         sidebarPanel.add(motorphLabel);
 
+        //SIDEBAR BUTTONS
         JButton dashboardButton = new JButton("Dashboard");
         dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
         dashboardButton.setBackground(Color.WHITE);
@@ -144,18 +161,6 @@ public class GUI_HREmployeeManagement extends JFrame {
 		HR_LeaveMngmntButton.setBounds(37, 491, 227, 31);
 		sidebarPanel.add(HR_LeaveMngmntButton);
 		
-		JButton Payroll_SalaryCalculationButton = new JButton("Salary Calculation");
-		Payroll_SalaryCalculationButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-		Payroll_SalaryCalculationButton.setBackground(Color.WHITE);
-		Payroll_SalaryCalculationButton.setBounds(37, 383, 227, 31);
-		sidebarPanel.add(Payroll_SalaryCalculationButton);
-		
-		JButton Payroll_MonthlyReportsButton = new JButton("Monthly Summary Reports");
-		Payroll_MonthlyReportsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
-		Payroll_MonthlyReportsButton.setBackground(Color.WHITE);
-		Payroll_MonthlyReportsButton.setBounds(37, 438, 227, 31);
-		sidebarPanel.add(Payroll_MonthlyReportsButton);
-		
 		JPanel separator = new JPanel();
 		separator.setBackground(new Color(30, 55, 101));
 		separator.setBounds(37, 350, 130, 3);
@@ -184,33 +189,137 @@ public class GUI_HREmployeeManagement extends JFrame {
 	    mainPanel.add(employeeNameLabel);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scrollPane.setBounds(340, 95, 935, 541);
 		mainPanel.add(scrollPane);
 		
 		table = new JTable();
-		scrollPane.setViewportView(table);		
+		table.setRowMargin(12);
+		table.setRowHeight(28);
+		table.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+		// Set the table to not allow cell editing
+		table.setDefaultEditor(Object.class, null);
+
+		// Allow row selection
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
-		JButton viewdetailsButton = new JButton("View Details");
-		viewdetailsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		viewdetailsButton.setBackground(Color.WHITE);
-		viewdetailsButton.setBounds(340, 654, 154, 51);
-		mainPanel.add(viewdetailsButton);
+		scrollPane.setViewportView(table);
+
+		//CRUD 
+	        
+	    //Add 
+		JButton addemployeeButton = new JButton("Add Employee");
+		addemployeeButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		addemployeeButton.setBackground(Color.WHITE);
+		addemployeeButton.setBounds(340, 654, 154, 51);
+		mainPanel.add(addemployeeButton);
 		
+		// Add action listener for the "Add Employee" button
+		addemployeeButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        DefaultTableModel model = (DefaultTableModel) table.getModel();
+		        
+		        // Get the last employee number from the table
+		        String lastEmployeeNumber = (String) model.getValueAt(model.getRowCount() - 1, 0);
+		        int newEmployeeNumber = Integer.parseInt(lastEmployeeNumber) + 1;
+		        
+		        // Create a new row with default values
+		        Object[] newRow = new Object[]{
+		            String.valueOf(newEmployeeNumber), // Employee number
+		            "", // Last Name
+		            "", // First Name
+		            "", // Birthday
+		            "", // Address
+		            "", // Phone Number
+		            "", // SSS #
+		            "", // Philhealth #
+		            "", // TIN #
+		            "", // Pag-ibig #
+		            "", // Status
+		            "", // Position
+		            "", // Immediate Supervisor
+		            0.0, // Basic Salary
+		            0.0, // Rice Subsidy
+		            0.0, // Phone Allowance
+		            0.0, // Clothing Allowance
+		            0.0, // Gross Semi-monthly Rate
+		            0.0 // Hourly Rate
+		        };
+		        
+		        // Add the new row to the table
+		        model.addRow(newRow);
+		        
+		        // Enable cell editing for the new row
+		        enableCellEditing(true);
+		        
+		        // Enable the "Save Changes" button
+		        btnSaveChanges.setEnabled(true);
+		    }
+		});
+
+		
+		//Update
 		JButton updatedataButton = new JButton("Update Data");
 		updatedataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
+		    public void actionPerformed(ActionEvent e) {
+		        // Enable cell editing
+		        enableCellEditing(true);
+		        // Enable "Save Changes" button
+		        btnSaveChanges.setEnabled(true);
+		    }
 		});
 		updatedataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		updatedataButton.setBackground(Color.WHITE);
 		updatedataButton.setBounds(528, 654, 154, 51);
+		updatedataButton.setEnabled(false); // Initially disabled
 		mainPanel.add(updatedataButton);
 		
-		JButton deletesataButton = new JButton("Delete Data");
-		deletesataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		deletesataButton.setBackground(Color.WHITE);
-		deletesataButton.setBounds(717, 654, 154, 51);
-		mainPanel.add(deletesataButton);
+		//Delete
+		JButton deletedataButton = new JButton("Delete Data");
+        deletedataButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    int option = JOptionPane.showConfirmDialog(GUI_HREmployeeManagement.this,
+                            "Are you sure you want to delete this employee record?", "Confirm Deletion",
+                            JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.YES_OPTION) {
+                        String employeeId = (String) table.getValueAt(selectedRow, 0);
+                        deleteEmployeeData(employeeId);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this,
+                            "Please select an employee record to delete.", "No Record Selected",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
+        });
+        deletedataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        deletedataButton.setBackground(Color.WHITE);
+        deletedataButton.setBounds(903, 654, 154, 51);
+        deletedataButton.setEnabled(false); // Initially disabled
+        mainPanel.add(deletedataButton);
+		
+		//Save
+		btnSaveChanges = new JButton("Save Changes");
+        btnSaveChanges.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    saveChanges();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        btnSaveChanges.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        btnSaveChanges.setBackground(Color.WHITE);
+        btnSaveChanges.setBounds(718, 654, 154, 51);
+        btnSaveChanges.setEnabled(false); // Initially disabled
+        mainPanel.add(btnSaveChanges);
+
 		
         // Set employee name dynamically
         if (loggedInEmployee != null) {
@@ -219,64 +328,218 @@ public class GUI_HREmployeeManagement extends JFrame {
 
         // Populate the table with loaded data
         populateTableWithAllEmployees();
+        
+        // Add selection listener to enable/disable buttons based on row selection
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    if (table.getSelectedRow() != -1) {
+                        // Row is selected, enable update and delete buttons
+                        updatedataButton.setEnabled(true);
+                        deletedataButton.setEnabled(true);
+                    } else {
+                        // No row selected, disable update and delete buttons
+                        updatedataButton.setEnabled(false);
+                        deletedataButton.setEnabled(false);
+                    }
+                }
+            }
+        });
     }
-	private void populateTableWithAllEmployees() {
-	    DefaultTableModel model = new DefaultTableModel();
-	    model.addColumn("Employee #");
-	    model.addColumn("Last Name");
-	    model.addColumn("First Name");
-	    model.addColumn("Birthday");
-	    model.addColumn("Address");
-	    model.addColumn("Phone Number");
-	    model.addColumn("SSS #");
-	    model.addColumn("Philhealth #");
-	    model.addColumn("TIN #");
-	    model.addColumn("Pag-ibig #");
-	    model.addColumn("Status");
-	    model.addColumn("Position");
-	    model.addColumn("Immediate Supervisor");
-	    model.addColumn("Basic Salary");
-	    model.addColumn("Rice Subsidy");
-	    model.addColumn("Phone Allowance");
-	    model.addColumn("Clothing Allowance");
-	    model.addColumn("Gross Semi-monthly Rate");
-	    model.addColumn("Hourly Rate");
+    
+    private void populateTableWithAllEmployees() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Employee #");
+        model.addColumn("Last Name");
+        model.addColumn("First Name");
+        model.addColumn("Birthday");
+        model.addColumn("Address");
+        model.addColumn("Phone Number");
+        model.addColumn("SSS #");
+        model.addColumn("Philhealth #");
+        model.addColumn("TIN #");
+        model.addColumn("Pag-ibig #");
+        model.addColumn("Status");
+        model.addColumn("Position");
+        model.addColumn("Immediate Supervisor");
+        model.addColumn("Basic Salary");
+        model.addColumn("Rice Subsidy");
+        model.addColumn("Phone Allowance");
+        model.addColumn("Clothing Allowance");
+        model.addColumn("Gross Semi-monthly Rate");
+        model.addColumn("Hourly Rate");
 
-	    // Assuming employeeData.getEmployees() returns a list of Employee objects
-	    for (Employee employee : employeeData.getEmployees()) {
-	        model.addRow(new Object[]{
-	                employee.getId(),
-	                employee.getLastName(),
-	                employee.getFirstName(),
-	                employee.getBirthday(),
-	                employee.getAddress(),
-	                employee.getPhoneNumber(),
-	                employee.getSssNumber(),
-	                employee.getPhilhealthNumber(),
-	                employee.getTinNumber(),
-	                employee.getPagibigNumber(),
-	                employee.getStatus(),
-	                employee.getPosition(),
-	                employee.getImmediateSupervisor(),
-	                employee.getBasicSalary(),
-	                employee.getRiceSubsidy(),
-	                employee.getPhoneAllowance(),
-	                employee.getClothingAllowance(),
-	                employee.getGrossSemiMonthlyRate(),
-	                employee.getHourlyRate()
-	        });
-	    }
+        // Assuming employeeData.getEmployees() returns a list of Employee objects
+        List<Employee> employees = employeeData.getEmployees();
 
-	    table.setModel(model);
-	}
+     // Sort employees by ascending employee number
+        Collections.sort(employees, new Comparator<Employee>() {
+            @Override
+            public int compare(Employee emp1, Employee emp2) {
+                // Parse employee IDs to integers for comparison
+                int id1 = Integer.parseInt(emp1.getId());
+                int id2 = Integer.parseInt(emp2.getId());
+                // Compare employee numbers in ascending order
+                return id1 - id2;
+            }
+        });
 
-    private void loadData() {
-        try {
-            // Load employee data from CSV file
-            employeeData.loadFromCSV("src/data/Employee Database.csv");
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (Employee employee : employees) {
+            model.addRow(new Object[]{
+                    employee.getId(),
+                    employee.getLastName(),
+                    employee.getFirstName(),
+                    employee.getBirthday(),
+                    employee.getAddress(),
+                    employee.getPhoneNumber(),
+                    employee.getSssNumber(),
+                    employee.getPhilhealthNumber(),
+                    employee.getTinNumber(),
+                    employee.getPagibigNumber(),
+                    employee.getStatus(),
+                    employee.getPosition(),
+                    employee.getImmediateSupervisor(),
+                    employee.getBasicSalary(),
+                    employee.getRiceSubsidy(),
+                    employee.getPhoneAllowance(),
+                    employee.getClothingAllowance(),
+                    employee.getGrossSemiMonthlyRate(),
+                    employee.getHourlyRate()
+            });
+        }
+
+        table.setModel(model);
+    }
+
+    private void loadData() throws IOException {
+        // Load employee data from CSV file
+		employeeData.loadFromCSV("src/data/Employee Database.csv");
+    }
+    
+    private Employee getUpdatedEmployeeFromModel(DefaultTableModel model, int row) {
+        String id = (String) model.getValueAt(row, 0);
+        String lastName = (String) model.getValueAt(row, 1);
+        String firstName = (String) model.getValueAt(row, 2);
+        String birthday = (String) model.getValueAt(row, 3);
+        String address = (String) model.getValueAt(row, 4);
+        String phoneNumber = (String) model.getValueAt(row, 5);
+        String sssNumber = (String) model.getValueAt(row, 6);
+        String philhealthNumber = (String) model.getValueAt(row, 7);
+        String tinNumber = (String) model.getValueAt(row, 8);
+        String pagibigNumber = (String) model.getValueAt(row, 9);
+        String status = (String) model.getValueAt(row, 10);
+        String position = (String) model.getValueAt(row, 11);
+        String supervisor = (String) model.getValueAt(row, 12);
+        double basicSalary = (double) model.getValueAt(row, 13);
+        double riceSubsidy = (double) model.getValueAt(row, 14);
+        double phoneAllowance = (double) model.getValueAt(row, 15);
+        double clothingAllowance = (double) model.getValueAt(row, 16);
+        double semiMonthlyRate = (double) model.getValueAt(row, 17);
+        double hourlyRate = (double) model.getValueAt(row, 18);
+
+        // Create and return the updated Employee object
+        return new Employee(id, lastName, firstName, birthday, address, phoneNumber, sssNumber, philhealthNumber,
+                tinNumber, pagibigNumber, status, position, supervisor, basicSalary, riceSubsidy, phoneAllowance,
+                clothingAllowance, semiMonthlyRate, hourlyRate);
+    }
+    
+    private Employee getEmployeeFromModel(DefaultTableModel model, int row) {
+        String id = (String) model.getValueAt(row, 0);
+        String lastName = (String) model.getValueAt(row, 1);
+        String firstName = (String) model.getValueAt(row, 2);
+        String birthday = (String) model.getValueAt(row, 3);
+        String address = (String) model.getValueAt(row, 4);
+        String phoneNumber = (String) model.getValueAt(row, 5);
+        String sssNumber = (String) model.getValueAt(row, 6);
+        String philhealthNumber = (String) model.getValueAt(row, 7);
+        String tinNumber = (String) model.getValueAt(row, 8);
+        String pagibigNumber = (String) model.getValueAt(row, 9);
+        String status = (String) model.getValueAt(row, 10);
+        String position = (String) model.getValueAt(row, 11);
+        String supervisor = (String) model.getValueAt(row, 12);
+        double basicSalary = (double) model.getValueAt(row, 13);
+        double riceSubsidy = (double) model.getValueAt(row, 14);
+        double phoneAllowance = (double) model.getValueAt(row, 15);
+        double clothingAllowance = (double) model.getValueAt(row, 16);
+        double semiMonthlyRate = (double) model.getValueAt(row, 17);
+        double hourlyRate = (double) model.getValueAt(row, 18);
+
+        // Create and return the Employee object
+        return new Employee(id, lastName, firstName, birthday, address, phoneNumber, sssNumber, philhealthNumber,
+                tinNumber, pagibigNumber, status, position, supervisor, basicSalary, riceSubsidy, phoneAllowance,
+                clothingAllowance, semiMonthlyRate, hourlyRate);
+    }
+
+    private void saveChanges() throws IOException {
+        // Enable logging before saving changes
+        employeeData.setLogging(true);
+        
+        // Stop cell editing to ensure changes are committed
+        if (table.getCellEditor() != null) {
+            table.getCellEditor().stopCellEditing();
+        }
+        
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        for (int row = 0; row < model.getRowCount(); row++) {
+            String employeeId = (String) model.getValueAt(row, 0);
+            Employee originalEmployee = getEmployeeFromModel(model, row);
+            Employee updatedEmployee = getUpdatedEmployeeFromModel(model, row);
+            
+            // Compare original and updated data to find changes
+            if (!originalEmployee.equals(updatedEmployee)) {
+                // Update only the modified data in CSV file
+                employeeData.updateEmployee(employeeId, updatedEmployee, loggedInEmployee.getUsername());
+            }
+        }
+        
+        // Save the changes to the CSV file after updating all employees
+        employeeData.saveToCSV("src/data/Employee Database.csv");      
+        // Once changes are saved, disable the save button until further changes are made
+        btnSaveChanges.setEnabled(false);
+        // Disable cell editing after saving changes
+        enableCellEditing(false);
+        // Refresh the table after saving changes
+        populateTableWithAllEmployees();
+    }
+
+
+
+    private void deleteEmployeeData(String employeeId) {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow != -1) {
+            int option = JOptionPane.showConfirmDialog(GUI_HREmployeeManagement.this,
+                    "Are you sure you want to delete this employee record?", "Confirm Deletion",
+                    JOptionPane.YES_NO_OPTION);
+            if (option == JOptionPane.YES_OPTION) {
+                // Enable logging before deleting an employee
+                employeeData.setLogging(true);
+                // Call the removeEmployee method from EmployeeData class
+                employeeData.removeEmployee(employeeId, loggedInEmployee.getUsername());
+                // Refresh the table after deletion
+                populateTableWithAllEmployees();
+                // Disable logging after deleting an employee
+                employeeData.setLogging(false);
+            }
+        } else {
+            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this,
+                    "Please select an employee record to delete.", "No Record Selected",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
     }
-}
 
+    
+    private void enableCellEditing(boolean editable) {
+        if (editable) {
+            for (int i = 0; i < table.getColumnCount(); i++) {
+                table.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(new JTextField()));
+            }
+        } else {
+            // Disable cell editing for all columns
+            for (int i = 0; i < table.getColumnCount(); i++) {
+                table.getColumnModel().getColumn(i).setCellEditor(null);
+            }
+        }
+    }
+
+
+}

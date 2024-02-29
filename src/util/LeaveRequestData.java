@@ -59,12 +59,12 @@ public class LeaveRequestData {
 
         writer.close(); // Close the writer
     }
-
+    
     // Write leave application data to a CSV file
     public static void writeLeaveApplicationData(String employeeId, String employeeName, String leaveType, String startDate, String endDate, String totalDays) throws IOException {
         String filePath = "src/Data/Leave Application Approved Dates.csv";
 
-        // Create a BufferedWriter to write to the file
+        // Create a BufferedWriter to write to the file, with append mode enabled
         BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
 
         // Write the leave application data to the file
@@ -139,5 +139,5 @@ public class LeaveRequestData {
             return 0;
         }
     }
-
+    
 }

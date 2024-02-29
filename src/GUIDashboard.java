@@ -19,6 +19,7 @@ import util.EmployeeData;
 
 import javax.swing.ImageIcon;
 import java.awt.Cursor;
+import java.awt.EventQueue;
 
 public class GUIDashboard {
 
@@ -197,11 +198,17 @@ public class GUIDashboard {
 		// Add action listener to HR_EmpMngmntButton
 		HR_EmpMngmntButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        openEmployeeManagement();
+		        try {
+					openEmployeeManagement();
+					dashboardScreen.dispose();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 		    }
 
 		    // Define the openEmployeeManagement method
-		    private void openEmployeeManagement() {
+		    private void openEmployeeManagement() throws IOException {
 		        // Create an instance of GUI_HREmployeeManagement
 		        GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(loggedInEmployee);
 
