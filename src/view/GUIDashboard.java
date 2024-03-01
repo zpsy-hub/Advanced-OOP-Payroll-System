@@ -1,25 +1,25 @@
-import java.awt.Font;
-import javax.swing.JFrame;
+package view;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 import model.Employee;
 import model.User;
 import model.UserRole;
 import util.EmployeeData;
-
-import javax.swing.ImageIcon;
-import java.awt.Cursor;
-import java.awt.EventQueue;
 
 public class GUIDashboard {
 

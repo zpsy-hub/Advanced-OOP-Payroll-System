@@ -1,42 +1,36 @@
+package view;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Font;
-
-import javax.swing.JFrame;
-import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JButton;
-import javax.swing.border.LineBorder;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import java.awt.GridLayout;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import java.awt.Cursor;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 
-import model.Employee;
 import model.Leave;
 import model.LeaveLog;
 import model.User;
+import service.LeaveRequestService;
 import util.LeaveLogData;
 import util.LeaveRequestComboPopulator;
 import util.LeaveRequestData;
-import service.LeaveRequestService;
-import javax.swing.ScrollPaneConstants;
 
 public class GUILeaveRequest {
 

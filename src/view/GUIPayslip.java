@@ -1,27 +1,25 @@
+package view;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Font;
-
-import javax.swing.JFrame;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
-import java.awt.Color;
-import javax.swing.JLabel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 import model.User;
-
-import java.awt.GridLayout;
-import javax.swing.JTable;
-import java.awt.Cursor;
 
 public class GUIPayslip {
 

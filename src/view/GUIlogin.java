@@ -1,30 +1,27 @@
-import java.awt.EventQueue;
-import javax.swing.JFrame;
-import java.awt.Toolkit;
+package view;
 import java.awt.Color;
-import javax.swing.JLabel;
+import java.awt.Cursor;
+import java.awt.EventQueue;
 import java.awt.Font;
-import javax.swing.SwingConstants;
-
-import model.Employee;
-import model.User;
-
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import model.User;
 import service.LoginService;
 import util.EmployeeData;
 import util.SessionManager;
 import util.UserRepository;
-import view.Dashboard;
-import java.awt.Cursor;
 
 public class GUIlogin {
 

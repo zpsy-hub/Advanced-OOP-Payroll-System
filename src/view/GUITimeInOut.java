@@ -1,32 +1,33 @@
+package view;
+import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.EventQueue;
-import javax.swing.JFrame;
+import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.awt.Color;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import java.awt.Font;
+
 import javax.swing.JButton;
-import javax.swing.border.LineBorder;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.ListSelectionModel;
 
 import model.Attendance;
 import model.User;
 import service.TimeInOutHandler;
 import util.AttendanceData;
 import util.EmployeeData;
-import javax.swing.border.TitledBorder;
-import javax.swing.JScrollPane;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.Cursor;
 
 public class GUITimeInOut {
 

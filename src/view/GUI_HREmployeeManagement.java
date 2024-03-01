@@ -1,4 +1,6 @@
+package view;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -6,31 +8,30 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.table.TableColumn;
 
 import model.Employee;
 import model.User;
+import service.EmployeeManager;
 import util.EmployeeData;
-import java.awt.Cursor;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.JOptionPane;
 
 public class GUI_HREmployeeManagement extends JFrame {
 
@@ -38,12 +39,14 @@ public class GUI_HREmployeeManagement extends JFrame {
     private JPanel contentPane;
     private User loggedInEmployee;
     private EmployeeData employeeData;
+    private EmployeeManager employeeManager;
     private JLabel employeeNameLabel;
     private JTable table;
     private JButton editButton;
     private JButton deleteButton;
     private JButton btnSaveChanges;
     private JButton signoutButton;
+    
 
     /**
      * Launch the application.
@@ -61,7 +64,7 @@ public class GUI_HREmployeeManagement extends JFrame {
             }
         });
     }
-
+    
     /**
      * Create the frame.
      * @throws IOException 
@@ -69,9 +72,19 @@ public class GUI_HREmployeeManagement extends JFrame {
     public GUI_HREmployeeManagement(User loggedInEmployee) throws IOException {
         this.loggedInEmployee = loggedInEmployee;
         this.employeeData = new EmployeeData();
+
+        // Initialize the JTable, editButton, and btnSaveChanges objects
+        table = new JTable();
+        editButton = new JButton("Edit");
+        btnSaveChanges = new JButton("Save Changes");
+
+        // Now create an instance of EmployeeManager with the initialized objects
+        this.employeeManager = new EmployeeManager(table, editButton, btnSaveChanges);
+
         loadData();
         initialize();
     }
+
 
     /**
      * Initialize the contents of the frame.
@@ -200,8 +213,16 @@ public class GUI_HREmployeeManagement extends JFrame {
 		table.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		// Set the table to not allow cell editing
-		table.setDefaultEditor(Object.class, null);
+		DefaultTableModel model = new DefaultTableModel(new Object[]{"Employee #", "Last Name", "First Name", "Birthday", "Address", "Phone Number", "SSS #", "Philhealth #", "TIN #", "Pag-ibig #", "Status", "Position", "Immediate Supervisor", "Basic Salary", "Rice Subsidy", "Phone Allowance", "Clothing Allowance", "Gross Semi-monthly Rate", "Hourly Rate"}, 0) {
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		        return column > 0;
+		    }
+		};
+
+
+	    // Set the table model
+	    table.setModel(model);
 
 		// Allow row selection
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -219,84 +240,71 @@ public class GUI_HREmployeeManagement extends JFrame {
 		
 		// Add action listener for the "Add Employee" button
 		addemployeeButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        DefaultTableModel model = (DefaultTableModel) table.getModel();
-		        
-		        // Get the last employee number from the table
-		        String lastEmployeeNumber = (String) model.getValueAt(model.getRowCount() - 1, 0);
-		        int newEmployeeNumber = Integer.parseInt(lastEmployeeNumber) + 1;
-		        
-		        // Create a new row with default values
-		        Object[] newRow = new Object[]{
-		            String.valueOf(newEmployeeNumber), // Employee number
-		            "", // Last Name
-		            "", // First Name
-		            "", // Birthday
-		            "", // Address
-		            "", // Phone Number
-		            "", // SSS #
-		            "", // Philhealth #
-		            "", // TIN #
-		            "", // Pag-ibig #
-		            "", // Status
-		            "", // Position
-		            "", // Immediate Supervisor
-		            0.0, // Basic Salary
-		            0.0, // Rice Subsidy
-		            0.0, // Phone Allowance
-		            0.0, // Clothing Allowance
-		            0.0, // Gross Semi-monthly Rate
-		            0.0 // Hourly Rate
-		        };
-		        
-		        // Add the new row to the table
-		        model.addRow(newRow);
-		        
-		        // Enable cell editing for the new row
-		        enableCellEditing(true);
-		        
-		        // Enable the "Save Changes" button
-		        btnSaveChanges.setEnabled(true);
-		    }
-		});
-
+            public void actionPerformed(ActionEvent e) {
+                DefaultTableModel model = (DefaultTableModel) table.getModel();
+                String lastEmployeeNumber = (String) model.getValueAt(model.getRowCount() - 1, 0);
+                int newEmployeeNumber = Integer.parseInt(lastEmployeeNumber) + 1;
+                Object[] newRow = new Object[]{
+                    String.valueOf(newEmployeeNumber),
+                    "", "", "", "", "", "", "", "", "", "", "", "", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+                };
+                model.addRow(newRow);
+                btnSaveChanges.setEnabled(true); // Enable save changes button after adding a new row
+            }
+        });
 		
-		//Update
+		// Update
 		JButton updatedataButton = new JButton("Update Data");
 		updatedataButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        // Enable cell editing
-		        enableCellEditing(true);
-		        // Enable "Save Changes" button
-		        btnSaveChanges.setEnabled(true);
-		    }
+			public void actionPerformed(ActionEvent e) {
+			    int selectedRow = table.getSelectedRow();
+			    
+			    if (selectedRow != -1) {
+			        // Get the updated data from the selected row
+			        Object[] updatedEmployeeData = new Object[model.getColumnCount()];
+			        for (int col = 0; col < model.getColumnCount(); col++) {
+			            updatedEmployeeData[col] = table.getValueAt(selectedRow, col);
+			        }
+			        
+			        // Update the employee using EmployeeManager
+			        try {
+			            employeeManager.updateEmployee(model, selectedRow, updatedEmployeeData);
+			        } catch (IOException ex) {
+			            ex.printStackTrace();
+			        }
+			    } else {
+			        JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this,
+			                "Please select an employee record to update.", "No Record Selected",
+			                JOptionPane.INFORMATION_MESSAGE);
+			    }
+			}
 		});
 		updatedataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		updatedataButton.setBackground(Color.WHITE);
 		updatedataButton.setBounds(528, 654, 154, 51);
 		updatedataButton.setEnabled(false); // Initially disabled
 		mainPanel.add(updatedataButton);
+
 		
 		//Delete
 		JButton deletedataButton = new JButton("Delete Data");
-        deletedataButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow != -1) {
-                    int option = JOptionPane.showConfirmDialog(GUI_HREmployeeManagement.this,
-                            "Are you sure you want to delete this employee record?", "Confirm Deletion",
-                            JOptionPane.YES_NO_OPTION);
-                    if (option == JOptionPane.YES_OPTION) {
-                        String employeeId = (String) table.getValueAt(selectedRow, 0);
-                        deleteEmployeeData(employeeId);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this,
-                            "Please select an employee record to delete.", "No Record Selected",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        });
+		deletedataButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        int selectedRow = table.getSelectedRow();
+		        if (selectedRow != -1) {
+		            // Delete the employee using EmployeeManager
+		            try {
+		                employeeManager.deleteEmployee((DefaultTableModel) table.getModel(), selectedRow);
+		            } catch (IOException ex) {
+		                ex.printStackTrace();
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this,
+		                    "Please select an employee record to delete.", "No Record Selected",
+		                    JOptionPane.INFORMATION_MESSAGE);
+		        }
+		    }
+		});
         deletedataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
         deletedataButton.setBackground(Color.WHITE);
         deletedataButton.setBounds(903, 654, 154, 51);
@@ -304,7 +312,7 @@ public class GUI_HREmployeeManagement extends JFrame {
         mainPanel.add(deletedataButton);
 		
 		//Save
-		btnSaveChanges = new JButton("Save Changes");
+        btnSaveChanges = new JButton("Save Changes");
         btnSaveChanges.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -347,8 +355,19 @@ public class GUI_HREmployeeManagement extends JFrame {
         });
     }
     
+    // Helper method to create Employee object from selected row data
+    private Employee createEmployeeFromRow(int row) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        // Extract data from the selected row and create an Employee object
+        Employee employee = new Employee();
+        employee.setId((String) model.getValueAt(row, 0));
+        employee.setLastName((String) model.getValueAt(row, 1));
+        // Populate other fields similarly
+        return employee;
+    }
+    
     private void populateTableWithAllEmployees() {
-        DefaultTableModel model = new DefaultTableModel();
+    	DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.addColumn("Employee #");
         model.addColumn("Last Name");
         model.addColumn("First Name");
@@ -412,8 +431,8 @@ public class GUI_HREmployeeManagement extends JFrame {
     }
 
     private void loadData() throws IOException {
-        // Load employee data from CSV file
-		employeeData.loadFromCSV("src/data/Employee Database.csv");
+        employeeData.loadFromCSV("src/data/Employee Database.csv");
+        populateTableWithAllEmployees();
     }
     
     private Employee getUpdatedEmployeeFromModel(DefaultTableModel model, int row) {
@@ -437,7 +456,6 @@ public class GUI_HREmployeeManagement extends JFrame {
         double semiMonthlyRate = (double) model.getValueAt(row, 17);
         double hourlyRate = (double) model.getValueAt(row, 18);
 
-        // Create and return the updated Employee object
         return new Employee(id, lastName, firstName, birthday, address, phoneNumber, sssNumber, philhealthNumber,
                 tinNumber, pagibigNumber, status, position, supervisor, basicSalary, riceSubsidy, phoneAllowance,
                 clothingAllowance, semiMonthlyRate, hourlyRate);
@@ -471,31 +489,19 @@ public class GUI_HREmployeeManagement extends JFrame {
     }
 
     private void saveChanges() throws IOException {
-        // Enable logging before saving changes
-        employeeData.setLogging(true);
-        
-        // Stop cell editing to ensure changes are committed
-        if (table.getCellEditor() != null) {
-            table.getCellEditor().stopCellEditing();
-        }
-        
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         for (int row = 0; row < model.getRowCount(); row++) {
             String employeeId = (String) model.getValueAt(row, 0);
-            Employee originalEmployee = getEmployeeFromModel(model, row);
+            Employee originalEmployee = employeeData.getId(employeeId);
             Employee updatedEmployee = getUpdatedEmployeeFromModel(model, row);
-            
-            // Compare original and updated data to find changes
+
             if (!originalEmployee.equals(updatedEmployee)) {
-                // Update only the modified data in CSV file
                 employeeData.updateEmployee(employeeId, updatedEmployee, loggedInEmployee.getUsername());
             }
         }
-        
-        // Save the changes to the CSV file after updating all employees
-        employeeData.saveToCSV("src/data/Employee Database.csv");      
-        // Once changes are saved, disable the save button until further changes are made
-        btnSaveChanges.setEnabled(false);
+
+        employeeData.saveToCSV("src/data/Employee Database.csv");
+        btnSaveChanges.setEnabled(false); // Disable save changes button after saving
         // Disable cell editing after saving changes
         enableCellEditing(false);
         // Refresh the table after saving changes
@@ -529,17 +535,25 @@ public class GUI_HREmployeeManagement extends JFrame {
 
     
     private void enableCellEditing(boolean editable) {
-        if (editable) {
-            for (int i = 0; i < table.getColumnCount(); i++) {
-                table.getColumnModel().getColumn(i).setCellEditor(new DefaultCellEditor(new JTextField()));
-            }
-        } else {
-            // Disable cell editing for all columns
-            for (int i = 0; i < table.getColumnCount(); i++) {
-                table.getColumnModel().getColumn(i).setCellEditor(null);
+        // Get the table's DefaultTableModel
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        // Enable/disable cell editing for each column
+        for (int i = 0; i < model.getColumnCount(); i++) {
+            // Get the TableColumn corresponding to the current column index
+            TableColumn column = table.getColumnModel().getColumn(i);
+
+            // Set the cell editor based on the 'editable' parameter
+            if (editable) {
+                // If 'editable' is true, set a DefaultCellEditor with a JTextField
+                column.setCellEditor(new DefaultCellEditor(new JTextField()));
+            } else {
+                // If 'editable' is false, set the cell editor to null to disable editing
+                column.setCellEditor(null);
             }
         }
     }
+
 
 
 }

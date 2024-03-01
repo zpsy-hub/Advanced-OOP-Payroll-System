@@ -1,23 +1,22 @@
+package view;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
-
-import javax.swing.JFrame;
-
-import view.GUI_PayrollSalaryCalculation;
-import java.awt.Toolkit;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.border.LineBorder;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 
 
 public class GUI_PayrollSalaryCalculation {
