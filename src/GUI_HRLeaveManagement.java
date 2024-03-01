@@ -68,7 +68,7 @@ public class GUI_HRLeaveManagement {
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBackground(Color.WHITE);
-		mainPanel.setBounds(0, 10, 1301, 733);
+		mainPanel.setBounds(0, 0, 1301, 743);
 		contentPane.add(mainPanel);
 		mainPanel.setLayout(null);
 		
@@ -146,6 +146,16 @@ public class GUI_HRLeaveManagement {
 		Payroll_MonthlyReportsButton.setBounds(37, 438, 227, 31);
 		sidebarPanel.add(Payroll_MonthlyReportsButton);
 		
+		JPanel separator = new JPanel();
+		separator.setBackground(new Color(30, 55, 101));
+		separator.setBounds(37, 350, 130, 3);
+		sidebarPanel.add(separator);
+		
+		JLabel HRaccessLabel = new JLabel("HR Access");
+		HRaccessLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 22));
+		HRaccessLabel.setBounds(177, 332, 100, 33);
+		sidebarPanel.add(HRaccessLabel);
+		
 		JLabel lblLeaveManagement = new JLabel("Leave Management");
 		lblLeaveManagement.setBounds(340, 36, 323, 33);
 		lblLeaveManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
@@ -171,7 +181,7 @@ public class GUI_HRLeaveManagement {
 		mainPanel.add(employeeNameLabel);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(340, 79, 935, 300);
+		scrollPane.setBounds(340, 79, 935, 547);
 		mainPanel.add(scrollPane);
 		
 		table = new JTable();
@@ -187,13 +197,13 @@ public class GUI_HRLeaveManagement {
 		});
 		approveButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		approveButton.setBackground(Color.WHITE);
-		approveButton.setBounds(479, 442, 154, 51);
+		approveButton.setBounds(340, 650, 154, 51);
 		mainPanel.add(approveButton);
 		
 		JButton rejectButton = new JButton("Reject");
 		rejectButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		rejectButton.setBackground(Color.WHITE);
-		rejectButton.setBounds(964, 442, 154, 51);
+		rejectButton.setBounds(544, 650, 154, 51);
 		mainPanel.add(rejectButton);
 		
 		try {
@@ -254,5 +264,4 @@ public class GUI_HRLeaveManagement {
 	    table.setModel(model);
 	    
 	}
-
 }
