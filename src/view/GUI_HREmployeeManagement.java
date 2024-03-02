@@ -256,29 +256,31 @@ public class GUI_HREmployeeManagement extends JFrame {
 		// Update
 		JButton updatedataButton = new JButton("Update Data");
 		updatedataButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			    int selectedRow = table.getSelectedRow();
-			    
-			    if (selectedRow != -1) {
-			        // Get the updated data from the selected row
-			        Object[] updatedEmployeeData = new Object[model.getColumnCount()];
-			        for (int col = 0; col < model.getColumnCount(); col++) {
-			            updatedEmployeeData[col] = table.getValueAt(selectedRow, col);
-			        }
-			        
-			        // Update the employee using EmployeeManager
-			        try {
-			            employeeManager.updateEmployee(model, selectedRow, updatedEmployeeData);
-			        } catch (IOException ex) {
-			            ex.printStackTrace();
-			        }
-			    } else {
-			        JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this,
-			                "Please select an employee record to update.", "No Record Selected",
-			                JOptionPane.INFORMATION_MESSAGE);
-			    }
-			}
+		    public void actionPerformed(ActionEvent e) {
+		        int selectedRow = table.getSelectedRow();
+
+		        if (selectedRow != -1) {
+		            // Get the updated data from the selected row
+		            Object[] updatedEmployeeData = new Object[model.getColumnCount()];
+		            for (int col = 0; col < model.getColumnCount(); col++) {
+		                updatedEmployeeData[col] = table.getValueAt(selectedRow, col);
+		            }
+
+		            // Update the employee using EmployeeManager
+		            try {
+		                employeeManager.updateEmployee(model, selectedRow, updatedEmployeeData);
+		                btnSaveChanges.setEnabled(true); // Enable save changes button after updating the data
+		            } catch (IOException ex) {
+		                ex.printStackTrace();
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this,
+		                "Please select an employee record to update.", "No Record Selected",
+		                JOptionPane.INFORMATION_MESSAGE);
+		        }
+		    }
 		});
+
 		updatedataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		updatedataButton.setBackground(Color.WHITE);
 		updatedataButton.setBounds(528, 654, 154, 51);
@@ -449,17 +451,29 @@ public class GUI_HREmployeeManagement extends JFrame {
         String status = (String) model.getValueAt(row, 10);
         String position = (String) model.getValueAt(row, 11);
         String supervisor = (String) model.getValueAt(row, 12);
-        double basicSalary = (double) model.getValueAt(row, 13);
-        double riceSubsidy = (double) model.getValueAt(row, 14);
-        double phoneAllowance = (double) model.getValueAt(row, 15);
-        double clothingAllowance = (double) model.getValueAt(row, 16);
-        double semiMonthlyRate = (double) model.getValueAt(row, 17);
-        double hourlyRate = (double) model.getValueAt(row, 18);
+        double basicSalary = parseDouble(model.getValueAt(row, 13));
+        double riceSubsidy = parseDouble(model.getValueAt(row, 14));
+        double phoneAllowance = parseDouble(model.getValueAt(row, 15));
+        double clothingAllowance = parseDouble(model.getValueAt(row, 16));
+        double semiMonthlyRate = parseDouble(model.getValueAt(row, 17));
+        double hourlyRate = parseDouble(model.getValueAt(row, 18));
 
         return new Employee(id, lastName, firstName, birthday, address, phoneNumber, sssNumber, philhealthNumber,
                 tinNumber, pagibigNumber, status, position, supervisor, basicSalary, riceSubsidy, phoneAllowance,
                 clothingAllowance, semiMonthlyRate, hourlyRate);
     }
+
+    private double parseDouble(Object value) {
+        if (value instanceof Double) {
+            return (double) value;
+        } else if (value instanceof String) {
+            return Double.parseDouble((String) value);
+        } else {
+            throw new IllegalArgumentException("Cannot parse value to double: " + value);
+        }
+    }
+
+
     
     private Employee getEmployeeFromModel(DefaultTableModel model, int row) {
         String id = (String) model.getValueAt(row, 0);
@@ -490,22 +504,42 @@ public class GUI_HREmployeeManagement extends JFrame {
 
     private void saveChanges() throws IOException {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
-        for (int row = 0; row < model.getRowCount(); row++) {
-            String employeeId = (String) model.getValueAt(row, 0);
-            Employee originalEmployee = employeeData.getId(employeeId);
-            Employee updatedEmployee = getUpdatedEmployeeFromModel(model, row);
+        
+        // Get the index of the selected row
+        int selectedRow = table.getSelectedRow();
+        
+        // Check if a row is selected
+        if (selectedRow != -1) {
+            String employeeId = (String) model.getValueAt(selectedRow, 0);
+            Employee originalEmployee = employeeData.getEmployee(employeeId); 
+            Employee updatedEmployee = getUpdatedEmployeeFromModel(model, selectedRow);
+
+            // Print original and updated employee data for logging purposes
+            System.out.println("Original Employee Data: " + originalEmployee.toString());
+            System.out.println("Updated Employee Data: " + updatedEmployee.toString());
 
             if (!originalEmployee.equals(updatedEmployee)) {
+                // Update the employee in the employeeData object
                 employeeData.updateEmployee(employeeId, updatedEmployee, loggedInEmployee.getUsername());
-            }
-        }
 
-        employeeData.saveToCSV("src/data/Employee Database.csv");
-        btnSaveChanges.setEnabled(false); // Disable save changes button after saving
-        // Disable cell editing after saving changes
-        enableCellEditing(false);
-        // Refresh the table after saving changes
-        populateTableWithAllEmployees();
+                // Save the updated employee data to the CSV file
+				employeeData.saveToCSV("src/data/Employee Database.csv");
+				btnSaveChanges.setEnabled(false); // Disable save changes button after saving
+				// Disable cell editing after saving changes
+				enableCellEditing(false);
+				// Refresh the table after saving changes
+				populateTableWithAllEmployees();
+
+				// Print a message indicating that changes have been saved
+				System.out.println("Changes saved successfully.");
+            } else {
+                // Print a message indicating that no changes were made
+                System.out.println("No changes made.");
+            }
+        } else {
+            // Print a message indicating that no row is selected
+            System.out.println("Please select a row to update.");
+        }
     }
 
 

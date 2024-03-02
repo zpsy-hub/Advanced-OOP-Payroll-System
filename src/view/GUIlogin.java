@@ -22,6 +22,7 @@ import service.LoginService;
 import util.EmployeeData;
 import util.SessionManager;
 import util.UserRepository;
+import service.SQL_client;
 
 public class GUIlogin {
 
@@ -36,6 +37,8 @@ public class GUIlogin {
      * Launch the application.
      */
     public static void main(String[] args) {
+    	SQL_client sql = SQL_client.getInstance();
+    	sql.getConnection();  			
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {

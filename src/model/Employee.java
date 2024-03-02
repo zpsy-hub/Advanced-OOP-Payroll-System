@@ -200,4 +200,14 @@ public class Employee {
 	    public void setHourlyRate(double hourlyRate) {
 	        this.hourlyRate = hourlyRate;
 	    }
+	    
+	    @Override
+	    public String toString() {
+	        return "Employee{" +
+	                "id='" + id + '\'' +
+	                ", lastName='" + lastName + '\'' +
+	                ", firstName='" + firstName + '\'' +
+	                // Add other fields as needed
+	                '}';
+	    }
 }
