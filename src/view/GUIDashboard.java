@@ -12,20 +12,23 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 import model.Employee;
 import model.User;
-import model.UserRole;
-import util.EmployeeData;
+import util.UserRole;
+import service.EmployeeDAO;
+import service.EmployeeService;
+import util.SessionManager;
+import util.UserRepository;
 
 public class GUIDashboard {
 
 	private JFrame dashboardScreen;
-    private User loggedInEmployee;
-    private EmployeeData employeeData;
+    private static User loggedInEmployee;
     private JLabel employeeNameLabel;
     private JLabel empIDLabel;
     private JLabel empPositionLabel;
@@ -44,23 +47,47 @@ public class GUIDashboard {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    GUIDashboard window = new GUIDashboard(null);
-                    window.dashboardScreen.setVisible(true);
-                    window.dashboardScreen.setLocationRelativeTo(null);
+                    // Retrieve the logged-in employee from the session manager
+                    User loggedInEmployee = SessionManager.getLoggedInUser();
+
+                    // Before initializing GUIDashboard, make sure loggedInEmployee is not null
+                    if (loggedInEmployee != null) {
+                        System.out.println("Logged-in Employee: " + loggedInEmployee);
+
+                        // Initialize GUIDashboard with the logged-in employee
+                        GUIDashboard window = new GUIDashboard(loggedInEmployee);
+                        window.dashboardScreen.setVisible(true);
+                        window.dashboardScreen.setLocationRelativeTo(null);
+
+                        // After initializing GUIDashboard
+                        System.out.println("GUIDashboard Initialized");
+
+                        // Call displayEmployeeInformation() to display the logged-in employee's information
+                        window.displayEmployeeInformation();
+                    } else {
+                        System.out.println("No user logged in.");
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
     }
+
+
+
 	/**
 	 * Create the application.
 	 */
+    // Constructor
     public GUIDashboard(User loggedInEmployee) {
         this.loggedInEmployee = loggedInEmployee;
-        this.employeeData = new EmployeeData();
-        loadData();
         initialize();
+    }
+
+    // Static getter for loggedInEmployee
+    public static User getLoggedInEmployee() {
+        return loggedInEmployee;
     }
 
     public JFrame getDashboardScreen() {
@@ -210,7 +237,7 @@ public class GUIDashboard {
 		    // Define the openEmployeeManagement method
 		    private void openEmployeeManagement() throws IOException {
 		        // Create an instance of GUI_HREmployeeManagement
-		        GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(loggedInEmployee);
+		        GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(null);
 
 		        // Make the employee management window visible
 		        employeeManagement.setVisible(true);
@@ -399,12 +426,12 @@ public class GUIDashboard {
 		mainPanel.add(signoutButton);
 		
 		// Initialize JLabels with empty strings
-		employeeFirstNameLabel = new JLabel("");
-		employeeFirstNameLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 40));
-		employeeFirstNameLabel.setBounds(512, 103, 323, 33);
-		mainPanel.add(employeeFirstNameLabel);
+	    employeeFirstNameLabel = new JLabel("");
+	    employeeFirstNameLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 40));
+	    employeeFirstNameLabel.setBounds(512, 103, 323, 33);
+	    mainPanel.add(employeeFirstNameLabel);
 
-		employeeNameLabel = new JLabel("");
+	    employeeNameLabel = new JLabel("");
 		employeeNameLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
 		employeeNameLabel.setBounds(158, 44, 228, 23);
 		employeeinfoPanel.add(employeeNameLabel);
@@ -460,34 +487,59 @@ public class GUIDashboard {
 		employeeinfoPanel.add(empPagibigLabel);
 
 		// Set employee info
-        if (loggedInEmployee != null) {
-            setEmployeeInfo(employeeData.getEmployee(loggedInEmployee.getid())); // Use getId() to retrieve employee ID
-        }
-	}
+		if (loggedInEmployee != null) {
+		    // Assuming you have an instance of EmployeeService and EmployeeDAO
+			UserRepository userRepository = new UserRepository();
+			EmployeeService employeeService = new EmployeeService(userRepository, loggedInEmployee);
 
-	public void setEmployeeInfo(Employee loggedInEmployeeInfo) {
-	    if (loggedInEmployeeInfo != null) {
-	        employeeFirstNameLabel.setText(loggedInEmployeeInfo.getFirstName());
-	        employeeNameLabel.setText(loggedInEmployeeInfo.getFirstName() + " " + loggedInEmployeeInfo.getLastName());
-	        empIDLabel.setText(loggedInEmployeeInfo.getId());
-	        empPositionLabel.setText(loggedInEmployeeInfo.getPosition());
-	        immediateSupervisorLabel.setText(loggedInEmployeeInfo.getImmediateSupervisor());
-	        empStatusLabel.setText(loggedInEmployeeInfo.getStatus());
-	        empBdayLabel.setText(loggedInEmployeeInfo.getBirthday());
-	        empAddressLabel.setText(loggedInEmployeeInfo.getAddress());
-	        empTINLabel.setText(loggedInEmployeeInfo.getTinNumber());
-	        empSSSLabel.setText(loggedInEmployeeInfo.getSssNumber());
-	        empPhilhealthLabel.setText(loggedInEmployeeInfo.getPhilhealthNumber());
-	        empPagibigLabel.setText(loggedInEmployeeInfo.getPagibigNumber());
+		    // Retrieve the employee by ID using the service
+		    Employee employee = employeeService.getEmployeeById(loggedInEmployee.getId());
+
+		    // Convert the int value to String before setting the text
+		    empIDLabel.setText(String.valueOf(employee.getEmpId()));
+		}
+		
+		// Call displayEmployeeInformation after initializing the labels
+	    displayEmployeeInformation();
+
+
+	}
+	
+	public void displayEmployeeInformation() {
+	    // Check if a user is logged in
+	    if (loggedInEmployee != null) {
+	        // Create an instance of EmployeeService using EmployeeDAO
+	        UserRepository userRepository = new UserRepository();
+	        EmployeeService employeeService = new EmployeeService(userRepository, loggedInEmployee);
+
+	        // Retrieve the employee's information from the database using their ID
+	        Employee employee = employeeService.getLoggedInEmployee();
+
+	        // Check if employee is found
+	        if (employee != null) {
+	            // Display employee information in the GUI
+	            employeeFirstNameLabel.setText(employee.getFirstName());
+	            employeeNameLabel.setText(employee.getFirstName() + " " + employee.getLastName());
+	            empIDLabel.setText(String.valueOf(employee.getEmpId()));
+	            empPositionLabel.setText(employee.getPosition());
+	            immediateSupervisorLabel.setText(employee.getImmediateSupervisor());
+	            empStatusLabel.setText(employee.getStatus());
+	            empBdayLabel.setText(employee.getBirthday());
+	            empAddressLabel.setText(employee.getAddress());
+	            empTINLabel.setText(employee.getTinNumber());
+	            empSSSLabel.setText(employee.getSssNumber());
+	            empPhilhealthLabel.setText(employee.getPhilhealthNumber());
+	            empPagibigLabel.setText(employee.getPagibigNumber());
+
+	            // No need for pop-up message if employee information is successfully displayed
+	        } else {
+	            // Handle case where employee is not found
+	            JOptionPane.showMessageDialog(dashboardScreen, "Employee not found in the database.", "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    } else {
+	        // Handle case where no user is logged in
+	        JOptionPane.showMessageDialog(dashboardScreen, "No user logged in.", "Error", JOptionPane.ERROR_MESSAGE);
 	    }
 	}
-	    
-	    private void loadData() {
-	        try {
-	            // Load employee data from CSV file
-	            employeeData.loadFromCSV("src/data/Employee Database.csv");
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	    }
+    
 	}

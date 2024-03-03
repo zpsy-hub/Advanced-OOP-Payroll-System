@@ -572,7 +572,7 @@ public class GUILeaveRequest {
     private void updateLeaveData() {
         try {
             // Fetch leave data for the logged-in employee
-            Leave leave = LeaveRequestData.getLeaveDataByEmployeeId(loggedInEmployee.getid());
+            Leave leave = LeaveRequestData.getLeaveDataByEmployeeId(loggedInEmployee.getId());
 
             // Update labels with leave data
             if (leave != null) {
@@ -645,7 +645,7 @@ public class GUILeaveRequest {
         String selectedLeaveType = (String) leaveTypeComboBox.getSelectedItem();
 
         // Check the leave tally balance for the employee and the selected leave type
-        int leaveTallyBalance = LeaveRequestData.getLeaveTallyBalance(loggedInEmployee.getid(), selectedLeaveType);
+        int leaveTallyBalance = LeaveRequestData.getLeaveTallyBalance(loggedInEmployee.getId(), selectedLeaveType);
 
         // Check if the total days exceed the leave tally balance
         if (totalDays > leaveTallyBalance) {
@@ -671,7 +671,7 @@ public class GUILeaveRequest {
         model.addColumn("Status");
 
         // Fetch leave request history for the logged-in employee
-        List<LeaveLog> leaveLogs = LeaveLogData.getLeaveLogsForEmployee(loggedInEmployee.getid());
+        List<LeaveLog> leaveLogs = LeaveLogData.getLeaveLogsForEmployee(loggedInEmployee.getId());
 
         // Populate the model with leave request history data
         for (LeaveLog leaveLog : leaveLogs) {

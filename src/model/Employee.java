@@ -1,213 +1,203 @@
 package model;
 
 public class Employee {
-	private String id;
-	private String lastName;
-	private String firstName;
-	private String birthday;
-	private String address;
-	private String phoneNumber;
-	private String sssNumber;
-	private String philhealthNumber;
-	private String tinNumber;
-	private String pagibigNumber;
-	private String status;
-	private String position;
-	private String immediateSupervisor;
-	private double basicSalary;
-	private double riceSubsidy;
-	private double phoneAllowance;
-	private double clothingAllowance;
-	private double grossSemiMonthlyRate;
-	private double hourlyRate;
+    private int id;
+    private String lastName;
+    private String firstName;
+    private String birthday;
+    private String address;
+    private String phoneNumber;
+    private String sssNumber;
+    private String philhealthNumber;
+    private String tinNumber;
+    private String pagibigNumber;
+    private String status;
+    private String position;
+    private String immediateSupervisor;
+    private float basicSalary;
+    private float riceSubsidy;
+    private float phoneAllowance;
+    private float clothingAllowance;
+    private float grossSemimonthlyRate;
+    private String hourlyRate;
 
-    // Constructor method
-	public Employee(String id, String lastName, String firstName, String birthday, String address, String phoneNumber,
-			String sssNumber, String philhealthNumber, String tinNumber, String pagibigNumber, String status,
-            String position, String immediateSupervisor, double basicSalary, double riceSubsidy, double phoneAllowance,
-            double clothingAllowance, double grossSemiMonthlyRate, double hourlyRate) {
-    this.id = id;
-    this.lastName = lastName;
-    this.firstName = firstName;
-    this.birthday = birthday;
-    this.address = address;
-    this.phoneNumber = phoneNumber;
-    this.sssNumber = sssNumber;
-    this.philhealthNumber = philhealthNumber;
-    this.tinNumber = tinNumber;
-    this.pagibigNumber = pagibigNumber;
-    this.status = status;
-    this.position = position;
-    this.immediateSupervisor = immediateSupervisor;
-    this.basicSalary = basicSalary;
-    this.riceSubsidy = riceSubsidy;
-    this.phoneAllowance = phoneAllowance;
-    this.clothingAllowance = clothingAllowance;
-    this.grossSemiMonthlyRate = grossSemiMonthlyRate;
-    this.hourlyRate = hourlyRate;
-}
+    // Constructor
+    public Employee(int id, String lastName, String firstName, String birthday, String address, String phoneNumber,
+            String sssNumber, String philhealthNumber, String tinNumber, String pagibigNumber, String status,
+            String position, String immediateSupervisor, float basicSalary, float riceSubsidy, float phoneAllowance,
+            float clothingAllowance, float grossSemimonthlyRate, String hourlyRate) {
+        this.id = id;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.birthday = birthday;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.sssNumber = sssNumber;
+        this.philhealthNumber = philhealthNumber;
+        this.tinNumber = tinNumber;
+        this.pagibigNumber = pagibigNumber;
+        this.status = status;
+        this.position = position;
+        this.immediateSupervisor = immediateSupervisor;
+        this.basicSalary = basicSalary;
+        this.riceSubsidy = riceSubsidy;
+        this.phoneAllowance = phoneAllowance;
+        this.clothingAllowance = clothingAllowance;
+        this.grossSemimonthlyRate = grossSemimonthlyRate;
+        this.hourlyRate = hourlyRate;
+    }
 
-	 // Getter methods
-	    public String getId() {
-	    return id;
-	    }
+    // Getters and Setters
+    public int getEmpId() {
+        return id;
+    }
 
-	    public String getLastName() {
-	    return lastName;
-	    }
+    public void setid(int id) {
+        this.id = id;
+    }
 
-	    public String getFirstName() {
-	    return firstName;
-	    }
+    public String getLastName() {
+        return lastName;
+    }
 
-	    public String getBirthday() {
-	    return birthday;
-	    }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	    public String getAddress() {
-	    return address;
-	    }
+    public String getFirstName() {
+        return firstName;
+    }
 
-	    public String getPhoneNumber() {
-	    return phoneNumber;
-	    }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	    public String getSssNumber() {
-	    return sssNumber;
-	    }
+    public String getBirthday() {
+        return birthday;
+    }
 
-	    public String getPhilhealthNumber() {
-	    return philhealthNumber;
-	    }
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
 
-	    public String getTinNumber() {
-	    return tinNumber;
-	    }
+    public String getAddress() {
+        return address;
+    }
 
-	    public String getPagibigNumber() {
-	    return pagibigNumber;
-	    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	    public String getStatus() {
-	    return status;
-	    }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-	    public String getPosition() {
-	    return position;
-	    }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-	    public String getImmediateSupervisor() {
-	    return immediateSupervisor;
-	    }
+    public String getSssNumber() {
+        return sssNumber;
+    }
 
-	    public double getBasicSalary() {
-	    return basicSalary;
-	    }
+    public void setSssNumber(String sssNumber) {
+        this.sssNumber = sssNumber;
+    }
 
-	    public double getRiceSubsidy() {
-	    return riceSubsidy;
-	    }
+    public String getPhilhealthNumber() {
+        return philhealthNumber;
+    }
 
-	    public double getPhoneAllowance() {
-	    return phoneAllowance;
-	    }
+    public void setPhilhealthNumber(String philhealthNumber) {
+        this.philhealthNumber = philhealthNumber;
+    }
 
-	    public double getClothingAllowance() {
-	    return clothingAllowance;
-	    }
+    public String getTinNumber() {
+        return tinNumber;
+    }
 
-	    public double getGrossSemiMonthlyRate() {
-	    return grossSemiMonthlyRate;
-	    }
+    public void setTinNumber(String tinNumber) {
+        this.tinNumber = tinNumber;
+    }
 
-	    public double getHourlyRate() {
-	    return hourlyRate;
-	    }
-	    
-	    //Setter methods
-	    public void setId(String id) {
-	        this.id = id;
-	    }
+    public String getPagibigNumber() {
+        return pagibigNumber;
+    }
 
-	    public void setLastName(String lastName) {
-	        this.lastName = lastName;
-	    }
+    public void setPagibigNumber(String pagibigNumber) {
+        this.pagibigNumber = pagibigNumber;
+    }
 
-	    public void setFirstName(String firstName) {
-	        this.firstName = firstName;
-	    }
+    public String getStatus() {
+        return status;
+    }
 
-	    public void setBirthday(String birthday) {
-	        this.birthday = birthday;
-	    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	    public void setAddress(String address) {
-	        this.address = address;
-	    }
+    public String getPosition() {
+        return position;
+    }
 
-	    public void setPhoneNumber(String phoneNumber) {
-	        this.phoneNumber = phoneNumber;
-	    }
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
-	    public void setSssNumber(String sssNumber) {
-	        this.sssNumber = sssNumber;
-	    }
+    public String getImmediateSupervisor() {
+        return immediateSupervisor;
+    }
 
-	    public void setPhilhealthNumber(String philhealthNumber) {
-	        this.philhealthNumber = philhealthNumber;
-	    }
+    public void setImmediateSupervisor(String immediateSupervisor) {
+        this.immediateSupervisor = immediateSupervisor;
+    }
 
-	    public void setTinNumber(String tinNumber) {
-	        this.tinNumber = tinNumber;
-	    }
+    public float getBasicSalary() {
+        return basicSalary;
+    }
 
-	    public void setPagibigNumber(String pagibigNumber) {
-	        this.pagibigNumber = pagibigNumber;
-	    }
+    public void setBasicSalary(float basicSalary) {
+        this.basicSalary = basicSalary;
+    }
 
-	    public void setStatus(String status) {
-	        this.status = status;
-	    }
+    public float getRiceSubsidy() {
+        return riceSubsidy;
+    }
 
-	    public void setPosition(String position) {
-	        this.position = position;
-	    }
+    public void setRiceSubsidy(float riceSubsidy) {
+        this.riceSubsidy = riceSubsidy;
+    }
 
-	    public void setImmediateSupervisor(String immediateSupervisor) {
-	        this.immediateSupervisor = immediateSupervisor;
-	    }
+    public float getPhoneAllowance() {
+        return phoneAllowance;
+    }
 
-	    public void setBasicSalary(double basicSalary) {
-	        this.basicSalary = basicSalary;
-	    }
+    public void setPhoneAllowance(float phoneAllowance) {
+        this.phoneAllowance = phoneAllowance;
+    }
 
-	    public void setRiceSubsidy(double riceSubsidy) {
-	        this.riceSubsidy = riceSubsidy;
-	    }
+    public float getClothingAllowance() {
+        return clothingAllowance;
+    }
 
-	    public void setPhoneAllowance(double phoneAllowance) {
-	        this.phoneAllowance = phoneAllowance;
-	    }
+    public void setClothingAllowance(float clothingAllowance) {
+        this.clothingAllowance = clothingAllowance;
+    }
 
-	    public void setClothingAllowance(double clothingAllowance) {
-	        this.clothingAllowance = clothingAllowance;
-	    }
+    public float getGrossSemimonthlyRate() {
+        return grossSemimonthlyRate;
+    }
 
-	    public void setGrossSemiMonthlyRate(double grossSemiMonthlyRate) {
-	        this.grossSemiMonthlyRate = grossSemiMonthlyRate;
-	    }
+    public void setGrossSemimonthlyRate(float grossSemimonthlyRate) {
+        this.grossSemimonthlyRate = grossSemimonthlyRate;
+    }
 
-	    public void setHourlyRate(double hourlyRate) {
-	        this.hourlyRate = hourlyRate;
-	    }
-	    
-	    @Override
-	    public String toString() {
-	        return "Employee{" +
-	                "id='" + id + '\'' +
-	                ", lastName='" + lastName + '\'' +
-	                ", firstName='" + firstName + '\'' +
-	                // Add other fields as needed
-	                '}';
-	    }
+    public String getHourlyRate() {
+        return hourlyRate;
+    }
+
+    public void setHourlyRate(String hourlyRate) {
+        this.hourlyRate = hourlyRate;
+    }
+
 }

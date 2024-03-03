@@ -27,14 +27,12 @@ import model.Attendance;
 import model.User;
 import service.TimeInOutHandler;
 import util.AttendanceData;
-import util.EmployeeData;
 
 public class GUITimeInOut {
 
     private JFrame timeinoutScreen;
     private JTable timeTable;
     private User loggedInEmployee;
-    private EmployeeData employeeData;
     private JTable table;
     private AttendanceData attendanceData;
     private TimeInOutHandler timeInOutHandler;
@@ -43,7 +41,6 @@ public class GUITimeInOut {
     // Constructor 
     public GUITimeInOut(User loggedInEmployee) {
         this.loggedInEmployee = loggedInEmployee;
-        this.employeeData = new EmployeeData();
         this.attendanceData = new AttendanceData();
         loadData();
         this.timeInOutHandler = new TimeInOutHandler(attendanceData);
@@ -210,7 +207,7 @@ public class GUITimeInOut {
             public void actionPerformed(ActionEvent e) {
                 try {
                     // Call the method in TimeInOutHandler to handle time in
-                    timeInOutHandler.logTimeIn(loggedInEmployee.getid(), loggedInEmployee.getLastName(), loggedInEmployee.getFirstName());
+                    timeInOutHandler.logTimeIn(loggedInEmployee.getId(), loggedInEmployee.getLastName(), loggedInEmployee.getFirstName());
                     // Refresh the table after logging time in
                     populateTable();
                 } catch (Exception ex) {
@@ -236,7 +233,7 @@ public class GUITimeInOut {
             public void actionPerformed(ActionEvent e) {
                 try {
                     // Call the method in TimeInOutHandler to handle time out
-                    timeInOutHandler.logTimeOut(loggedInEmployee.getid());
+                    timeInOutHandler.logTimeOut(loggedInEmployee.getId());
                     // Refresh the table after logging time out
                     populateTable();
                 } catch (Exception ex) {
@@ -333,7 +330,7 @@ public class GUITimeInOut {
         // Fetch attendance records for the logged-in user
         List<Attendance> userRecords = new ArrayList<>();
         for (Attendance record : attendanceData.getAttendanceRecords()) {
-            if (record.getid().equals(loggedInEmployee.getid())) {
+            if (record.getid().equals(loggedInEmployee.getId())) {
                 userRecords.add(record);
             }
         }
@@ -360,8 +357,6 @@ public class GUITimeInOut {
 
     private void loadData() {
         try {
-            // Load employee data from CSV file
-            employeeData.loadFromCSV("src/data/Employee Database.csv");
             // Load attendance data from CSV file
             attendanceData.loadFromCSV("src/data/Attendance Timesheet.csv");
         } catch (IOException e) {

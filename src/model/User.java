@@ -1,9 +1,10 @@
 package model;
+import util.UserRole;
 
 public class User {
     private String username;
     private String password;
-    private String id;
+    private int id;
     private String lastName;
     private String firstName;
     private String position;
@@ -11,10 +12,10 @@ public class User {
     private Employee employee;
 
     // Constructor
-    public User(String username, String password, String id, String lastName, String firstName, String position, UserRole role) {
+    public User(String username, String password, int employeeNumber, String lastName, String firstName, String position, UserRole role) {
         this.username = username;
         this.password = password;
-        this.id = id;
+        this.id = employeeNumber;
         this.lastName = lastName;
         this.firstName = firstName;
         this.position = position;
@@ -38,11 +39,11 @@ public class User {
         this.password = password;
     }
 
-    public String getid() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -77,17 +78,12 @@ public class User {
     public void setRole(UserRole role) {
         this.role = role;
     }
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
 
     public Employee getEmployee() {
         return employee;
     }
-    
-    @Override
-    public String toString() {
-        return "Employee ID: " + id;
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }
-

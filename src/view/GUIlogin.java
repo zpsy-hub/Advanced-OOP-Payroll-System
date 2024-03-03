@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.Connection;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -57,10 +58,8 @@ public class GUIlogin {
      */
     public GUIlogin() {
         initialize();
-        // Initialize the LoginService, UserRepository, and SessionManager
         UserRepository userRepository = new UserRepository();
-        EmployeeData employeeData = new EmployeeData();
-        sessionManager = new SessionManager(userRepository, employeeData);
+        sessionManager = new SessionManager(userRepository);
     }
 
     //Initialize the contents of the frame. GUI starts here.
@@ -139,38 +138,37 @@ public class GUIlogin {
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String username = usernameTextField1.getText();
-                String password = new String(passwordField.getPassword()); 
+                String password = new String(passwordField.getPassword());
 
-                // Check login credentials
-                boolean loginSuccess = false;
-        		try {
-        			loginSuccess = sessionManager.login(username, password);
-        		} catch (IOException e1) {
-        			// Handle IOException
-        			e1.printStackTrace();
-        		}
-                
-                if (loginSuccess) {
-                    // Log successful login attempt
-                    sessionManager.logLoginAttempt(username, true);
-                    
-                    // Retrieve the logged-in employee information
-                    User loggedInEmployee = sessionManager.getLoggedInUser(); // Assuming such method exists
-                    
-                    // Open the Dashboard with the logged-in employee
-                    openDashboard(loggedInEmployee);
-                } else {
-                    // Log unsuccessful login attempt
-                    sessionManager.logLoginAttempt(username, false);
-                    // Show error message
+                // Check if username or password is empty
+                if (username.isEmpty() || password.isEmpty()) {
                     JOptionPane.showMessageDialog(loginScreen1,
-                            "Invalid username or password. Please try again.");
+                            "Please enter both username and password.");
+                    return;
                 }
+
+                // Get the SQL connection
+				Connection conn = SQL_client.getInstance().getConnection();
+
+				// Call the login method with the Connection parameter
+				boolean loginSuccess = sessionManager.login(username, password, conn);
+				
+				if (loginSuccess) {
+				    // Retrieve the logged-in user
+				    User loggedInUser = SessionManager.getLoggedInUser();
+
+				    // Open the Dashboard with the logged-in user
+				    openDashboard(loggedInUser);
+				} else {
+				    // Show error message for incorrect username or password
+				    JOptionPane.showMessageDialog(loginScreen1,
+				            "Incorrect username or password. Please try again.");
+				}
             }
         });
     }
 
-    
+   
     private void openDashboard(User loggedInEmployee) {
         // Create an instance of GUIDashboard with the logged-in employee
         GUIDashboard dashboard = new GUIDashboard(loggedInEmployee);

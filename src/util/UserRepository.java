@@ -1,48 +1,46 @@
 package util;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import util.UserRole;
 import model.User;
-import model.UserRole;
+import service.SQL_client;
 
 public class UserRepository {
-    private List<User> userList;
-    private String csvFilePath = "src/data/Login Credentials.csv";
-
     public UserRepository() {
-        userList = new ArrayList<>();
-        loadUsersFromCSV();
+        // Constructor
     }
 
-    // Load user data from CSV file
-    private void loadUsersFromCSV() {
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
-            String line;
-            boolean headerSkipped = false; // Flag to skip the header row
-            while ((line = br.readLine()) != null) {
-                if (!headerSkipped) {
-                    headerSkipped = true;
-                    continue; // Skip the header row
-                }
-                String[] data = line.split(",");
-                String employeeNumber = data[0]; // Assuming employee ID is the first column
-                String lastName = data[1];
-                String firstName = data[2];
-                String position = data[3];
-                String username = data[4];
-                String password = data[5];
-                UserRole role = determineUserRole(position);
-                User user = new User(username, password, employeeNumber, lastName, firstName, position, role);
-                userList.add(user);
+    public User authenticateUser(String username, String password) {
+        try {
+            Connection conn = SQL_client.getInstance().getConnection(); // Obtain database connection
+            if (conn == null) {
+                // Handle null connection (optional)
+                System.err.println("Database connection is null.");
+                return null;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM payroll_system.login_credentials WHERE username = ? AND password = ?");
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                int employeeNumber = rs.getInt("emp_id");
+                String lastName = rs.getString("employee_lastname");
+                String firstName = rs.getString("employee_firstname");
+                String position = rs.getString("position");
+                UserRole role = determineUserRole(position);
+                return new User(username, password, employeeNumber, lastName, firstName, position, role);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log the exception
         }
+        return null; // Authentication failed or database error occurred
     }
-    
+
     private UserRole determineUserRole(String position) {
         if (position.equalsIgnoreCase("Payroll Manager") || 
             position.equalsIgnoreCase("Payroll Team Leader") || 
@@ -58,43 +56,13 @@ public class UserRepository {
         }
     }
 
-    // Authenticate user based on username and password
-    public UserRole authenticateUser(String username, String password) {
-        for (User user : userList) {
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                return user.getRole();
-            }
+    // Get employee ID based on the username
+    public int getEmployeeIdByUsername(String username, String password) { // Changed return type to int
+        User user = authenticateUser(username, password); // Get the user object
+        if (user != null) {
+            return user.getId(); // Return the employee ID of the user
+        } else {
+            return -1; // Return -1 if user not found
         }
-        return null; // Authentication failed
-    }
-
-    // Get user by username
-    public User getUserByUsername(String username) {
-        for (User user : userList) {
-            if (user.getUsername().equals(username)) {
-                return user;
-            }
-        }
-        return null; // User not found
-    }
-
-    // Get employee ID based on the logged-in user's username
-    public String getEmployeeIdByUsername(String username) {
-        for (User user : userList) {
-            if (user.getUsername().equals(username)) {
-                return user.getid(); 
-            }
-        }
-        return null; // Employee ID not found
-    }
-
-    // Get user role based on the logged-in user's username
-    public UserRole getUserRoleByUsername(String username) {
-        for (User user : userList) {
-            if (user.getUsername().equals(username)) {
-                return user.getRole(); 
-            }
-        }
-        return null; // User role not found
     }
 }

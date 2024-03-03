@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import model.User;
 import model.UserRole;
 import util.UserRepository;
 
@@ -18,14 +19,10 @@ public class LoginService {
 
     // Modified login method to return a boolean indicating login success
     public boolean login(String username, String password) {
-        UserRole role = userRepository.authenticateUser(username, password);
-        if (role != null) {
-            logLoginAttempt(username, true); // Log successful login attempt
-            return true;
-        } else {
-            logLoginAttempt(username, false); // Log unsuccessful login attempt
-            return false;
-        }
+        User user = userRepository.authenticateUser(username, password);
+        // Logging login attempt
+        logLoginAttempt(username, user != null);
+        return user != null;
     }
 
     // Method to log login attempt in CSV file
