@@ -22,11 +22,16 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-
+import java.sql.*;
 import model.Attendance;
+import model.Employee;
 import model.User;
+import service.EmployeeService;
 import service.TimeInOutHandler;
-import util.AttendanceData;
+import service.TimeSheetService;
+import service.TimesheetDAO;
+import util.UserRepository;
+
 
 public class GUITimeInOut {
 
@@ -34,16 +39,12 @@ public class GUITimeInOut {
     private JTable timeTable;
     private User loggedInEmployee;
     private JTable table;
-    private AttendanceData attendanceData;
     private TimeInOutHandler timeInOutHandler;
     private boolean timeOutRecorded = false;
 
     // Constructor 
     public GUITimeInOut(User loggedInEmployee) {
         this.loggedInEmployee = loggedInEmployee;
-        this.attendanceData = new AttendanceData();
-        loadData();
-        this.timeInOutHandler = new TimeInOutHandler(attendanceData);
         initialize();
         populateTable();
     }
@@ -203,19 +204,6 @@ public class GUITimeInOut {
 
         JButton timeInButton = new JButton("TIME IN");
         timeInButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        timeInButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    // Call the method in TimeInOutHandler to handle time in
-                    timeInOutHandler.logTimeIn(loggedInEmployee.getId(), loggedInEmployee.getLastName(), loggedInEmployee.getFirstName());
-                    // Refresh the table after logging time in
-                    populateTable();
-                } catch (Exception ex) {
-                    ex.printStackTrace(); 
-                }
-            }
-        });
-        
         timeInButton.setBackground(new Color(255, 255, 255));
         timeInButton.setFont(new Font("Tahoma", Font.BOLD, 35));
         timeInButton.setBounds(42, 55, 239, 102);
@@ -227,21 +215,7 @@ public class GUITimeInOut {
         timeOutButton.setBackground(Color.WHITE);
         timeOutButton.setBounds(640, 55, 239, 102);
         timeinoutPanel.add(timeOutButton);
-        
-        
-        timeOutButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    // Call the method in TimeInOutHandler to handle time out
-                    timeInOutHandler.logTimeOut(loggedInEmployee.getId());
-                    // Refresh the table after logging time out
-                    populateTable();
-                } catch (Exception ex) {
-                    ex.printStackTrace(); 
-                }
-            }
-        });
-
+ 
         JLabel empStatus = new JLabel("OFF"); // Default status is OFF
         empStatus.setForeground(new Color(255, 0, 0)); // Default color is red
         empStatus.setHorizontalAlignment(SwingConstants.CENTER);
@@ -319,48 +293,64 @@ public class GUITimeInOut {
         }
     }
 
-    //Populate the table with attendance records for the logged-in user.
     private void populateTable() {
-        // Create a DefaultTableModel to hold the data
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Date");
-        model.addColumn("Time In");
-        model.addColumn("Time Out");
+        // Check if a user is logged in
+        if (loggedInEmployee != null) {
+            // Debugging: Print a message indicating that a user is logged in
+            System.out.println("User is logged in: " + loggedInEmployee.getFirstName());
 
-        // Fetch attendance records for the logged-in user
-        List<Attendance> userRecords = new ArrayList<>();
-        for (Attendance record : attendanceData.getAttendanceRecords()) {
-            if (record.getid().equals(loggedInEmployee.getId())) {
-                userRecords.add(record);
+            // Instantiate TimesheetDAO
+            TimesheetDAO dao = TimesheetDAO.getInstance();
+
+            // Retrieve timesheet records for the logged-in employee
+            List<String[]> timesheetRecords = dao.getLoggedInEmployeeTimesheetRecords(loggedInEmployee.getId());
+            
+            // Check if timesheetRecords is not null and not empty
+            if (timesheetRecords != null && !timesheetRecords.isEmpty()) {
+                // Debugging: Print the number of timesheet records retrieved
+                System.out.println("Number of timesheet records retrieved: " + timesheetRecords.size());
+
+                // Populate the table with timesheet records
+                DefaultTableModel model = new DefaultTableModel();
+                model.addColumn("Date");
+                model.addColumn("Time In");
+                model.addColumn("Time Out");
+
+                // Loop through each timesheet record
+                for (String[] record : timesheetRecords) {
+                    String date = record[0];
+                    String timeIn = record[1];
+                    String timeOut = record[2];
+
+                    // Debugging: Print the timesheet record details
+                    System.out.println("Date: " + date + ", Time In: " + timeIn + ", Time Out: " + timeOut);
+
+                    // Add the timesheet record to the table model
+                    model.addRow(new Object[]{date, timeIn, timeOut});
+                }
+
+                // Set the table model
+                table.setModel(model);
+            } else {
+                // Debugging: Print a message indicating that no timesheet records were found
+                System.out.println("No timesheet records found for the logged-in employee");
+                // No timesheet records found for the logged-in employee
+                // Handle accordingly, e.g., display a message to the user
             }
+        } else {
+            // Debugging: Print a message indicating that no user is logged in
+            System.out.println("No user is logged in");
+            // No user logged in
+            // Handle accordingly, e.g., display a message to the user
         }
-
-        // Sort the records by date in descending order
-        userRecords.sort(Comparator.comparing(Attendance::getDate).reversed());
-
-        // Add sorted records to the table model
-        for (Attendance record : userRecords) {
-            // Format time in HH:MM format
-            String timeIn = record.getTimeIn().format(DateTimeFormatter.ofPattern("HH:mm"));
-            // Format time out HH:MM format
-            String timeOut = record.getTimeOut() != null ? record.getTimeOut().format(DateTimeFormatter.ofPattern("HH:mm")) : "";
-            model.addRow(new Object[]{record.getDate(), timeIn, timeOut});
-        }
-
-        // Set the table model
-        table.setModel(model);
     }
+
+
+
+
 
     public void openWindow() {
         timeinoutScreen.setVisible(true);
     }
 
-    private void loadData() {
-        try {
-            // Load attendance data from CSV file
-            attendanceData.loadFromCSV("src/data/Attendance Timesheet.csv");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
