@@ -243,13 +243,22 @@ public class GUIDashboard {
 		        employeeManagement.setVisible(true);
 		    }
 		});
-
+		
+		//hrattendancemngmnt
 		JButton HR_AttendanceMngmntButton = new JButton("Attendance management");
 		HR_AttendanceMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_AttendanceMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_AttendanceMngmntButton.setBackground(Color.WHITE);
 		HR_AttendanceMngmntButton.setBounds(37, 438, 227, 31);
 		sidebarPanel.add(HR_AttendanceMngmntButton);
+		HR_AttendanceMngmntButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_HRAttendanceManagement window = new GUI_HRAttendanceManagement();
+				window.hrattendancemngmnt.setVisible(true);
+		    }
+		});
+		
+		
 		
 		JButton HR_LeaveMngmntButton = new JButton("Leave management");
 		HR_LeaveMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

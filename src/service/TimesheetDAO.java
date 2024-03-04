@@ -40,7 +40,7 @@ public class TimesheetDAO {
         }
     }
     
- // Method to record time in for a specific employee
+    // Method to record time in for a specific employee
     public void recordTimeIn(int empId, String empLastName, String empFirstName) {
         String recordId = getFormattedRecordId(empId); // Use the helper method to generate formatted record ID
         String timeIn = getCurrentTime();
@@ -110,6 +110,7 @@ public class TimesheetDAO {
         return records;
     }
     
+    //Gets an employee's records from loggeedinuser
     public List<String[]> getLoggedInEmployeeTimesheetRecords(int empId) {
         List<String[]> records = new ArrayList<>();
         try {
@@ -132,6 +133,7 @@ public class TimesheetDAO {
         return records;
     }
     
+    //Returns unique Monthyear from records
     public List<String> getUniqueMonthYearCombinations() {
         List<String> monthYearList = new ArrayList<>();
         try {
@@ -150,6 +152,7 @@ public class TimesheetDAO {
         return monthYearList;
     }
     
+    //Records filtered by MonthYear
     public List<String[]> getFilteredTimesheetRecords(int empId, String selectedMonthYear) {
         List<String[]> records = new ArrayList<>();
         try {
@@ -217,21 +220,58 @@ public class TimesheetDAO {
         }
         return hasRecord;
     }
-
-
     
-    public static void main(String[] args) {
-        // Assuming you have instantiated your TimesheetDAO
-        TimesheetDAO dao = TimesheetDAO.getInstance();
-
-        // Get unique month-year combinations
-        List<String> monthYearCombinations = dao.getUniqueMonthYearCombinations();
-
-        // Print the retrieved month-year combinations
-        System.out.println("Unique Month-Year Combinations:");
-        for (String monthYear : monthYearCombinations) {
-            System.out.println(monthYear);
+ // Method to retrieve all timesheet records from the database
+    public List<String[]> getAllTimesheetRecords() {
+        List<String[]> records = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM payroll_system.attendance";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String recordId = resultSet.getString("record_id");
+                int empId = resultSet.getInt("emp_id");
+                String lastName = resultSet.getString("employee_lastname");
+                String firstName = resultSet.getString("employee_firstname");
+                String date = resultSet.getString("date");
+                String timeIn = resultSet.getString("time_in");
+                String timeOut = resultSet.getString("time_out");
+                String[] record = {recordId, String.valueOf(empId), lastName, firstName, date, timeIn, timeOut};
+                records.add(record);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+        return records;
+    }
+
+    // Method to retrieve timesheet records filtered by month-year
+    public List<String[]> getFilteredTimesheetRecords(String selectedMonthYear) {
+        List<String[]> records = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM payroll_system.attendance WHERE DATE_FORMAT(date, '%Y-%m') = ?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, selectedMonthYear);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String recordId = resultSet.getString("record_id");
+                int empId = resultSet.getInt("emp_id");
+                String lastName = resultSet.getString("employee_lastname");
+                String firstName = resultSet.getString("employee_firstname");
+                String date = resultSet.getString("date");
+                String timeIn = resultSet.getString("time_in");
+                String timeOut = resultSet.getString("time_out");
+                String[] record = {recordId, String.valueOf(empId), lastName, firstName, date, timeIn, timeOut};
+                records.add(record);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return records;
     }
 
 }

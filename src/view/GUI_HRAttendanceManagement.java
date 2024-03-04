@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,11 +15,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
+
+import service.TimesheetDAO;
+
+import javax.swing.JComboBox;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 public class GUI_HRAttendanceManagement {
-
-	private JFrame hrattendancemngmnt;
+	JFrame hrattendancemngmnt;
 	private JTable attendancemanagementTable;
+	private JTextField textFieldSearch;
 
 	/**
 	 * Launch the application.
@@ -60,6 +68,23 @@ public class GUI_HRAttendanceManagement {
 		mainPanel.setBounds(0, 0, 1301, 733);
 		hrattendancemngmnt.getContentPane().add(mainPanel);
 		mainPanel.setLayout(null);
+		JComboBox<String> comboBoxbyMonthYear = new JComboBox<>();
+		comboBoxbyMonthYear.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+		comboBoxbyMonthYear.setBounds(464, 55, 162, 21);
+		mainPanel.add(comboBoxbyMonthYear);
+		comboBoxbyMonthYear.addItem("All Records");
+		
+		        // ActionListener for the JComboBox
+		        comboBoxbyMonthYear.addActionListener(new ActionListener() {
+		            public void actionPerformed(ActionEvent e) {
+		                String selectedMonthYear = (String) comboBoxbyMonthYear.getSelectedItem();
+		                if (!selectedMonthYear.equals("All Records")) {
+		                    filterRecordsByMonthYear(selectedMonthYear);
+		                } else {
+		                    populateTable();
+		                }
+		            }
+		        });
 		
 		JPanel sidebarPanel = new JPanel();
 		sidebarPanel.setBackground(new Color(255, 255, 255));
@@ -135,12 +160,15 @@ public class GUI_HRAttendanceManagement {
 		
 		JPanel tablePanel = new JPanel();
 		tablePanel.setBackground(new Color(255, 255, 255));
-		tablePanel.setBounds(333, 93, 937, 613);
+		tablePanel.setBounds(333, 93, 937, 550);
 		mainPanel.add(tablePanel);
 		tablePanel.setLayout(new GridLayout(1, 0, 0, 0));
 		
+		JScrollPane scrollPane = new JScrollPane();
+		tablePanel.add(scrollPane);
+		
 		attendancemanagementTable = new JTable();
-		tablePanel.add(attendancemanagementTable);
+		scrollPane.setViewportView(attendancemanagementTable);
 		
 		JButton signoutButton = new JButton("Sign Out");
 		signoutButton.addActionListener(new ActionListener() {
@@ -154,5 +182,85 @@ public class GUI_HRAttendanceManagement {
 		signoutButton.setBackground(Color.WHITE);
 		signoutButton.setBounds(1160, 36, 103, 31);
 		mainPanel.add(signoutButton);
+		
+		JLabel lblFilterRecordsBy = new JLabel("Filter records by:");
+		lblFilterRecordsBy.setHorizontalAlignment(SwingConstants.LEFT);
+		lblFilterRecordsBy.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+		lblFilterRecordsBy.setBounds(333, 46, 339, 39);
+		mainPanel.add(lblFilterRecordsBy);
+		
+		textFieldSearch = new JTextField();
+		textFieldSearch.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+		textFieldSearch.setBounds(843, 55, 162, 21);
+		mainPanel.add(textFieldSearch);
+		textFieldSearch.setColumns(10);
+		
+		JLabel lblSearchForAn = new JLabel("Search for an Employee:");
+		lblSearchForAn.setHorizontalAlignment(SwingConstants.LEFT);
+		lblSearchForAn.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+		lblSearchForAn.setBounds(661, 46, 339, 39);
+		mainPanel.add(lblSearchForAn);
+		
+		JButton searchButton = new JButton("Search");
+		searchButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		searchButton.setBounds(1015, 55, 85, 21);
+		mainPanel.add(searchButton);
+
+		
+		//Combobox for month year
+        TimesheetDAO dao = TimesheetDAO.getInstance();
+        List<String> monthYearCombinations = dao.getUniqueMonthYearCombinations();
+        for (String monthYear : monthYearCombinations) {
+            comboBoxbyMonthYear.addItem(monthYear);
+        }
+    }
+
+	private void populateTable() {
+	    // Retrieve all timesheet records
+	    TimesheetDAO dao = TimesheetDAO.getInstance();
+	    List<String[]> allRecords = dao.getAllTimesheetRecords();
+
+	    // Populate the table with all records
+	    DefaultTableModel model = new DefaultTableModel();
+	    model.addColumn("Record ID");
+	    model.addColumn("Employee ID");
+	    model.addColumn("Last Name");
+	    model.addColumn("First Name");
+	    model.addColumn("Date");
+	    model.addColumn("Time In");
+	    model.addColumn("Time Out");
+
+	    for (String[] record : allRecords) {
+	        model.addRow(record);
+	    }
+
+	    attendancemanagementTable.setModel(model); // Corrected line
 	}
+
+	private void filterRecordsByMonthYear(String selectedMonthYear) {
+	    // Retrieve filtered timesheet records
+	    TimesheetDAO dao = TimesheetDAO.getInstance();
+	    List<String[]> filteredRecords = dao.getFilteredTimesheetRecords(selectedMonthYear);
+
+	    // Populate the table with filtered records
+	    DefaultTableModel model = new DefaultTableModel();
+	    model.addColumn("Record ID");
+	    model.addColumn("Employee ID");
+	    model.addColumn("Last Name");
+	    model.addColumn("First Name");
+	    model.addColumn("Date");
+	    model.addColumn("Time In");
+	    model.addColumn("Time Out");
+
+	    for (String[] record : filteredRecords) {
+	        model.addRow(record);
+	    }
+
+	    attendancemanagementTable.setModel(model); // Corrected line
+	}
+
+
+    public void openWindow() {
+        hrattendancemngmnt.setVisible(true);
+    }
 }

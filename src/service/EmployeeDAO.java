@@ -6,6 +6,18 @@ import java.util.List;
 import model.Employee;
 
 public class EmployeeDAO {
+	private static EmployeeDAO instance = null;
+
+    // Singleton pattern: private constructor
+    EmployeeDAO() {}
+
+    // Singleton pattern: getInstance method
+    public static EmployeeDAO getInstance() {
+        if (instance == null) {
+            instance = new EmployeeDAO();
+        }
+        return instance;
+    }
 
     public static boolean createEmployee(Employee employee) {
         String sql = "INSERT INTO payroll_system.employees (emp_id, employee_lastname, employee_firstname, birthday, address, phone_number, sss_number, philhealth_number, tin_number, pagibig_number, status, position, immediate_supervisor, basic_salary, rice_subsidy, phone_allowance, clothing_allowance, gross_semimonthly_rate, hourly_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -196,6 +208,23 @@ public class EmployeeDAO {
         } else {
             System.out.println("Employee not found in the database.");
         }
+    }
+    
+    // Method to get the hourly rate by employee ID
+    public double getHourlyRateById(int empId) {
+        String sql = "SELECT hourly_rate FROM payroll_system.employees WHERE emp_id=?";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, empId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("hourly_rate");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        // Return a default value if no hourly rate is found
+        return 0.0;
     }
     
 }
