@@ -15,6 +15,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -31,6 +32,7 @@ import service.TimeInOutHandler;
 import service.TimeSheetService;
 import service.TimesheetDAO;
 import util.UserRepository;
+import javax.swing.JComboBox;
 
 
 public class GUITimeInOut {
@@ -198,7 +200,7 @@ public class GUITimeInOut {
         JPanel timeinoutPanel = new JPanel();
         timeinoutPanel.setBackground(new Color(255, 255, 255));
         timeinoutPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-        timeinoutPanel.setBounds(340, 79, 923, 242);
+        timeinoutPanel.setBounds(340, 79, 923, 220);
         mainPanel.add(timeinoutPanel);
         timeinoutPanel.setLayout(null);
 
@@ -223,26 +225,48 @@ public class GUITimeInOut {
         empStatus.setBounds(291, 102, 339, 39);
         timeinoutPanel.add(empStatus);
 
-        // BUG NEED TO FIX THE TIME IN/OUT STATUS
         timeInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                empStatus.setText("IN");
-                empStatus.setForeground(new Color(0, 255, 0)); // Change color to green
-                timeInButton.setEnabled(false); // Disable the Time In button
-                timeOutButton.setEnabled(true); // Enable the Time Out button
+                // Check if there is already a time in record for the current date
+                if (!TimesheetDAO.getInstance().hasTimeInRecordForToday(loggedInEmployee.getId())) {
+                    // If no time in record exists, record time in for the logged-in employee
+                    recordTimeIn();
+                    empStatus.setText("IN");
+                    empStatus.setForeground(new Color(0, 255, 0)); // Change color to green
+                    timeInButton.setEnabled(false); // Disable the Time In button
+                    timeOutButton.setEnabled(true); // Enable the Time Out button
+                    // Repopulate the table after recording time in
+                    populateTable();
+                } else {
+                    // Notify the user that a time in record already exists for today
+                    JOptionPane.showMessageDialog(null, "Time in has already been recorded for today", "Time In Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
         timeOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                empStatus.setText("OUT");
-                empStatus.setForeground(new Color(255, 0, 0)); // Change color back to red
-                timeOutButton.setEnabled(false); // Disable the Time Out button
-                timeInButton.setEnabled(false); // Disable the Time In button
+                // Check if there is already a time out record for the current date
+                if (!TimesheetDAO.getInstance().hasTimeOutRecordForToday(loggedInEmployee.getId())) {
+                    // If no time out record exists, record time out for the logged-in employee
+                    recordTimeOut();
+                    empStatus.setText("OUT");
+                    empStatus.setForeground(new Color(255, 0, 0)); // Change color back to red
+                    timeOutButton.setEnabled(false); // Disable the Time Out button
+                    timeInButton.setEnabled(false); // Disable the Time In button
+                    // Repopulate the table after recording time out
+                    populateTable();
+                } else {
+                    // Notify the user that a time out record already exists for today
+                    JOptionPane.showMessageDialog(null, "Time out has already been recorded for today", "Time Out Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
+
+
+
              
         JLabel currentstatusLabel = new JLabel("Current Status:");
         currentstatusLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 28));
@@ -271,7 +295,7 @@ public class GUITimeInOut {
         
         JPanel panel = new JPanel();
         panel.setBorder(new TitledBorder(null, "Attendance Records", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        panel.setBounds(340, 341, 923, 371);
+        panel.setBounds(340, 355, 923, 350);
         mainPanel.add(panel);
         panel.setLayout(null);
         
@@ -286,6 +310,46 @@ public class GUITimeInOut {
         table.setRowSelectionAllowed(false);
         table.setFont(new Font("Tahoma", Font.PLAIN, 16));
         scrollPane.setViewportView(table);
+      
+        
+        //Combobox to filter
+        JComboBox comboBoxbyMonthYear = new JComboBox();
+        comboBoxbyMonthYear.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+        comboBoxbyMonthYear.setBounds(480, 319, 162, 21);
+        mainPanel.add(comboBoxbyMonthYear);
+        // Implement an ActionListener for the JComboBox to filter records based on the selected month-year
+        comboBoxbyMonthYear.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedMonthYear = (String) comboBoxbyMonthYear.getSelectedItem();
+                // Check if the selected option is not the default option
+                if (!selectedMonthYear.equals("All Records")) {
+                    // Filter records based on the selected month-year and update the table
+                    filterRecordsByMonthYear(selectedMonthYear);
+                } else {
+                    // Display all records
+                    populateTable();
+                }
+            }
+        });
+
+        
+        //Combobox for month year
+        TimesheetDAO dao = TimesheetDAO.getInstance();
+        List<String> monthYearCombinations = dao.getUniqueMonthYearCombinations();
+        
+        // Add a default option to the combo box
+        comboBoxbyMonthYear.addItem("All Records");
+
+        // Populate the JComboBox with the retrieved month-year combinations
+        for (String monthYear : monthYearCombinations) {
+            comboBoxbyMonthYear.addItem(monthYear);
+        }
+        
+        JLabel lblFilterRecordsBy = new JLabel("Filter records by:");
+        lblFilterRecordsBy.setHorizontalAlignment(SwingConstants.LEFT);
+        lblFilterRecordsBy.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
+        lblFilterRecordsBy.setBounds(340, 309, 339, 39);
+        mainPanel.add(lblFilterRecordsBy);
 
         // Set employee name dynamically
         if (loggedInEmployee != null) {
@@ -296,9 +360,6 @@ public class GUITimeInOut {
     private void populateTable() {
         // Check if a user is logged in
         if (loggedInEmployee != null) {
-            // Debugging: Print a message indicating that a user is logged in
-            System.out.println("User is logged in: " + loggedInEmployee.getFirstName());
-
             // Instantiate TimesheetDAO
             TimesheetDAO dao = TimesheetDAO.getInstance();
 
@@ -307,9 +368,6 @@ public class GUITimeInOut {
             
             // Check if timesheetRecords is not null and not empty
             if (timesheetRecords != null && !timesheetRecords.isEmpty()) {
-                // Debugging: Print the number of timesheet records retrieved
-                System.out.println("Number of timesheet records retrieved: " + timesheetRecords.size());
-
                 // Populate the table with timesheet records
                 DefaultTableModel model = new DefaultTableModel();
                 model.addColumn("Date");
@@ -322,8 +380,54 @@ public class GUITimeInOut {
                     String timeIn = record[1];
                     String timeOut = record[2];
 
-                    // Debugging: Print the timesheet record details
-                    System.out.println("Date: " + date + ", Time In: " + timeIn + ", Time Out: " + timeOut);
+                    // Add the timesheet record to the table model
+                    model.addRow(new Object[]{date, timeIn, timeOut});
+                }
+
+                // Set the table model
+                table.setModel(model);
+            } else {
+                // Display a message indicating that no timesheet records were found
+                JOptionPane.showMessageDialog(null, "No timesheet records found for the logged-in employee", "No Records", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else {
+            // Display a message indicating that no user is logged in
+            JOptionPane.showMessageDialog(null, "No user is logged in", "Not Logged In", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    // Define the method to filter records by month-year
+    private void filterRecordsByMonthYear(String selectedMonthYear) {
+        // Check if a user is logged in
+        if (loggedInEmployee != null) {
+            // Instantiate TimesheetDAO
+            TimesheetDAO dao = TimesheetDAO.getInstance();
+
+            // Retrieve filtered timesheet records for the logged-in employee based on selectedMonthYear
+            List<String[]> filteredRecords;
+
+            // Check if the selected month-year is "All Records"
+            if (selectedMonthYear.equals("All Records")) {
+                // If "All Records" selected, retrieve all timesheet records for the logged-in employee
+                filteredRecords = dao.getLoggedInEmployeeTimesheetRecords(loggedInEmployee.getId());
+            } else {
+                // Otherwise, retrieve filtered timesheet records for the selected month-year
+                filteredRecords = dao.getFilteredTimesheetRecords(loggedInEmployee.getId(), selectedMonthYear);
+            }
+
+            // Check if filteredRecords is not null and not empty
+            if (filteredRecords != null && !filteredRecords.isEmpty()) {
+                // Populate the table with filtered timesheet records
+                DefaultTableModel model = new DefaultTableModel();
+                model.addColumn("Date");
+                model.addColumn("Time In");
+                model.addColumn("Time Out");
+
+                // Loop through each filtered timesheet record
+                for (String[] record : filteredRecords) {
+                    String date = record[0];
+                    String timeIn = record[1];
+                    String timeOut = record[2];
 
                     // Add the timesheet record to the table model
                     model.addRow(new Object[]{date, timeIn, timeOut});
@@ -332,25 +436,37 @@ public class GUITimeInOut {
                 // Set the table model
                 table.setModel(model);
             } else {
-                // Debugging: Print a message indicating that no timesheet records were found
-                System.out.println("No timesheet records found for the logged-in employee");
-                // No timesheet records found for the logged-in employee
-                // Handle accordingly, e.g., display a message to the user
+                // Display a message indicating that no timesheet records were found for the selected month-year
+                JOptionPane.showMessageDialog(null, "No timesheet records found for the selected month-year", "No Records", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
-            // Debugging: Print a message indicating that no user is logged in
-            System.out.println("No user is logged in");
-            // No user logged in
-            // Handle accordingly, e.g., display a message to the user
+            // Display a message indicating that no user is logged in
+            JOptionPane.showMessageDialog(null, "No user is logged in", "Not Logged In", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+ // Method to record time in for the logged-in employee
+    private void recordTimeIn() {
+        // Get the logged-in employee details
+        int empId = loggedInEmployee.getId();
+        String empLastName = loggedInEmployee.getLastName();
+        String empFirstName = loggedInEmployee.getFirstName();
 
+        // Record time in using TimesheetDAO
+        TimesheetDAO.getInstance().recordTimeIn(empId, empLastName, empFirstName);
+    }
 
+    // Method to record time out for the logged-in employee
+    private void recordTimeOut() {
+        // Get the logged-in employee ID
+        int empId = loggedInEmployee.getId();
 
+        // Record time out using TimesheetDAO
+        TimesheetDAO.getInstance().recordTimeOut(empId);
+    }
 
 
     public void openWindow() {
         timeinoutScreen.setVisible(true);
     }
-
 }
