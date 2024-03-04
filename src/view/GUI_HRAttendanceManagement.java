@@ -7,6 +7,9 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -159,6 +162,7 @@ public class GUI_HRAttendanceManagement {
 		sidebarPanel.add(HRaccessLabel);
 		
 		JPanel tablePanel = new JPanel();
+		tablePanel.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
 		tablePanel.setBackground(new Color(255, 255, 255));
 		tablePanel.setBounds(333, 93, 937, 550);
 		mainPanel.add(tablePanel);
@@ -195,6 +199,21 @@ public class GUI_HRAttendanceManagement {
 		mainPanel.add(textFieldSearch);
 		textFieldSearch.setColumns(10);
 		
+		textFieldSearch.addKeyListener(new KeyAdapter() {
+		    @Override
+		    public void keyPressed(KeyEvent e) {
+		        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		            String query = textFieldSearch.getText().trim();
+		            if (!query.isEmpty()) {
+		                searchEmployees(query);
+		            } else {
+		                populateTable(); // If the search field is empty, show all records
+		            }
+		        }
+		    }
+		});
+
+		
 		JLabel lblSearchForAn = new JLabel("Search for an Employee:");
 		lblSearchForAn.setHorizontalAlignment(SwingConstants.LEFT);
 		lblSearchForAn.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
@@ -205,6 +224,17 @@ public class GUI_HRAttendanceManagement {
 		searchButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		searchButton.setBounds(1015, 55, 85, 21);
 		mainPanel.add(searchButton);
+		searchButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String query = textFieldSearch.getText().trim();
+                if (!query.isEmpty()) {
+                    searchEmployees(query);
+                } else {
+                    populateTable(); // If the search field is empty, show all records
+                }
+            }
+        });
+
 
 		
 		//Combobox for month year
@@ -258,6 +288,48 @@ public class GUI_HRAttendanceManagement {
 
 	    attendancemanagementTable.setModel(model); // Corrected line
 	}
+	
+	private void searchEmployees(String query) {
+	    // Retrieve the list of all employees from the DAO
+	    TimesheetDAO dao = TimesheetDAO.getInstance();
+	    List<String[]> allEmployees = dao.getAllTimesheetRecords(); // Assuming this returns all employees
+
+	    // Create a filtered list to store matching employees
+	    List<String[]> filteredEmployees = new ArrayList<>();
+
+	    // Iterate through all employees and check if the query matches employee ID or name
+	    for (String[] employee : allEmployees) {
+	        // Check if the employee ID or name contains the query (case-insensitive)
+	        if (employee[1].equalsIgnoreCase(query) || 
+	            employee[2].toLowerCase().contains(query.toLowerCase()) ||  // Assuming employee name is at index 2
+	            employee[3].toLowerCase().contains(query.toLowerCase())) {  // Assuming employee name is at index 3
+	            filteredEmployees.add(employee); // If match found, add to filtered list
+	        }
+	    }
+
+	    // Populate the table with filtered results
+	    populateTableWithFilteredResults(filteredEmployees);
+	}
+	
+	private void populateTableWithFilteredResults(List<String[]> filteredEmployees) {
+	    // Populate the table with filtered results
+	    DefaultTableModel model = new DefaultTableModel();
+	    model.addColumn("Record ID");
+	    model.addColumn("Employee ID");
+	    model.addColumn("Last Name");
+	    model.addColumn("First Name");
+	    model.addColumn("Date");
+	    model.addColumn("Time In");
+	    model.addColumn("Time Out");
+
+	    for (String[] employee : filteredEmployees) {
+	        model.addRow(employee);
+	    }
+
+	    attendancemanagementTable.setModel(model); // Set the model to the table
+	}
+
+
 
 
     public void openWindow() {

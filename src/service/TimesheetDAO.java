@@ -1,12 +1,17 @@
 package service;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import util.UserRepository;
 
 public class TimesheetDAO {
+	private LocalDate payPeriodStartDate;
+    private LocalDate payPeriodEndDate;
     private static TimesheetDAO instance = null;
     private Connection conn = null;
     TimesheetDAO() {
@@ -273,5 +278,89 @@ public class TimesheetDAO {
         }
         return records;
     }
+    
+    // Method to retrieve timesheet records for a given month-year
+    public List<String[]> getTimesheetRecordsForMonthYear(String monthYear) {
+        List<String[]> records = new ArrayList<>();
+        try {
+            // Extract year and month from the given parameter
+            String[] yearMonth = monthYear.split("-");
+            String year = yearMonth[0];
+            String month = yearMonth[1];
+            
+            // Construct the SQL query to filter records based on year and month
+            String sql = "SELECT * FROM payroll_system.attendance WHERE YEAR(date) = ? AND MONTH(date) = ?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setString(1, year);
+            statement.setString(2, month);
+            ResultSet resultSet = statement.executeQuery();
+            
+            // Retrieve records and add them to the list
+            while (resultSet.next()) {
+                String recordId = resultSet.getString("record_id");
+                String lastName = resultSet.getString("employee_lastname");
+                String firstName = resultSet.getString("employee_firstname");
+                String date = resultSet.getString("date");
+                String timeIn = resultSet.getString("time_in");
+                String timeOut = resultSet.getString("time_out");
+                String[] record = {recordId, lastName, firstName, date, timeIn, timeOut};
+                records.add(record);
+            }
+            
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return records;
+    }
+    
+    // Method to calculate the pay period start date based on the given month and year
+    public LocalDate calculatePayPeriodStartDate(String monthYear) {
+        // Retrieve the first recorded date from the timesheet records for the given month and year
+        List<String[]> timesheetRecords = getTimesheetRecordsForMonthYear(monthYear);
+        if (!timesheetRecords.isEmpty()) {
+            String firstRecordDate = timesheetRecords.get(0)[3]; // Assuming date is at index 3
+            return LocalDate.parse(firstRecordDate);
+        } else {
+            // Default to the 1st day of the month if no records are found
+            return LocalDate.parse(monthYear + "-01");
+        }
+    }
+
+    // Method to calculate the pay period end date based on the given month and year
+    public LocalDate calculatePayPeriodEndDate(String monthYear) {
+        // Retrieve the last recorded date from the timesheet records for the given month and year
+        List<String[]> timesheetRecords = getTimesheetRecordsForMonthYear(monthYear);
+        if (!timesheetRecords.isEmpty()) {
+            String lastRecordDate = timesheetRecords.get(timesheetRecords.size() - 1)[3]; // Assuming date is at index 3
+            return LocalDate.parse(lastRecordDate);
+        } else {
+            // Default to the last day of the month if no records are found
+            return LocalDate.parse(monthYear + "-01").withDayOfMonth(
+                    YearMonth.parse(monthYear, DateTimeFormatter.ofPattern("yyyy-MM")).lengthOfMonth());
+        }
+    }
+
+    // Getter method for pay period start date
+    public LocalDate getPayPeriodStartDate() {
+        return payPeriodStartDate;
+    }
+
+    // Setter method for pay period start date
+    public void setPayPeriodStartDate(LocalDate startDate) {
+        this.payPeriodStartDate = startDate;
+    }
+
+    // Getter method for pay period end date
+    public LocalDate getPayPeriodEndDate() {
+        return payPeriodEndDate;
+    }
+
+    // Setter method for pay period end date
+    public void setPayPeriodEndDate(LocalDate endDate) {
+        this.payPeriodEndDate = endDate;
+    }
+
 
 }

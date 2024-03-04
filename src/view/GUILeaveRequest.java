@@ -60,7 +60,7 @@ public class GUILeaveRequest {
             public void run() {
                 try {
                     // Pass the loggedInEmployee when creating GUILeaveRequest instance
-                    User loggedInEmployee = new User();
+                    User loggedInEmployee = new User(null, null, 0, null, null, null, null);
                     GUILeaveRequest window = new GUILeaveRequest(loggedInEmployee);
                     window.leaverequestScreen.setVisible(true);
                     window.leaverequestScreen.setLocationRelativeTo(null);

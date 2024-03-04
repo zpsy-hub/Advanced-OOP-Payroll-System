@@ -106,7 +106,7 @@ public class EmployeeDAO {
         float phoneAllowance = rs.getFloat("phone_allowance");
         float clothingAllowance = rs.getFloat("clothing_allowance");
         float grossSemimonthlyRate = rs.getFloat("gross_semimonthly_rate");
-        String hourlyRate = rs.getString("hourly_rate");
+        double hourlyRate = rs.getDouble("hourly_rate");
 
         // Use the parameterized constructor to create an Employee object
         return new Employee(id, lastName, firstName, birthday, address, phoneNumber, sssNumber, philhealthNumber,

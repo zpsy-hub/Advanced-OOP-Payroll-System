@@ -19,13 +19,13 @@ public class Employee {
     private float phoneAllowance;
     private float clothingAllowance;
     private float grossSemimonthlyRate;
-    private String hourlyRate;
+    private double hourlyRate;
 
     // Constructor
     public Employee(int id, String lastName, String firstName, String birthday, String address, String phoneNumber,
             String sssNumber, String philhealthNumber, String tinNumber, String pagibigNumber, String status,
             String position, String immediateSupervisor, float basicSalary, float riceSubsidy, float phoneAllowance,
-            float clothingAllowance, float grossSemimonthlyRate, String hourlyRate) {
+            float clothingAllowance, float grossSemimonthlyRate, double hourlyRate) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -192,11 +192,11 @@ public class Employee {
         this.grossSemimonthlyRate = grossSemimonthlyRate;
     }
 
-    public String getHourlyRate() {
+    public double getHourlyRate() {
         return hourlyRate;
     }
 
-    public void setHourlyRate(String hourlyRate) {
+    public void setHourlyRate(double hourlyRate) {
         this.hourlyRate = hourlyRate;
     }
 

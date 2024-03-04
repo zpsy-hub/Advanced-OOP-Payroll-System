@@ -2,20 +2,18 @@ package model;
 import java.time.LocalDate;
 
 public class Payslip {
-    private String payslipNumber;
     private LocalDate periodStartDate;
     private LocalDate periodEndDate;
     private int employeeId;
     private String employeeName;
     private String employeePosition;
-    private String employeeDepartment;
     private double monthlyRate;
     private int totalHours;
     private int overtimeHours;
-    private double grossIncome;
     private double riceSubsidy;
     private double phoneAllowance;
     private double clothingAllowance;
+    private double grossIncome;
     private double totalBenefits;
     private double sssContribution;
     private double philhealthContribution;
@@ -24,67 +22,39 @@ public class Payslip {
     private double totalDeductions;
     private double netPay;
 
-    // Constructor
-    public Payslip(String payslipNumber, LocalDate periodStartDate, LocalDate periodEndDate,
-                   int employeeId, String employeeName, String employeePosition,
-                   String employeeDepartment, double monthlyRate, int totalHours, int overtimeHours,
-                   double riceSubsidy, double phoneAllowance, double clothingAllowance,
-                   double sssContribution, double philhealthContribution,
-                   double pagibigContribution, double withholdingTax) {
-        this.payslipNumber = payslipNumber;
+    public Payslip() {
+        // Default constructor
+    }
+
+ // Constructor with parameters
+    public Payslip(LocalDate periodStartDate, LocalDate periodEndDate, int employeeId, String employeeName,
+                   String employeePosition, double monthlyRate, int totalHours, int overtimeHours,
+                   double grossIncome, double riceSubsidy, double phoneAllowance, double clothingAllowance,
+                   double totalBenefits, double sssContribution, double philhealthContribution,
+                   double pagibigContribution, double withholdingTax, double totalDeductions, double netPay) {
         this.periodStartDate = periodStartDate;
         this.periodEndDate = periodEndDate;
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.employeePosition = employeePosition;
-        this.employeeDepartment = employeeDepartment;
         this.monthlyRate = monthlyRate;
         this.totalHours = totalHours;
         this.overtimeHours = overtimeHours;
+        this.grossIncome = grossIncome;
         this.riceSubsidy = riceSubsidy;
         this.phoneAllowance = phoneAllowance;
         this.clothingAllowance = clothingAllowance;
+        this.totalBenefits = totalBenefits;
         this.sssContribution = sssContribution;
         this.philhealthContribution = philhealthContribution;
         this.pagibigContribution = pagibigContribution;
         this.withholdingTax = withholdingTax;
-
-        // Calculate other fields
-        calculateGrossIncome();
-        calculateTotalBenefits();
-        calculateTotalDeductions();
-        calculateNetPay();
+        this.totalDeductions = totalDeductions;
+        this.netPay = netPay;
     }
 
-    // Method to calculate gross income
-    private void calculateGrossIncome() {
-        grossIncome = (monthlyRate / 30) * totalHours + (overtimeHours * monthlyRate / 30 * 1.5);
-    }
 
-    // Method to calculate total benefits
-    private void calculateTotalBenefits() {
-        totalBenefits = riceSubsidy + phoneAllowance + clothingAllowance;
-    }
-
-    // Method to calculate total deductions
-    private void calculateTotalDeductions() {
-        totalDeductions = sssContribution + philhealthContribution + pagibigContribution + withholdingTax;
-    }
-
-    // Method to calculate net pay
-    private void calculateNetPay() {
-        netPay = grossIncome - totalDeductions;
-    }
-
-    // Getters and Setters
-    public String getPayslipNumber() {
-        return payslipNumber;
-    }
-
-    public void setPayslipNumber(String payslipNumber) {
-        this.payslipNumber = payslipNumber;
-    }
-
+    // Getters and setters
     public LocalDate getPeriodStartDate() {
         return periodStartDate;
     }
@@ -125,14 +95,6 @@ public class Payslip {
         this.employeePosition = employeePosition;
     }
 
-    public String getEmployeeDepartment() {
-        return employeeDepartment;
-    }
-
-    public void setEmployeeDepartment(String employeeDepartment) {
-        this.employeeDepartment = employeeDepartment;
-    }
-
     public double getMonthlyRate() {
         return monthlyRate;
     }
@@ -157,14 +119,6 @@ public class Payslip {
         this.overtimeHours = overtimeHours;
     }
 
-    public double getGrossIncome() {
-        return grossIncome;
-    }
-
-    public void setGrossIncome(double grossIncome) {
-        this.grossIncome = grossIncome;
-    }
-
     public double getRiceSubsidy() {
         return riceSubsidy;
     }
@@ -187,6 +141,14 @@ public class Payslip {
 
     public void setClothingAllowance(double clothingAllowance) {
         this.clothingAllowance = clothingAllowance;
+    }
+
+    public double getGrossIncome() {
+        return grossIncome;
+    }
+
+    public void setGrossIncome(double grossIncome) {
+        this.grossIncome = grossIncome;
     }
 
     public double getTotalBenefits() {
@@ -245,4 +207,3 @@ public class Payslip {
         this.netPay = netPay;
     }
 }
-
