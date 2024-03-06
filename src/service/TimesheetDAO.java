@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import util.UserRepository;
@@ -320,6 +322,8 @@ public class TimesheetDAO {
         // Retrieve the first recorded date from the timesheet records for the given month and year
         List<String[]> timesheetRecords = getTimesheetRecordsForMonthYear(monthYear);
         if (!timesheetRecords.isEmpty()) {
+            // Sort the records based on date to get the earliest record
+            Collections.sort(timesheetRecords, Comparator.comparing(record -> LocalDate.parse(record[3])));
             String firstRecordDate = timesheetRecords.get(0)[3]; // Assuming date is at index 3
             return LocalDate.parse(firstRecordDate);
         } else {
@@ -333,6 +337,8 @@ public class TimesheetDAO {
         // Retrieve the last recorded date from the timesheet records for the given month and year
         List<String[]> timesheetRecords = getTimesheetRecordsForMonthYear(monthYear);
         if (!timesheetRecords.isEmpty()) {
+            // Sort the records based on date to get the latest record
+            Collections.sort(timesheetRecords, Comparator.comparing(record -> LocalDate.parse(record[3])));
             String lastRecordDate = timesheetRecords.get(timesheetRecords.size() - 1)[3]; // Assuming date is at index 3
             return LocalDate.parse(lastRecordDate);
         } else {
@@ -341,6 +347,8 @@ public class TimesheetDAO {
                     YearMonth.parse(monthYear, DateTimeFormatter.ofPattern("yyyy-MM")).lengthOfMonth());
         }
     }
+
+
 
     // Getter method for pay period start date
     public LocalDate getPayPeriodStartDate() {

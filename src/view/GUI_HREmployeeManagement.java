@@ -167,7 +167,7 @@ public class GUI_HREmployeeManagement extends JFrame {
 		HR_AttendanceMngmntButton.setBounds(37, 438, 227, 31);
 		sidebarPanel.add(HR_AttendanceMngmntButton);
 		
-		JButton HR_LeaveMngmntButton = new JButton("Leave management");
+		JButton HR_LeaveMngmntButton = new JButton("LeaveBalance management");
 		HR_LeaveMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_LeaveMngmntButton.setBackground(Color.WHITE);

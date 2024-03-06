@@ -3,7 +3,7 @@ package util;
 import javax.swing.JComboBox;
 import java.io.IOException;
 import java.util.List;
-import model.Leave;
+import model.LeaveBalance;
 
 public class LeaveRequestComboPopulator {
 

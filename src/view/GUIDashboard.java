@@ -260,7 +260,7 @@ public class GUIDashboard {
 		
 		
 		
-		JButton HR_LeaveMngmntButton = new JButton("Leave management");
+		JButton HR_LeaveMngmntButton = new JButton("LeaveBalance management");
 		HR_LeaveMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_LeaveMngmntButton.setBackground(Color.WHITE);

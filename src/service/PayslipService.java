@@ -268,9 +268,9 @@ public class PayslipService {
         // Calculate withholding tax
         double withholdingTax = calculateWithholdingTax(empId, monthYear);
 
-        // Retrieve pay period start and end dates
-        LocalDate payPeriodStartDate = timesheetDAO.getPayPeriodStartDate();
-        LocalDate payPeriodEndDate = timesheetDAO.getPayPeriodEndDate();
+        // Retrieve pay period start and end dates from TimesheetDAO
+        LocalDate payPeriodStartDate = timesheetDAO.calculatePayPeriodStartDate(monthYear);
+        LocalDate payPeriodEndDate = timesheetDAO.calculatePayPeriodEndDate(monthYear);
 
         // Create and return the payslip object
         return new Payslip(
@@ -297,6 +297,7 @@ public class PayslipService {
     }
 
 
+
        
     // Method to display total hours worked for a specific employee in a given month
     public void displayTotalHours(int empId, String monthYear) {
@@ -313,7 +314,7 @@ public class PayslipService {
 
         // Assuming employee ID and month-year for testing
         int employeeId = 1;
-        String monthYear = "2024-02"; // Example month-year
+        String monthYear = "2023-02"; // Example month-year
 
         // Calculate gross salary for the specified employee and month-year
         double grossSalary = calculator.calculateGrossSalary(employeeId, monthYear);

@@ -6,21 +6,21 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import model.Leave;
+import model.LeaveBalance;
 
 public class LeaveRequestData {
 
-    // Read Leave data from a CSV file and return a list of leaves
-    public static List<Leave> readLeaveCsv() throws IOException {
-        List<Leave> leaves = new ArrayList<>();
-        String filename = "src/data/Leave Balance.csv";
+    // Read LeaveBalance data from a CSV file and return a list of leaves
+    public static List<LeaveBalance> readLeaveCsv() throws IOException {
+        List<LeaveBalance> leaves = new ArrayList<>();
+        String filename = "src/data/LeaveBalance Balance.csv";
         BufferedReader reader = new BufferedReader(new FileReader(filename));
         String line; // Variable to store each line read from the CSV
 
         // Skip the header line
         reader.readLine();
 
-        // Read each line from the CSV and create a Leave object
+        // Read each line from the CSV and create a LeaveBalance object
         while ((line = reader.readLine()) != null) {
             String[] fields = line.split(",");
             String id = fields[0];
@@ -30,8 +30,8 @@ public class LeaveRequestData {
             int vacationLeaveDays = Integer.parseInt(fields[4]);
             int emergencyLeaveDays = Integer.parseInt(fields[5]);
 
-            // Create a Leave object and add it to the list
-            Leave leave = new Leave(id, lastName, firstName, sickLeaveDays, emergencyLeaveDays, vacationLeaveDays);
+            // Create a LeaveBalance object and add it to the list
+            LeaveBalance leave = new LeaveBalance(id, lastName, firstName, sickLeaveDays, emergencyLeaveDays, vacationLeaveDays);
             leaves.add(leave);
         }
 
@@ -40,15 +40,15 @@ public class LeaveRequestData {
     }
 
     // Update the leave balance in the CSV file
-    public static void updateLeaveCsv(List<Leave> leaves) throws IOException {
-        String filename = "src/Data/Leave Balance Tally.csv";
+    public static void updateLeaveCsv(List<LeaveBalance> leaves) throws IOException {
+        String filename = "src/Data/LeaveBalance Balance Tally.csv";
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 
         // Write the header line
-        writer.write("Employee ID,Last Name,First Name,Sick Leave Days,Vacation Leave Days,Emergency Leave Days\n");
+        writer.write("Employee ID,Last Name,First Name,Sick LeaveBalance Days,Vacation LeaveBalance Days,Emergency LeaveBalance Days\n");
 
         // Write leave data for each leave object
-        for (Leave leave : leaves) {
+        for (LeaveBalance leave : leaves) {
             writer.write(leave.getId() + "," +
                     leave.getLastName() + "," +
                     leave.getFirstName() + "," +
@@ -62,7 +62,7 @@ public class LeaveRequestData {
     
     // Write leave application data to a CSV file
     public static void writeLeaveApplicationData(String employeeId, String employeeName, String leaveType, String startDate, String endDate, String totalDays) throws IOException {
-        String filePath = "src/Data/Leave Application Approved Dates.csv";
+        String filePath = "src/Data/LeaveBalance Application Approved Dates.csv";
 
         // Create a BufferedWriter to write to the file, with append mode enabled
         BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
@@ -79,9 +79,9 @@ public class LeaveRequestData {
     }
     
     // Retrieve leave data for a specific employee ID
-    public static Leave getLeaveDataByEmployeeId(String employeeId) throws IOException {
-        List<Leave> leaves = readLeaveCsv();
-        for (Leave leave : leaves) {
+    public static LeaveBalance getLeaveDataByEmployeeId(String employeeId) throws IOException {
+        List<LeaveBalance> leaves = readLeaveCsv();
+        for (LeaveBalance leave : leaves) {
             if (leave.getId().equals(employeeId)) {
                 return leave;
             }
@@ -90,19 +90,19 @@ public class LeaveRequestData {
     }
 
     // Update leave balance based on leave type
-    public static void updateLeaveBalance(Leave leave, String leaveType, long totalDays) {
+    public static void updateLeaveBalance(LeaveBalance leave, String leaveType, long totalDays) {
         switch (leaveType) {
-            case "Sick Leave":
+            case "Sick LeaveBalance":
                 leave.setSickLeaveDays(leave.getSickLeaveDays() - (int) totalDays);
                 break;
-            case "Vacation Leave":
+            case "Vacation LeaveBalance":
                 leave.setVacationLeaveDays(leave.getVacationLeaveDays() - (int) totalDays);
                 break;
-            case "Emergency Leave":
+            case "Emergency LeaveBalance":
                 leave.setEmergencyLeaveDays(leave.getEmergencyLeaveDays() - (int) totalDays);
                 break;
             default:
-                JOptionPane.showMessageDialog(null, "Invalid leave type.", "Leave Request Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Invalid leave type.", "LeaveBalance Request Error", JOptionPane.ERROR_MESSAGE);
                 break;
         }
     }
@@ -111,26 +111,26 @@ public class LeaveRequestData {
     public static int getLeaveTallyBalance(String employeeId, String leaveType) {
         try {
             // Retrieve leave data for the employee
-            Leave leave = LeaveRequestData.getLeaveDataByEmployeeId(employeeId);
+            LeaveBalance leave = LeaveRequestData.getLeaveDataByEmployeeId(employeeId);
 
             // Check if leave data is found
             if (leave != null) {
                 // Determine the leave balance based on the leave type
                 switch (leaveType) {
-                    case "Sick Leave":
+                    case "Sick LeaveBalance":
                         return leave.getSickLeaveDays();
-                    case "Vacation Leave":
+                    case "Vacation LeaveBalance":
                         return leave.getVacationLeaveDays();
-                    case "Emergency Leave":
+                    case "Emergency LeaveBalance":
                         return leave.getEmergencyLeaveDays();
                     default:
                         // Handle invalid leave type
-                        JOptionPane.showMessageDialog(null, "Invalid leave type.", "Leave Request Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Invalid leave type.", "LeaveBalance Request Error", JOptionPane.ERROR_MESSAGE);
                         return 0;
                 }
             } else {
                 // Handle case where employee ID is not found
-                JOptionPane.showMessageDialog(null, "Employee ID not found.", "Leave Request Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Employee ID not found.", "LeaveBalance Request Error", JOptionPane.ERROR_MESSAGE);
                 return 0;
             }
         } catch (Exception e) {

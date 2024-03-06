@@ -19,7 +19,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import model.LeaveLog;
+import model.LeaveRequestLog;
 import util.LeaveLogData;
 
 public class GUI_HRLeaveManagement {
@@ -126,7 +126,7 @@ public class GUI_HRLeaveManagement {
 		HR_AttendanceMngmntButton.setBounds(37, 438, 227, 31);
 		sidebarPanel.add(HR_AttendanceMngmntButton);
 		
-		JButton HR_LeaveMngmntButton = new JButton("Leave management");
+		JButton HR_LeaveMngmntButton = new JButton("LeaveBalance management");
 		HR_LeaveMngmntButton.setEnabled(false);
 		HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_LeaveMngmntButton.setBackground(Color.WHITE);
@@ -155,7 +155,7 @@ public class GUI_HRLeaveManagement {
 		HRaccessLabel.setBounds(177, 332, 100, 33);
 		sidebarPanel.add(HRaccessLabel);
 		
-		JLabel lblLeaveManagement = new JLabel("Leave Management");
+		JLabel lblLeaveManagement = new JLabel("LeaveBalance Management");
 		lblLeaveManagement.setBounds(340, 36, 323, 33);
 		lblLeaveManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
 		mainPanel.add(lblLeaveManagement);
@@ -225,7 +225,7 @@ public class GUI_HRLeaveManagement {
 	    model.addColumn("Employee #");
 	    model.addColumn("Last Name");
 	    model.addColumn("First Name");
-	    model.addColumn("Leave Type");
+	    model.addColumn("LeaveBalance Type");
 	    model.addColumn("Start Date");
 	    model.addColumn("End Date");
 	    model.addColumn("Total Days");
@@ -233,18 +233,18 @@ public class GUI_HRLeaveManagement {
 	    model.addColumn("Status");
 
 	    // Fetch leave request history for all employees
-	    List<LeaveLog> leaveLogs = LeaveLogData.getAllLeaveLogs();
+	    List<LeaveRequestLog> leaveLogs = LeaveLogData.getAllLeaveLogs();
 
 	    // Sort leave logs by date in descending order
-	    Collections.sort(leaveLogs, new Comparator<LeaveLog>() {
+	    Collections.sort(leaveLogs, new Comparator<LeaveRequestLog>() {
 	        @Override
-	        public int compare(LeaveLog log1, LeaveLog log2) {
+	        public int compare(LeaveRequestLog log1, LeaveRequestLog log2) {
 	            return log2.getDate().compareTo(log1.getDate());
 	        }
 	    });
 
 	    // Populate the model with leave request history data
-	    for (LeaveLog leaveLog : leaveLogs) {
+	    for (LeaveRequestLog leaveLog : leaveLogs) {
 	        model.addRow(new Object[]{
 	            leaveLog.getDate(),
 	            leaveLog.getId(),

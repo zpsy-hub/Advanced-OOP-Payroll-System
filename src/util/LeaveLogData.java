@@ -13,15 +13,15 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import model.LeaveLog;
+import model.LeaveRequestLog;
 import model.User;
 import model.Employee;
-import model.Leave;
+import model.LeaveBalance;
 
 public class LeaveLogData {
 
-    public static List<LeaveLog> readLeaveLogsFromCSV(String filename) throws IOException {
-        List<LeaveLog> leaveLogs = new ArrayList<>();
+    public static List<LeaveRequestLog> readLeaveLogsFromCSV(String filename) throws IOException {
+        List<LeaveRequestLog> leaveLogs = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -40,7 +40,7 @@ public class LeaveLogData {
                 }
 
                 try {
-                    LeaveLog leaveLog = new LeaveLog(
+                    LeaveRequestLog leaveLog = new LeaveRequestLog(
                         parts[0].trim(),
                         parts[1].trim(),
                         parts[2].trim(),
@@ -64,12 +64,12 @@ public class LeaveLogData {
     }
     
     // Method to get leave logs for a specific employee
-    public static List<LeaveLog> getLeaveLogsForEmployee(String employeeId) throws IOException {
-        List<LeaveLog> allLeaveLogs = readLeaveLogsFromCSV("src/data/Leave Log.csv");
-        List<LeaveLog> employeeLeaveLogs = new ArrayList<>();
+    public static List<LeaveRequestLog> getLeaveLogsForEmployee(String employeeId) throws IOException {
+        List<LeaveRequestLog> allLeaveLogs = readLeaveLogsFromCSV("src/data/LeaveBalance Log.csv");
+        List<LeaveRequestLog> employeeLeaveLogs = new ArrayList<>();
         
         // Filter leave logs for the specified employee
-        for (LeaveLog leaveLog : allLeaveLogs) {
+        for (LeaveRequestLog leaveLog : allLeaveLogs) {
             if (leaveLog.getId().equals(employeeId)) {
                 employeeLeaveLogs.add(leaveLog);
             }
@@ -79,21 +79,21 @@ public class LeaveLogData {
     }
     
     // Method to get leave logs for all employees
-    public static List<LeaveLog> getAllLeaveLogs() throws IOException {
-        List<LeaveLog> allLeaveLogs = readLeaveLogsFromCSV("src/data/Leave Log.csv");
+    public static List<LeaveRequestLog> getAllLeaveLogs() throws IOException {
+        List<LeaveRequestLog> allLeaveLogs = readLeaveLogsFromCSV("src/data/LeaveBalance Log.csv");
         return allLeaveLogs;
     }
     
     // Write leave log data to a CSV file
-    public static void writeLeaveLogData(LeaveLog leaveLog, String filePath) throws IOException {
+    public static void writeLeaveLogData(LeaveRequestLog leaveLog, String filePath) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
 
         File file = new File(filePath);
         if (file.length() == 0) {
-            writer.write("Date,Employee ID,Last Name,First Name,Leave Type,Start Date,End Date,Total Days,Remaining Balance,Status\n");
+            writer.write("Date,Employee ID,Last Name,First Name,LeaveBalance Type,Start Date,End Date,Total Days,Remaining Balance,Status\n");
         }
 
-        Leave leave = LeaveRequestData.getLeaveDataByEmployeeId(leaveLog.getId());
+        LeaveBalance leave = LeaveRequestData.getLeaveDataByEmployeeId(leaveLog.getId());
         if (leave != null) {
             int remainingBalance = calculateRemainingBalance(leave, leaveLog.getLeaveType(), leaveLog.getTotalDays());
             writer.write(leaveLog.getDate() + "," +
@@ -107,7 +107,7 @@ public class LeaveLogData {
                     remainingBalance + "," +
                     leaveLog.getStatus() + "\n");
         } else {
-            JOptionPane.showMessageDialog(null, "Leave data not found for Employee ID: " + leaveLog.getId(), "Leave Request Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "LeaveBalance data not found for Employee ID: " + leaveLog.getId(), "LeaveBalance Request Error", JOptionPane.ERROR_MESSAGE);
         }
 
         writer.close(); 
@@ -117,7 +117,7 @@ public class LeaveLogData {
         String status = "Pending";
         String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
         
-        LeaveLog leaveLog = new LeaveLog(
+        LeaveRequestLog leaveLog = new LeaveRequestLog(
                 currentDate,
                 user.getid(),
                 user.getLastName(),
@@ -130,8 +130,8 @@ public class LeaveLogData {
                 status
         );        
         try {
-        	writeLeaveLogData(leaveLog, "src/data/Leave Log.csv");
-            System.out.println("Leave request added successfully.");
+        	writeLeaveLogData(leaveLog, "src/data/LeaveBalance Log.csv");
+            System.out.println("LeaveBalance request added successfully.");
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error adding leave request.");
@@ -139,20 +139,20 @@ public class LeaveLogData {
     }
 
     // Calculate remaining balance based on leave type and total days taken
-    public static int calculateRemainingBalance(Leave leave, String leaveType, long totalDays) {
+    public static int calculateRemainingBalance(LeaveBalance leave, String leaveType, long totalDays) {
         int remainingBalance = 0;
         switch (leaveType) {
-            case "Sick Leave":
+            case "Sick LeaveBalance":
                 remainingBalance = leave.getSickLeaveDays() - (int) totalDays;
                 break;
-            case "Vacation Leave":
+            case "Vacation LeaveBalance":
                 remainingBalance = leave.getVacationLeaveDays() - (int) totalDays;
                 break;
-            case "Emergency Leave":
+            case "Emergency LeaveBalance":
                 remainingBalance = leave.getEmergencyLeaveDays() - (int) totalDays;
                 break;
             default:
-                JOptionPane.showMessageDialog(null, "Invalid leave type.", "Leave Request Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Invalid leave type.", "LeaveBalance Request Error", JOptionPane.ERROR_MESSAGE);
                 break;
         }
         return remainingBalance;

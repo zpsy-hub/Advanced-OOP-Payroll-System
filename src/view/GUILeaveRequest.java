@@ -8,6 +8,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -24,11 +26,12 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-import model.Leave;
-import model.LeaveLog;
+import model.LeaveBalance;
+import model.LeaveRequestLog;
 import model.User;
+import service.LeaveBalanceDAO;
+import service.LeaveRequestLogDAO;
 import service.LeaveRequestService;
-import util.LeaveLogData;
 import util.LeaveRequestComboPopulator;
 import util.LeaveRequestData;
 
@@ -50,6 +53,8 @@ public class GUILeaveRequest {
     private JComboBox<String> endyearComboBox;
     JComboBox<String> leaveTypeComboBox;
     private JLabel textField;
+    private LeaveBalanceDAO leaveBalanceDAO;
+    private LeaveRequestLogDAO leaveLogDAO;
 
 
 	/**
@@ -85,6 +90,11 @@ public class GUILeaveRequest {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		
+		// Initialize DAO instances
+        leaveBalanceDAO = new LeaveBalanceDAO();
+        leaveLogDAO = new LeaveRequestLogDAO();
+        
 		leaverequestScreen = new JFrame();
 		leaverequestScreen.setTitle("MotorPH Payroll System");
 		leaverequestScreen.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\GitHub\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
@@ -273,11 +283,9 @@ public class GUILeaveRequest {
         emergencyTotal.setForeground(Color.BLACK);
         emergencyTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
         emergencyTotal.setBounds(10, 56, 196, 43);
-        emergencyPanel.add(emergencyTotal);
-
-        updateLeaveData();      
+        emergencyPanel.add(emergencyTotal);         
     		
-		JLabel leaveapplicationLabel = new JLabel("Leave Application");
+		JLabel leaveapplicationLabel = new JLabel("LeaveBalance Application");
 		leaveapplicationLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
 		leaveapplicationLabel.setBounds(340, 273, 280, 33);
 		mainPanel.add(leaveapplicationLabel);
@@ -288,7 +296,7 @@ public class GUILeaveRequest {
 		LineSeparator.setBounds(340, 316, 370, 1);
 		mainPanel.add(LineSeparator);
 		
-		JLabel lblSelectLeaveType = new JLabel("Select Leave Type:");
+		JLabel lblSelectLeaveType = new JLabel("Select LeaveBalance Type:");
 		lblSelectLeaveType.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
 		lblSelectLeaveType.setBounds(340, 337, 160, 21);
 		mainPanel.add(lblSelectLeaveType);
@@ -389,28 +397,15 @@ public class GUILeaveRequest {
 		sendleaveButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        String leaveType = (String) leaveTypeComboBox.getSelectedItem();
-		        String startDate = (String) startmonthComboBox.getSelectedItem() + "/" +
-		                           (String) startdayComboBox.getSelectedItem() + "/" +
-		                           (String) startyearComboBox.getSelectedItem();
-		        String endDate = (String) endmonthComboBox.getSelectedItem() + "/" +
-		                         (String) enddayComboBox.getSelectedItem() + "/" +
+		        String startDate = (String) startmonthComboBox.getSelectedItem() + "-" +
+		                            (String) startdayComboBox.getSelectedItem() + "-" +
+		                            (String) startyearComboBox.getSelectedItem();
+		        String endDate = (String) endmonthComboBox.getSelectedItem() + "-" +
+		                         (String) enddayComboBox.getSelectedItem() + "-" +
 		                         (String) endyearComboBox.getSelectedItem();
-		        int totalDays = Integer.parseInt(textField_ComputedDays.getText());
-		        int remainingBalance = 0; // Assuming you get this value from somewhere
 
-		        // Assuming loggedInEmployee is accessible here
-		        User loggedInUser = GUILeaveRequest.this.loggedInEmployee;
-
-		        // Assuming LeaveLogData.addLeaveRequest() method accepts User
-		        LeaveLogData.addLeaveRequest(loggedInUser, leaveType, startDate, endDate, totalDays, remainingBalance);
-		        JOptionPane.showMessageDialog(leaverequestScreen, "Leave request sent successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-		        
-		        // Repopulate the table with the updated leave history
-		        try {
-		            populateLeaveHistoryTable();
-		        } catch (IOException ex) {
-		            ex.printStackTrace();
-		        }
+		        LeaveRequestService leaveRequestService = new LeaveRequestService();
+		        leaveRequestService.submitLeaveRequest(loggedInEmployee, leaveType, 0, startDate, endDate);
 		    }
 		});
 		
@@ -420,7 +415,7 @@ public class GUILeaveRequest {
 		LineSeparator_1.setBounds(736, 316, 529, 1);
 		mainPanel.add(LineSeparator_1);
 		
-		JLabel leavehistoryLabel = new JLabel("Leave Request History");
+		JLabel leavehistoryLabel = new JLabel("LeaveBalance Request History");
 		leavehistoryLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
 		leavehistoryLabel.setBounds(736, 273, 335, 33);
 		mainPanel.add(leavehistoryLabel);
@@ -487,7 +482,7 @@ public class GUILeaveRequest {
 	    ClearFormButton.setBackground(Color.WHITE);
 	    ClearFormButton.setBounds(330, 652, 170, 60);
 	    mainPanel.add(ClearFormButton);
-
+	    updateLeaveData();    
 	    // Add ActionListener to ClearFormButton
 	    ClearFormButton.addActionListener(new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
@@ -511,12 +506,7 @@ public class GUILeaveRequest {
             e.printStackTrace();
         }
         
-     // Call the method to populate the leave history table
-        try {
-            populateLeaveHistoryTable();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+     populateLeaveHistoryTable();
         
      // Add action listeners to combo boxes to trigger calculation of total days upon user input
         startmonthComboBox.addActionListener(e -> {
@@ -571,16 +561,16 @@ public class GUILeaveRequest {
 	// Method to fetch and update leave data for the logged-in employee
     private void updateLeaveData() {
         try {
-            // Fetch leave data for the logged-in employee
-            Leave leave = LeaveRequestData.getLeaveDataByEmployeeId(loggedInEmployee.getId());
+            // Fetch leave data for the logged-in employee using DAO
+            LeaveBalance leave = leaveBalanceDAO.getLeaveBalanceByEmployeeId(loggedInEmployee.getId());
 
             // Update labels with leave data
             if (leave != null) {
-                int totalLeaves = leave.getVacationLeaveDays() + leave.getSickLeaveDays() + leave.getEmergencyLeaveDays();
+                int totalLeaves = leave.getVacationLeave() + leave.getSickLeave() + leave.getEmergencyLeave();
                 leaveTotal.setText(String.valueOf(totalLeaves));
-                vacationTotal.setText(String.valueOf(leave.getVacationLeaveDays()));
-                sickTotal.setText(String.valueOf(leave.getSickLeaveDays()));
-                emergencyTotal.setText(String.valueOf(leave.getEmergencyLeaveDays()));
+                vacationTotal.setText(String.valueOf(leave.getVacationLeave()));
+                sickTotal.setText(String.valueOf(leave.getSickLeave()));
+                emergencyTotal.setText(String.valueOf(leave.getEmergencyLeave()));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -615,11 +605,14 @@ public class GUILeaveRequest {
     private void calculateTotalDays() {
         // Clear the total days text field
         textField_ComputedDays.setText("");
+
+        // Check if any combo box is at default selection
         if (isAnyComboBoxAtDefaultSelection()) {
             // If any combo box is at default selection, exit the method
             return;
-        }    
+        }
 
+        // Get selected values from combo boxes
         String startYear = (String) startyearComboBox.getSelectedItem();
         String startMonth = (String) startmonthComboBox.getSelectedItem();
         String startDay = (String) startdayComboBox.getSelectedItem();
@@ -630,6 +623,7 @@ public class GUILeaveRequest {
         // Calculate total days using LeaveRequestService method
         int totalDays = LeaveRequestService.calculateTotalDays(startYear, startMonth, startDay, endYear, endMonth, endDay);
 
+        // Check if total days is less than 0 or equal to 0
         if (totalDays < 0) {
             // Handle error condition
             JOptionPane.showMessageDialog(leaverequestScreen, "Error calculating total days.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -641,15 +635,38 @@ public class GUILeaveRequest {
             return;
         }
 
-        // Get the selected leave type
-        String selectedLeaveType = (String) leaveTypeComboBox.getSelectedItem();
+        // Retrieve the leave balance for the employee and the selected leave type
+        LeaveBalanceDAO leaveBalanceDAO = LeaveBalanceDAO.getInstance();
+        LeaveBalance leaveBalance = leaveBalanceDAO.getLeaveBalanceByEmployeeId(loggedInEmployee.getId());
+        int leaveTallyBalance = 0;
 
-        // Check the leave tally balance for the employee and the selected leave type
-        int leaveTallyBalance = LeaveRequestData.getLeaveTallyBalance(loggedInEmployee.getId(), selectedLeaveType);
+        // Check if the leave balance is not null and get the balance based on the selected leave type
+        if (leaveBalance != null) {
+            String selectedLeaveType = (String) leaveTypeComboBox.getSelectedItem();
+            switch (selectedLeaveType) {
+                case "Sick Leave":
+                    leaveTallyBalance = leaveBalance.getSickLeave();
+                    break;
+                case "Vacation Leave":
+                    leaveTallyBalance = leaveBalance.getVacationLeave();
+                    break;
+                case "Emergency Leave":
+                    leaveTallyBalance = leaveBalance.getEmergencyLeave();
+                    break;
+                default:
+                    // Handle invalid leave type
+                    JOptionPane.showMessageDialog(leaverequestScreen, "Invalid leave type.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+            }
 
-        // Check if the total days exceed the leave tally balance
-        if (totalDays > leaveTallyBalance) {
-            JOptionPane.showMessageDialog(leaverequestScreen, "Insufficient leave balance. Maximum allowed days: " + leaveTallyBalance, "Error", JOptionPane.ERROR_MESSAGE);
+            // Check if the total days exceed the leave tally balance
+            if (totalDays > leaveTallyBalance) {
+                JOptionPane.showMessageDialog(leaverequestScreen, "Insufficient leave balance. Maximum allowed days: " + leaveTallyBalance, "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } else {
+            // Handle case where leave balance is not found for the employee
+            JOptionPane.showMessageDialog(leaverequestScreen, "Leave balance not found for employee.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -659,36 +676,36 @@ public class GUILeaveRequest {
 
     
     // Method to populate the leave history table with leave request history
-    private void populateLeaveHistoryTable() throws IOException {
-        // Create a DefaultTableModel to hold the data
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Date");
-        model.addColumn("Leave Type");
-        model.addColumn("Start Date");
-        model.addColumn("End Date");
-        model.addColumn("Total Days");
-        model.addColumn("Remaining Balance");
-        model.addColumn("Status");
-
-        // Fetch leave request history for the logged-in employee
-        List<LeaveLog> leaveLogs = LeaveLogData.getLeaveLogsForEmployee(loggedInEmployee.getId());
-
-        // Populate the model with leave request history data
-        for (LeaveLog leaveLog : leaveLogs) {
-            model.addRow(new Object[]{
-                    leaveLog.getDate(),
-                    leaveLog.getLeaveType(),
-                    leaveLog.getStartDate(),
-                    leaveLog.getEndDate(),
-                    leaveLog.getTotalDays(),
-                    leaveLog.getRemainingBalance(),
-                    leaveLog.getStatus()
-            });
+    private void populateLeaveHistoryTable() {
+        try {
+            // Retrieve leave request logs for the logged-in employee
+            List<LeaveRequestLog> leaveLogs = LeaveRequestLogDAO.getInstance().getLeaveLogsByEmployeeId(loggedInEmployee.getId());
+            
+            // Clear existing table data
+            DefaultTableModel model = (DefaultTableModel) leavehistoryTable.getModel();
+            model.setRowCount(0);
+            
+            // Populate the table with leave request logs
+            for (LeaveRequestLog leaveLog : leaveLogs) {
+                model.addRow(new Object[]{
+                        leaveLog.getTimestamp(),
+                        leaveLog.getId(),
+                        leaveLog.getEmployeeLastName(),
+                        leaveLog.getEmployeeFirstName(),
+                        leaveLog.getLeaveType(),
+                        leaveLog.getDateStart(),
+                        leaveLog.getDateEnd(),
+                        leaveLog.getDaysTotal(),
+                        leaveLog.getLeaveBalance(),
+                        leaveLog.getStatus()
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        // Set the model to the leavehistoryTable
-        leavehistoryTable.setModel(model);
     }
+
+
     
 }
 
