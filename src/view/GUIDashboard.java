@@ -257,15 +257,19 @@ public class GUIDashboard {
 				window.hrattendancemngmnt.setVisible(true);
 		    }
 		});
-		
-		
-		
-		JButton HR_LeaveMngmntButton = new JButton("LeaveBalance management");
+						
+		JButton HR_LeaveMngmntButton = new JButton("Leave management");
 		HR_LeaveMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_LeaveMngmntButton.setBackground(Color.WHITE);
 		HR_LeaveMngmntButton.setBounds(37, 491, 227, 31);
 		sidebarPanel.add(HR_LeaveMngmntButton);
+		HR_LeaveMngmntButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_HRLeaveManagement window = new GUI_HRLeaveManagement();
+		    	window.hrleavemngmnt.setVisible(true);
+		    }
+		});
 		
 		JButton Payroll_SalaryCalculationButton = new JButton("Salary Calculation");
 		Payroll_SalaryCalculationButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));

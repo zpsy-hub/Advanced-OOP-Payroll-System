@@ -55,27 +55,28 @@ public class LeaveRequestLogDAO {
         return leaveLogs;
     }
 
-    // Method to add a new leave request log
+ // Method to add a new leave request log
     public void addLeaveLog(LeaveRequestLog leaveLog) {
         try {
-            String sql = "INSERT INTO payroll_system.leave_request_log (timestamp, emp_id, employee_lastname, employee_firstname, leave_type, date_start, date_end, days_total, leave_balance, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO payroll_system.leave_request_log (emp_id, employee_lastname, employee_firstname, leave_type, date_start, date_end, days_total, leave_balance, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setDate(1, leaveLog.getTimestamp());
-            statement.setInt(2, leaveLog.getId());
-            statement.setString(3, leaveLog.getEmployeeLastName());
-            statement.setString(4, leaveLog.getEmployeeFirstName());
-            statement.setString(5, leaveLog.getLeaveType());
-            statement.setDate(6, leaveLog.getDateStart());
-            statement.setDate(7, leaveLog.getDateEnd());
-            statement.setInt(8, leaveLog.getDaysTotal());
-            statement.setInt(9, leaveLog.getLeaveBalance());
-            statement.setString(10, leaveLog.getStatus());
+            // Omit setting timestamp here to let the database handle it
+            statement.setInt(1, leaveLog.getId());
+            statement.setString(2, leaveLog.getEmployeeLastName());
+            statement.setString(3, leaveLog.getEmployeeFirstName());
+            statement.setString(4, leaveLog.getLeaveType());
+            statement.setDate(5, leaveLog.getDateStart());
+            statement.setDate(6, leaveLog.getDateEnd());
+            statement.setInt(7, leaveLog.getDaysTotal());
+            statement.setInt(8, leaveLog.getLeaveBalance());
+            statement.setString(9, leaveLog.getStatus());
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     // Method to update an existing leave request log
     public void updateLeaveLog(LeaveRequestLog leaveLog) {
@@ -98,19 +99,68 @@ public class LeaveRequestLogDAO {
             e.printStackTrace();
         }
     }
+    
+    // Method to retrieve all leave request logs
+    public List<LeaveRequestLog> getAllLeaveLogs() {
+        List<LeaveRequestLog> leaveLogs = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM payroll_system.leave_request_log";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                LeaveRequestLog leaveLog = new LeaveRequestLog(
+                    resultSet.getDate("timestamp"),
+                    resultSet.getInt("emp_id"),
+                    resultSet.getString("employee_lastname"),
+                    resultSet.getString("employee_firstname"),
+                    resultSet.getString("leave_type"),
+                    resultSet.getDate("date_start"),
+                    resultSet.getDate("date_end"),
+                    resultSet.getInt("days_total"),
+                    resultSet.getInt("leave_balance"),
+                    resultSet.getString("status")
+                );
+                leaveLogs.add(leaveLog);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return leaveLogs;
+    }
+
 
 
     public static void main(String[] args) {
-        // Test retrieving leave request logs for employee ID 1
-        int id = 1;
-        List<LeaveRequestLog> leaveLogs = getInstance().getLeaveLogsByEmployeeId(id);
+        LeaveRequestLogDAO leaveRequestLogDAO = getInstance();
+        
+        // Retrieve all leave request logs
+        List<LeaveRequestLog> leaveLogs = leaveRequestLogDAO.getAllLeaveLogs();
+        
         if (!leaveLogs.isEmpty()) {
-            System.out.println("Leave request logs for employee ID " + id + ":");
+            System.out.println("All leave request logs:");
             for (LeaveRequestLog leaveLog : leaveLogs) {
                 System.out.println(leaveLog);
             }
         } else {
-            System.out.println("No leave request logs found for employee ID " + id);
+            System.out.println("No leave request logs found.");
         }
     }
+    
+    // Method to update the status of a leave request log
+    public void updateLeaveStatus(int logId, String status) {
+        try {
+            String sql = "UPDATE payroll_system.leave_request_log SET status = ? WHERE emp_id = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, status);
+            statement.setInt(2, logId);
+            statement.executeUpdate();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

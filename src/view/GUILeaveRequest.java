@@ -9,8 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -405,9 +408,16 @@ public class GUILeaveRequest {
 		                         (String) endyearComboBox.getSelectedItem();
 
 		        LeaveRequestService leaveRequestService = new LeaveRequestService();
-		        leaveRequestService.submitLeaveRequest(loggedInEmployee, leaveType, 0, startDate, endDate);
+		        boolean leaveSubmitted = leaveRequestService.submitLeaveRequest(loggedInEmployee, leaveType, startDate, endDate);
+		        if (leaveSubmitted) {
+		            // Refresh the leave history table
+		            refreshLeaveHistoryTable();
+		            // Update leave balance data
+		            updateLeaveData();
+		        }
 		    }
 		});
+
 		
 		JPanel LineSeparator_1 = new JPanel();
 		LineSeparator_1.setBorder(new LineBorder(new Color(30, 55, 101), 0));
@@ -415,7 +425,7 @@ public class GUILeaveRequest {
 		LineSeparator_1.setBounds(736, 316, 529, 1);
 		mainPanel.add(LineSeparator_1);
 		
-		JLabel leavehistoryLabel = new JLabel("LeaveBalance Request History");
+		JLabel leavehistoryLabel = new JLabel("Leave Request History");
 		leavehistoryLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
 		leavehistoryLabel.setBounds(736, 273, 335, 33);
 		mainPanel.add(leavehistoryLabel);
@@ -427,16 +437,18 @@ public class GUILeaveRequest {
 		leavehistoryPanel.setLayout(new GridLayout(1, 0, 0, 0));
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		leavehistoryPanel.add(scrollPane);
 		
-		leavehistoryTable = new JTable();
+		JTable leavehistoryTable = new JTable();
 		leavehistoryTable.setRowHeight(28);
 		leavehistoryTable.setRowSelectionAllowed(false);
 		leavehistoryTable.setEnabled(false);
 		scrollPane.setViewportView(leavehistoryTable);
 		leavehistoryTable.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
 		leavehistoryTable.setBorder(new LineBorder(new Color(0, 0, 0)));
+		
+		// Set the table model using populateLeaveHistoryTable method
+		populateLeaveHistoryTable(leavehistoryTable);
 		
 		JButton signoutButton = new JButton("Sign Out");
 		signoutButton.addActionListener(new ActionListener() {
@@ -505,9 +517,7 @@ public class GUILeaveRequest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-     populateLeaveHistoryTable();
-        
+               
      // Add action listeners to combo boxes to trigger calculation of total days upon user input
         startmonthComboBox.addActionListener(e -> {
             if (!isAnyComboBoxAtDefaultSelection()) {
@@ -675,35 +685,57 @@ public class GUILeaveRequest {
     }
 
     
-    // Method to populate the leave history table with leave request history
-    private void populateLeaveHistoryTable() {
+    private void populateLeaveHistoryTable(JTable table) {
         try {
             // Retrieve leave request logs for the logged-in employee
             List<LeaveRequestLog> leaveLogs = LeaveRequestLogDAO.getInstance().getLeaveLogsByEmployeeId(loggedInEmployee.getId());
             
-            // Clear existing table data
-            DefaultTableModel model = (DefaultTableModel) leavehistoryTable.getModel();
-            model.setRowCount(0);
+            // Create a DefaultTableModel
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Timestamp");
+            model.addColumn("ID");
+            model.addColumn("Last Name");
+            model.addColumn("First Name");
+            model.addColumn("Leave Type");
+            model.addColumn("Start Date");
+            model.addColumn("End Date");
+            model.addColumn("Total Days");
+            model.addColumn("Leave Balance");
+            model.addColumn("Status");
             
-            // Populate the table with leave request logs
+            // Populate the model with leave request logs
             for (LeaveRequestLog leaveLog : leaveLogs) {
                 model.addRow(new Object[]{
-                        leaveLog.getTimestamp(),
-                        leaveLog.getId(),
-                        leaveLog.getEmployeeLastName(),
-                        leaveLog.getEmployeeFirstName(),
-                        leaveLog.getLeaveType(),
-                        leaveLog.getDateStart(),
-                        leaveLog.getDateEnd(),
-                        leaveLog.getDaysTotal(),
-                        leaveLog.getLeaveBalance(),
-                        leaveLog.getStatus()
+                    leaveLog.getTimestamp(),
+                    leaveLog.getId(),
+                    leaveLog.getEmployeeLastName(),
+                    leaveLog.getEmployeeFirstName(),
+                    leaveLog.getLeaveType(),
+                    leaveLog.getDateStart(),
+                    leaveLog.getDateEnd(),
+                    leaveLog.getDaysTotal(),
+                    leaveLog.getLeaveBalance(),
+                    leaveLog.getStatus()
                 });
             }
+            
+            // Set the model for the table
+            table.setModel(model);
         } catch (Exception e) {
+            // Handle exceptions
             e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void refreshLeaveHistoryTable() {
+        DefaultTableModel model = (DefaultTableModel) leavehistoryTable.getModel();
+        model.setRowCount(0); // Clear existing rows
+        
+        // Repopulate the leave history table
+        populateLeaveHistoryTable(leavehistoryTable);
+    }
+
 
 
     

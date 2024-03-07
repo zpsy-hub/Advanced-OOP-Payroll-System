@@ -37,26 +37,37 @@ public class LeaveRequestService {
         this.leaveBalanceDAO = new LeaveBalanceDAO(); 
     }
 
-    public boolean submitLeaveRequest(User loggedInEmployee, String leaveType, int totalDays, String startDate, String endDate) {
+    public boolean submitLeaveRequest(User loggedInEmployee, String leaveType, String startDate, String endDate) {
         try {
             // Get employee ID and name
             int id = loggedInEmployee.getId();
             String employeeName = loggedInEmployee.getLastName() + ", " + loggedInEmployee.getFirstName();
 
+            // Parse start date
+            String[] startParts = startDate.split("-");
+            String startMonth = startParts[0];
+            String startDay = startParts[1];
+            String startYear = startParts[2];
+
+            // Parse end date
+            String[] endParts = endDate.split("-");
+            String endMonth = endParts[0];
+            String endDay = endParts[1];
+            String endYear = endParts[2];
+
+            // Calculate total days
+            int totalDays = calculateTotalDays(startYear, startMonth, startDay, endYear, endMonth, endDay);
+
             // Check if requested days exceed leave balance
             if (checkLeaveBalance(id, leaveType, totalDays)) {
                 // Deduct leave balance and submit leave request
-                LeaveRequestLog leaveRequestLog = new LeaveRequestLog(null, totalDays, employeeName, employeeName, employeeName, null, null, totalDays, totalDays, employeeName);
-                leaveRequestLog.setTimestamp(new java.sql.Date(System.currentTimeMillis())); // Set current timestamp
-                leaveRequestLog.setId(loggedInEmployee.getId());
+                LeaveRequestLog leaveRequestLog = new LeaveRequestLog(null, totalDays, employeeName, employeeName, leaveType, null, null, totalDays, totalDays, "pending");
+                leaveRequestLog.setId(id);
                 leaveRequestLog.setEmployeeLastName(loggedInEmployee.getLastName());
                 leaveRequestLog.setEmployeeFirstName(loggedInEmployee.getFirstName());
-                leaveRequestLog.setLeaveType(leaveType);
                 leaveRequestLog.setDateStart(java.sql.Date.valueOf(parseDate(startDate))); 
                 leaveRequestLog.setDateEnd(java.sql.Date.valueOf(parseDate(endDate))); 
-                leaveRequestLog.setDaysTotal(totalDays);
-                leaveRequestLog.setLeaveBalance(getUpdatedLeaveBalance(id, leaveType, totalDays)); // Calculate leave balance
-                leaveRequestLog.setStatus("pending"); // Set status to pending
+                leaveRequestLog.setLeaveBalance(getUpdatedLeaveBalance(id, leaveType, totalDays)); 
 
                 LeaveRequestLogDAO.getInstance().addLeaveLog(leaveRequestLog);
 
@@ -73,6 +84,9 @@ public class LeaveRequestService {
             return false; // Return false if request fails due to IOException
         }
     }
+
+
+
     
  // Method to parse date in the format "Month-dd-yyyy" to "yyyy-MM-dd"
     private String parseDate(String date) {

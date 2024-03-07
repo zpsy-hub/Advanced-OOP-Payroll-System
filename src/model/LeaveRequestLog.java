@@ -109,4 +109,20 @@ public class LeaveRequestLog {
     public void setStatus(String status) {
         this.status = status;
     }
+    
+    @Override
+    public String toString() {
+        return "LeaveRequestLog{" +
+                "timestamp=" + timestamp +
+                ", id=" + id +
+                ", employeeLastName='" + employeeLastName + '\'' +
+                ", employeeFirstName='" + employeeFirstName + '\'' +
+                ", leaveType='" + leaveType + '\'' +
+                ", dateStart=" + dateStart +
+                ", dateEnd=" + dateEnd +
+                ", daysTotal=" + daysTotal +
+                ", leaveBalance=" + leaveBalance +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }
