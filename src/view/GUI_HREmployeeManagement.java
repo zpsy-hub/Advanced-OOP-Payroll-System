@@ -22,6 +22,8 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import model.Employee;
@@ -230,13 +232,50 @@ public class GUI_HREmployeeManagement extends JFrame {
         updatedataButton.setEnabled(false); // Initially disabled
         mainPanel.add(updatedataButton);
 
-        // Delete
+     // Delete
         JButton deletedataButton = new JButton("Delete Data");
         deletedataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
         deletedataButton.setBackground(Color.WHITE);
         deletedataButton.setBounds(903, 654, 154, 51);
         deletedataButton.setEnabled(false); // Initially disabled
         mainPanel.add(deletedataButton);
+
+        // Add ListSelectionListener to the table to enable/disable delete button based on row selection
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    if (table.getSelectedRow() != -1) {
+                        deletedataButton.setEnabled(true);
+                    } else {
+                        deletedataButton.setEnabled(false);
+                    }
+                }
+            }
+        });
+
+        // Add action listener for the "Delete Data" button
+        deletedataButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    int option = JOptionPane.showConfirmDialog(GUI_HREmployeeManagement.this, "Are you sure you want to delete this employee? Deletion is permanent.", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.YES_OPTION) {
+                        DefaultTableModel model = (DefaultTableModel) table.getModel();
+                        int idToDelete = (int) model.getValueAt(selectedRow, 0);
+                        boolean success = EmployeeDAO.deleteEmployee(idToDelete);
+                        if (success) {
+                            model.removeRow(selectedRow);
+                            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Employee deleted successfully.");
+                        } else {
+                            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Error deleting employee.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Please select a row to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
 
         // Save
         btnSaveChanges = new JButton("Save Changes");
@@ -245,6 +284,7 @@ public class GUI_HREmployeeManagement extends JFrame {
         btnSaveChanges.setBounds(718, 654, 154, 51);
         btnSaveChanges.setEnabled(false); // Initially disabled
         mainPanel.add(btnSaveChanges);
+        
         // Add action listener for the "Save Changes" button
         btnSaveChanges.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
