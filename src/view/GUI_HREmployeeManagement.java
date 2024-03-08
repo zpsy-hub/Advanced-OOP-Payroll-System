@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -207,7 +208,7 @@ public class GUI_HREmployeeManagement extends JFrame {
         addemployeeButton.setBackground(Color.WHITE);
         addemployeeButton.setBounds(340, 654, 154, 51);
         mainPanel.add(addemployeeButton);
-        // Action listener for the "Add Employee" button
+        // Add action listener for the "Add Employee" button
         addemployeeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -219,6 +220,7 @@ public class GUI_HREmployeeManagement extends JFrame {
                 int nextEmployeeId = maxEmployeeId + 1;
                 model.addRow(new Object[]{nextEmployeeId, "", "", "", "", "", "", "", "", "", "", "", "", 0.0f, 0.0f, 0.0f, 0.0f, 0.0, 0.0f});
                 btnSaveChanges.setEnabled(true);
+                isAddingEmployee = true; // Set flag to indicate adding new employee
             }
         });
 
@@ -232,7 +234,24 @@ public class GUI_HREmployeeManagement extends JFrame {
         updatedataButton.setEnabled(false); // Initially disabled
         mainPanel.add(updatedataButton);
 
-     // Delete
+        // Add action listener for the "Update Data" button
+        updatedataButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    DefaultTableModel model = (DefaultTableModel) table.getModel();
+                    // Enable the "Save Changes" button
+                    btnSaveChanges.setEnabled(true);
+                    // Enable editing in the selected row
+                    table.editCellAt(selectedRow, 1);
+                    updatedataButton.setEnabled(false); // Disable the "Update Data" button after it's clicked
+                } else {
+                    JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Please select a row to update.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // Delete
         JButton deletedataButton = new JButton("Delete Data");
         deletedataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
         deletedataButton.setBackground(Color.WHITE);
@@ -240,14 +259,18 @@ public class GUI_HREmployeeManagement extends JFrame {
         deletedataButton.setEnabled(false); // Initially disabled
         mainPanel.add(deletedataButton);
 
-        // Add ListSelectionListener to the table to enable/disable delete button based on row selection
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+     // Add ListSelectionListener to the table to enable/disable delete button based on row selection
+        ListSelectionModel selectionModel = table.getSelectionModel();
+        selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Allow only single row selection
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
                 if (!event.getValueIsAdjusting()) {
                     if (table.getSelectedRow() != -1) {
-                        deletedataButton.setEnabled(true);
+                        updatedataButton.setEnabled(true); // Enable the "Update Data" button
+                        deletedataButton.setEnabled(true); // Enable the "Delete Data" button
                     } else {
-                        deletedataButton.setEnabled(false);
+                        updatedataButton.setEnabled(false); // Disable the "Update Data" button
+                        deletedataButton.setEnabled(false); // Disable the "Delete Data" button
                     }
                 }
             }
@@ -285,53 +308,29 @@ public class GUI_HREmployeeManagement extends JFrame {
         btnSaveChanges.setEnabled(false); // Initially disabled
         mainPanel.add(btnSaveChanges);
         
-        // Add action listener for the "Save Changes" button
+     // Add action listener for the "Save Changes" button
         btnSaveChanges.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 DefaultTableModel model = (DefaultTableModel) table.getModel();
                 if (validateInput(model)) {
-                    int lastIndex = model.getRowCount() - 1;
-                    if (lastIndex >= 0) {
-                        // New entry, create an Employee object and add it to the database
-                        Integer id = (Integer) model.getValueAt(lastIndex, 0);
-                        String lastName = (String) model.getValueAt(lastIndex, 1);
-                        String firstName = (String) model.getValueAt(lastIndex, 2);
-                        String birthday = (String) model.getValueAt(lastIndex, 3);
-                        String address = (String) model.getValueAt(lastIndex, 4);
-                        String phoneNumber = (String) model.getValueAt(lastIndex, 5);
-                        String sssNumber = (String) model.getValueAt(lastIndex, 6);
-                        String philhealthNumber = (String) model.getValueAt(lastIndex, 7);
-                        String tinNumber = (String) model.getValueAt(lastIndex, 8);
-                        String pagibigNumber = (String) model.getValueAt(lastIndex, 9);
-                        String status = (String) model.getValueAt(lastIndex, 10);
-                        String position = (String) model.getValueAt(lastIndex, 11);
-                        String immediateSupervisor = (String) model.getValueAt(lastIndex, 12);
-                        float basicSalary = Float.parseFloat(model.getValueAt(lastIndex, 13).toString());
-                        float riceSubsidy = Float.parseFloat(model.getValueAt(lastIndex, 14).toString());
-                        float phoneAllowance = Float.parseFloat(model.getValueAt(lastIndex, 15).toString());
-                        float clothingAllowance = Float.parseFloat(model.getValueAt(lastIndex, 16).toString());
-                        float grossSemimonthlyRate = Float.parseFloat(model.getValueAt(lastIndex, 17).toString());
-                        double hourlyRate = Double.parseDouble(model.getValueAt(lastIndex, 18).toString());
-
-
-                        // Create an Employee object with the data
-                        Employee employee = new Employee(id, lastName, firstName, birthday, address, phoneNumber,
-                                sssNumber, philhealthNumber, tinNumber, pagibigNumber, status, position, immediateSupervisor,
-                                basicSalary, riceSubsidy, phoneAllowance, clothingAllowance, grossSemimonthlyRate, hourlyRate);
-
-                        boolean success = EmployeeDAO.createEmployee(employee);
-                        if (success) {
-                            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Employee data saved successfully.");
+                    int selectedRow = table.getSelectedRow();
+                    if (selectedRow != -1) {
+                        if (isAddingEmployee) {
+                            addNewEmployee(model, selectedRow); // Pass the selected row to addNewEmployee method
                         } else {
-                            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Error saving employee data.", "Error", JOptionPane.ERROR_MESSAGE);
+                            updateEmployee(model, selectedRow); // Pass the selected row to updateEmployee method
                         }
-                        btnSaveChanges.setEnabled(false);
+                    } else {
+                        JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Please select a row to update.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
                     JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Please enter valid data in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+
+        
+
 
         // Set employee name dynamically
         if (loggedInEmployee != null) {
@@ -385,7 +384,7 @@ public class GUI_HREmployeeManagement extends JFrame {
         table.setModel(model);
     }
     
- // Method to validate input for each column
+    // Method to validate input for each column
     private String validateColumn(int columnIndex, Object value) {
         switch (columnIndex) {
             case 0: // Employee #
@@ -442,6 +441,100 @@ public class GUI_HREmployeeManagement extends JFrame {
         }
         return true; // Return true if all fields pass validation
     }
+    
+    private void addNewEmployee(DefaultTableModel model, int selectedRow) {
+        if (validateInput(model)) {
+            int lastIndex = model.getRowCount() - 1;
+            if (lastIndex >= 0) {
+                // Extract data from the last row
+                Integer id = (Integer) model.getValueAt(lastIndex, 0);
+                String lastName = (String) model.getValueAt(lastIndex, 1);
+                String firstName = (String) model.getValueAt(lastIndex, 2);
+                String birthday = (String) model.getValueAt(lastIndex, 3);
+                String address = (String) model.getValueAt(lastIndex, 4);
+                String phoneNumber = (String) model.getValueAt(lastIndex, 5);
+                String sssNumber = (String) model.getValueAt(lastIndex, 6);
+                String philhealthNumber = (String) model.getValueAt(lastIndex, 7);
+                String tinNumber = (String) model.getValueAt(lastIndex, 8);
+                String pagibigNumber = (String) model.getValueAt(lastIndex, 9);
+                String status = (String) model.getValueAt(lastIndex, 10);
+                String position = (String) model.getValueAt(lastIndex, 11);
+                String immediateSupervisor = (String) model.getValueAt(lastIndex, 12);
+                float basicSalary = Float.parseFloat(model.getValueAt(lastIndex, 13).toString());
+                float riceSubsidy = Float.parseFloat(model.getValueAt(lastIndex, 14).toString());
+                float phoneAllowance = Float.parseFloat(model.getValueAt(lastIndex, 15).toString());
+                float clothingAllowance = Float.parseFloat(model.getValueAt(lastIndex, 16).toString());
+                float grossSemimonthlyRate = Float.parseFloat(model.getValueAt(lastIndex, 17).toString());
+                double hourlyRate = Double.parseDouble(model.getValueAt(lastIndex, 18).toString());
+
+                // Create an Employee object with the data
+                Employee employee = new Employee(id, lastName, firstName, birthday, address, phoneNumber,
+                        sssNumber, philhealthNumber, tinNumber, pagibigNumber, status, position, immediateSupervisor,
+                        basicSalary, riceSubsidy, phoneAllowance, clothingAllowance, grossSemimonthlyRate, hourlyRate);
+
+                // Add the employee to the database
+                boolean success = EmployeeDAO.createEmployee(employee);
+                if (success) {
+                    // Display success message
+                    JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Employee data saved successfully.");
+                    btnSaveChanges.setEnabled(false); // Disable the "Save Changes" button after saving
+                } else {
+                    // Display error message if saving fails
+                    JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Error saving employee data.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } else {
+            // Display error message if input validation fails
+            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Please enter valid data in all fields.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void updateEmployee(DefaultTableModel model, int selectedRow) {
+        int selectedRow1 = table.getSelectedRow();
+        if (selectedRow1 != -1) {
+            // Extract data from the selected row
+            Integer id = (Integer) model.getValueAt(selectedRow1, 0);
+            String lastName = (String) model.getValueAt(selectedRow1, 1);
+            String firstName = (String) model.getValueAt(selectedRow1, 2);
+            String birthday = (String) model.getValueAt(selectedRow1, 3);
+            String address = (String) model.getValueAt(selectedRow1, 4);
+            String phoneNumber = (String) model.getValueAt(selectedRow1, 5);
+            String sssNumber = (String) model.getValueAt(selectedRow1, 6);
+            String philhealthNumber = (String) model.getValueAt(selectedRow1, 7);
+            String tinNumber = (String) model.getValueAt(selectedRow1, 8);
+            String pagibigNumber = (String) model.getValueAt(selectedRow1, 9);
+            String status = (String) model.getValueAt(selectedRow1, 10);
+            String position = (String) model.getValueAt(selectedRow1, 11);
+            String immediateSupervisor = (String) model.getValueAt(selectedRow1, 12);
+            float basicSalary = Float.parseFloat(model.getValueAt(selectedRow1, 13).toString());
+            float riceSubsidy = Float.parseFloat(model.getValueAt(selectedRow1, 14).toString());
+            float phoneAllowance = Float.parseFloat(model.getValueAt(selectedRow1, 15).toString());
+            float clothingAllowance = Float.parseFloat(model.getValueAt(selectedRow1, 16).toString());
+            float grossSemimonthlyRate = Float.parseFloat(model.getValueAt(selectedRow1, 17).toString());
+            double hourlyRate = Double.parseDouble(model.getValueAt(selectedRow1, 18).toString());
+
+            // Create an Employee object with the updated data
+            Employee employee = new Employee(id, lastName, firstName, birthday, address, phoneNumber,
+                    sssNumber, philhealthNumber, tinNumber, pagibigNumber, status, position, immediateSupervisor,
+                    basicSalary, riceSubsidy, phoneAllowance, clothingAllowance, grossSemimonthlyRate, hourlyRate);
+
+            // Update the employee's information in the database
+            boolean success = EmployeeDAO.updateEmployee(employee);
+            if (success) {
+                // Display success message
+                JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Employee data updated successfully.");
+                btnSaveChanges.setEnabled(false); // Disable the "Save Changes" button after updating
+            } else {
+                // Display error message if update fails
+                JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Error updating employee data.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            // Display error message if no row is selected
+            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Please select a row to update.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
 
 
 
