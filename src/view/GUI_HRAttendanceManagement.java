@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,9 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
+import model.User;
 import service.TimesheetDAO;
+import util.SessionManager;
 
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
@@ -30,6 +33,7 @@ public class GUI_HRAttendanceManagement {
 	JFrame hrattendancemngmnt;
 	private JTable attendancemanagementTable;
 	private JTextField textFieldSearch;
+    private static User loggedInEmployee;
 
 	/**
 	 * Launch the application.
@@ -38,7 +42,8 @@ public class GUI_HRAttendanceManagement {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI_HRAttendanceManagement window = new GUI_HRAttendanceManagement();
+					User loggedInEmployee = SessionManager.getLoggedInUser();
+					GUI_HRAttendanceManagement window = new GUI_HRAttendanceManagement(loggedInEmployee);
 					window.hrattendancemngmnt.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -49,8 +54,10 @@ public class GUI_HRAttendanceManagement {
 
 	/**
 	 * Create the application.
+	 * @param loggedInEmployee2 
 	 */
-	public GUI_HRAttendanceManagement() {
+	public GUI_HRAttendanceManagement(User loggedInEmployee) {
+		GUI_HRAttendanceManagement.loggedInEmployee = loggedInEmployee;
 		initialize();
 	}
 
@@ -71,12 +78,12 @@ public class GUI_HRAttendanceManagement {
 		mainPanel.setBounds(0, 0, 1301, 733);
 		hrattendancemngmnt.getContentPane().add(mainPanel);
 		mainPanel.setLayout(null);
+		
 		JComboBox<String> comboBoxbyMonthYear = new JComboBox<>();
 		comboBoxbyMonthYear.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
 		comboBoxbyMonthYear.setBounds(464, 55, 162, 21);
 		mainPanel.add(comboBoxbyMonthYear);
-		comboBoxbyMonthYear.addItem("All Records");
-		
+		comboBoxbyMonthYear.addItem("All Records");	
 		        // ActionListener for the JComboBox
 		        comboBoxbyMonthYear.addActionListener(new ActionListener() {
 		            public void actionPerformed(ActionEvent e) {
@@ -108,6 +115,13 @@ public class GUI_HRAttendanceManagement {
 		dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		dashboardButton.setBounds(37, 95, 227, 31);
 		sidebarPanel.add(dashboardButton);
+		dashboardButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUIDashboard window = new GUIDashboard(loggedInEmployee);
+                window.dashboardScreen.setVisible(true);
+		        hrattendancemngmnt.dispose();
+		        }
+		});
 		
 		JButton timeInOutButton = new JButton("Time In/Out");
 		timeInOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -115,6 +129,13 @@ public class GUI_HRAttendanceManagement {
 		timeInOutButton.setBackground(Color.WHITE);
 		timeInOutButton.setBounds(37, 154, 227, 31);
 		sidebarPanel.add(timeInOutButton);
+		timeInOutButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
+		        timeInOut.openWindow();
+		        hrattendancemngmnt.dispose();
+		        }
+		});
 		
 		JButton payslipButton = new JButton("Payslip");
 		payslipButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -122,6 +143,13 @@ public class GUI_HRAttendanceManagement {
 		payslipButton.setBackground(Color.WHITE);
 		payslipButton.setBounds(37, 216, 227, 31);
 		sidebarPanel.add(payslipButton);
+		payslipButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
+		    	payslip.openWindow();
+		    	hrattendancemngmnt.dispose();		    		        	    
+		    }
+		});
 		
 		JButton leaverequestButton = new JButton("Leave Request");
 		leaverequestButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -129,6 +157,13 @@ public class GUI_HRAttendanceManagement {
 		leaverequestButton.setBackground(Color.WHITE);
 		leaverequestButton.setBounds(37, 277, 227, 31);
 		sidebarPanel.add(leaverequestButton);
+		leaverequestButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUIPayslip window = new GUIPayslip(loggedInEmployee);
+				window.payslipScreen.setVisible(true);
+				hrattendancemngmnt.dispose();
+		    }
+		});
 		
 		JButton HR_EmpMngmntButton = new JButton("Employee management");
 		HR_EmpMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -136,6 +171,25 @@ public class GUI_HRAttendanceManagement {
 		HR_EmpMngmntButton.setBackground(Color.WHITE);
 		HR_EmpMngmntButton.setBounds(37, 383, 227, 31);
 		sidebarPanel.add(HR_EmpMngmntButton);
+		HR_EmpMngmntButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        try {
+					openEmployeeManagement();
+					hrattendancemngmnt.dispose();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+		    }
+
+		    // Define the openEmployeeManagement method
+		    private void openEmployeeManagement() throws IOException {
+		        // Create an instance of GUI_HREmployeeManagement
+		        GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(loggedInEmployee);
+
+		        // Make the employee management window visible
+		        employeeManagement.setVisible(true);
+		    }
+		});
 		
 		JButton HR_AttendanceMngmntButton = new JButton("Attendance management");
 		HR_AttendanceMngmntButton.setEnabled(false);
@@ -150,6 +204,13 @@ public class GUI_HRAttendanceManagement {
 		HR_LeaveMngmntButton.setBackground(Color.WHITE);
 		HR_LeaveMngmntButton.setBounds(37, 491, 227, 31);
 		sidebarPanel.add(HR_LeaveMngmntButton);
+		HR_LeaveMngmntButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_HRLeaveManagement window = new GUI_HRLeaveManagement(loggedInEmployee);
+		    	window.hrleavemngmnt.setVisible(true);
+		    	hrattendancemngmnt.dispose();
+		    }
+		});
 		
 		JPanel separator = new JPanel();
 		separator.setBackground(new Color(30, 55, 101));
@@ -267,7 +328,7 @@ public class GUI_HRAttendanceManagement {
 	        model.addRow(record);
 	    }
 
-	    attendancemanagementTable.setModel(model); // Corrected line
+	    attendancemanagementTable.setModel(model); 
 	}
 
 	private void filterRecordsByMonthYear(String selectedMonthYear) {
@@ -289,13 +350,13 @@ public class GUI_HRAttendanceManagement {
 	        model.addRow(record);
 	    }
 
-	    attendancemanagementTable.setModel(model); // Corrected line
+	    attendancemanagementTable.setModel(model); 
 	}
 	
 	private void searchEmployees(String query) {
 	    // Retrieve the list of all employees from the DAO
 	    TimesheetDAO dao = TimesheetDAO.getInstance();
-	    List<String[]> allEmployees = dao.getAllTimesheetRecords(); // Assuming this returns all employees
+	    List<String[]> allEmployees = dao.getAllTimesheetRecords(); 
 
 	    // Create a filtered list to store matching employees
 	    List<String[]> filteredEmployees = new ArrayList<>();
@@ -329,11 +390,8 @@ public class GUI_HRAttendanceManagement {
 	        model.addRow(employee);
 	    }
 
-	    attendancemanagementTable.setModel(model); // Set the model to the table
+	    attendancemanagementTable.setModel(model); 
 	}
-
-
-
 
     public void openWindow() {
         hrattendancemngmnt.setVisible(true);

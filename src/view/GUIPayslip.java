@@ -20,10 +20,11 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 import model.User;
+import util.SessionManager;
 
 public class GUIPayslip {
 
-	private JFrame payslipScreen;
+	JFrame payslipScreen;
 	private JTable earningsTable;
 	private JTable deductionsTable;
 	private JTable netpayTable;
@@ -36,6 +37,7 @@ public class GUIPayslip {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					User loggedInEmployee = SessionManager.getLoggedInUser();
 					GUIPayslip window = new GUIPayslip(loggedInEmployee);
 					window.payslipScreen.setVisible(true);
 					window.payslipScreen.setLocationRelativeTo(null);
@@ -50,7 +52,7 @@ public class GUIPayslip {
 	 * Create the application.
 	 */
 	public GUIPayslip(User loggedInEmployee) {
-        this.loggedInEmployee = loggedInEmployee;
+        GUIPayslip.loggedInEmployee = loggedInEmployee;
         initialize();
     }
 

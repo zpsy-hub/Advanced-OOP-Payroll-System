@@ -73,6 +73,7 @@ public class GUITimeInOut {
      * Create the application.
      */
     public GUITimeInOut() {
+    	this.loggedInEmployee = loggedInEmployee;
         initialize();
     }
 

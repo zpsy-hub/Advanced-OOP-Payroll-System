@@ -27,7 +27,7 @@ import util.UserRepository;
 
 public class GUIDashboard {
 
-	private JFrame dashboardScreen;
+	JFrame dashboardScreen;
     private static User loggedInEmployee;
     private JLabel employeeNameLabel;
     private JLabel empIDLabel;
@@ -52,15 +52,10 @@ public class GUIDashboard {
 
                     // Before initializing GUIDashboard, make sure loggedInEmployee is not null
                     if (loggedInEmployee != null) {
-                        System.out.println("Logged-in Employee: " + loggedInEmployee);
-
                         // Initialize GUIDashboard with the logged-in employee
                         GUIDashboard window = new GUIDashboard(loggedInEmployee);
                         window.dashboardScreen.setVisible(true);
                         window.dashboardScreen.setLocationRelativeTo(null);
-
-                        // After initializing GUIDashboard
-                        System.out.println("GUIDashboard Initialized");
 
                         // Call displayEmployeeInformation() to display the logged-in employee's information
                         window.displayEmployeeInformation();
@@ -76,12 +71,13 @@ public class GUIDashboard {
 
 
 
+
 	/**
 	 * Create the application.
 	 */
     // Constructor
     public GUIDashboard(User loggedInEmployee) {
-        this.loggedInEmployee = loggedInEmployee;
+        GUIDashboard.loggedInEmployee = loggedInEmployee;
         initialize();
     }
 
@@ -142,35 +138,20 @@ public class GUIDashboard {
 		timeInOutButton.setBackground(Color.WHITE);
 		timeInOutButton.setBounds(37, 154, 227, 31);
 		sidebarPanel.add(timeInOutButton);
-		
-		// Define action listener for the timeInOutButton
 		timeInOutButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        // Open GUITimeInOut with the logged-in employee
 		        GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
 		        timeInOut.openWindow();
-
-		        // Close the current dashboard window after
-		        if (dashboardScreen != null) {
-		            dashboardScreen.dispose();
+		        dashboardScreen.dispose();
 		        }
-		    }
 		});
 			
 		JButton payslipButton = new JButton("Payslip");
 		payslipButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        openPayslip(loggedInEmployee);
-		        dashboardScreen.dispose(); // Optionally dispose the current window
-		    }
-
-		    // Define the openPayslip method here within the ActionListener class
-		    private void openPayslip(User loggedInEmployee) {
-		        // Create an instance of GUIPayslip with the loggedInEmployee
-		        GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
-
-		        // Make the payslip window visible
-		        payslip.openWindow();
+		    	GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
+		    	payslip.openWindow();
+		        dashboardScreen.dispose(); 		    		        	    
 		    }
 		});
 
@@ -186,26 +167,11 @@ public class GUIDashboard {
 		leaverequestButton.setBackground(Color.WHITE);
 		leaverequestButton.setBounds(37, 277, 227, 31);
 		sidebarPanel.add(leaverequestButton);
-
 		leaverequestButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        openLeaveRequest(loggedInEmployee);
-		        dashboardScreen.dispose(); // Optionally dispose the current window
-		    }
-
-		    // Define the openLeaveRequest method here within the ActionListener class
-		    private void openLeaveRequest(User loggedInEmployee) {
-		        // Create an instance of GUILeaveRequest with the loggedInEmployee
-		        GUILeaveRequest leaveRequest = null;
-				try {
-					leaveRequest = new GUILeaveRequest(loggedInEmployee);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-		        // Make the leave request window visible
-		        leaveRequest.openWindow();
+		    	GUIPayslip window = new GUIPayslip(loggedInEmployee);
+				window.payslipScreen.setVisible(true);
+				dashboardScreen.dispose(); 
 		    }
 		});
 						
@@ -221,15 +187,12 @@ public class GUIDashboard {
 		HR_EmpMngmntButton.setBackground(Color.WHITE);
 		HR_EmpMngmntButton.setBounds(37, 383, 227, 31);
 		sidebarPanel.add(HR_EmpMngmntButton);
-
-		// Add action listener to HR_EmpMngmntButton
 		HR_EmpMngmntButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        try {
 					openEmployeeManagement();
 					dashboardScreen.dispose();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 		    }
@@ -237,7 +200,7 @@ public class GUIDashboard {
 		    // Define the openEmployeeManagement method
 		    private void openEmployeeManagement() throws IOException {
 		        // Create an instance of GUI_HREmployeeManagement
-		        GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(null);
+		        GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(loggedInEmployee);
 
 		        // Make the employee management window visible
 		        employeeManagement.setVisible(true);
@@ -253,8 +216,9 @@ public class GUIDashboard {
 		sidebarPanel.add(HR_AttendanceMngmntButton);
 		HR_AttendanceMngmntButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	GUI_HRAttendanceManagement window = new GUI_HRAttendanceManagement();
+		    	GUI_HRAttendanceManagement window = new GUI_HRAttendanceManagement(loggedInEmployee);
 				window.hrattendancemngmnt.setVisible(true);
+				dashboardScreen.dispose(); 
 		    }
 		});
 						
@@ -266,8 +230,9 @@ public class GUIDashboard {
 		sidebarPanel.add(HR_LeaveMngmntButton);
 		HR_LeaveMngmntButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	GUI_HRLeaveManagement window = new GUI_HRLeaveManagement();
+		    	GUI_HRLeaveManagement window = new GUI_HRLeaveManagement(loggedInEmployee);
 		    	window.hrleavemngmnt.setVisible(true);
+		    	dashboardScreen.dispose(); 
 		    }
 		});
 		
@@ -276,12 +241,27 @@ public class GUIDashboard {
 		Payroll_SalaryCalculationButton.setBackground(Color.WHITE);
 		Payroll_SalaryCalculationButton.setBounds(37, 383, 227, 31);
 		sidebarPanel.add(Payroll_SalaryCalculationButton);
+		Payroll_SalaryCalculationButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_PayrollSalaryCalculation window = new GUI_PayrollSalaryCalculation(loggedInEmployee);
+		    	window.payrollsalarycalc.setVisible(true);
+		    	dashboardScreen.dispose(); 
+		    }
+		});
 		
 		JButton Payroll_MonthlyReportsButton = new JButton("Monthly Summary Reports");
 		Payroll_MonthlyReportsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
 		Payroll_MonthlyReportsButton.setBackground(Color.WHITE);
 		Payroll_MonthlyReportsButton.setBounds(37, 438, 227, 31);
 		sidebarPanel.add(Payroll_MonthlyReportsButton);
+		Payroll_MonthlyReportsButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_PayrollMonthlySummary window = new GUI_PayrollMonthlySummary(loggedInEmployee);
+				window.payrollmontlysummary.setVisible(true);
+				dashboardScreen.dispose(); 
+		    }
+		});
+		
 		
 		// Check the user role
 		UserRole userRole = loggedInEmployee != null ? loggedInEmployee.getRole() : null;

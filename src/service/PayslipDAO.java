@@ -1,5 +1,3 @@
-package service;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,12 +8,13 @@ import java.util.List;
 import model.Payslip;
 
 public class PayslipDAO {
+    private static PayslipDAO instance = null;
     private Connection connection;
-    private static PayslipDAO instance;
+    private EmployeeDAO employeeDAO;
 
     private PayslipDAO() {
-        // Initialize database connection
-        connection = DatabaseConnection.getConnection();
+    	connection = SQL_client.getInstance().getConnection();
+        employeeDAO = EmployeeDAO.getInstance();
     }
 
     public static PayslipDAO getInstance() {
@@ -33,10 +32,11 @@ public class PayslipDAO {
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setDate(1, java.sql.Date.valueOf(payslip.getPeriodStartDate()));
             statement.setDate(2, java.sql.Date.valueOf(payslip.getPeriodEndDate()));
-            statement.setString(3, payslip.getEmployeeId());
+            statement.setInt(3, payslip.getEmployeeId());
             statement.setString(4, payslip.getEmployeeName());
             statement.setString(5, payslip.getEmployeePosition());
-            statement.setDouble(6, payslip.getHourlyRate());
+            double hourlyRate = employeeDAO.getHourlyRateById(payslip.getEmployeeId());
+            statement.setDouble(6, hourlyRate);
             statement.setDouble(7, payslip.getMonthlyRate());
             statement.setInt(8, payslip.getTotalHours());
             statement.setInt(9, payslip.getOvertimeHours());
@@ -104,4 +104,3 @@ public class PayslipDAO {
         return payslips;
     }
 }
-
