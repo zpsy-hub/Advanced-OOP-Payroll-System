@@ -1,6 +1,8 @@
 package model;
 import java.time.LocalDate;
 
+import service.EmployeeDAO;
+
 public class Payslip {
     private LocalDate periodStartDate;
     private LocalDate periodEndDate;
@@ -10,10 +12,10 @@ public class Payslip {
     private double monthlyRate;
     private int totalHours;
     private int overtimeHours;
+    private double grossIncome;
     private double riceSubsidy;
     private double phoneAllowance;
     private double clothingAllowance;
-    private double grossIncome;
     private double totalBenefits;
     private double sssContribution;
     private double philhealthContribution;
@@ -22,13 +24,9 @@ public class Payslip {
     private double totalDeductions;
     private double netPay;
 
-    public Payslip() {
-        // Default constructor
-    }
-
- // Constructor with parameters
+    // Constructor with parameters
     public Payslip(LocalDate periodStartDate, LocalDate periodEndDate, int employeeId, String employeeName,
-                   String employeePosition, double monthlyRate, int totalHours, int overtimeHours,
+                   String employeePosition, double hourlyRate, double monthlyRate, int totalHours, int overtimeHours,
                    double grossIncome, double riceSubsidy, double phoneAllowance, double clothingAllowance,
                    double totalBenefits, double sssContribution, double philhealthContribution,
                    double pagibigContribution, double withholdingTax, double totalDeductions, double netPay) {
@@ -52,7 +50,6 @@ public class Payslip {
         this.totalDeductions = totalDeductions;
         this.netPay = netPay;
     }
-
 
     // Getters and setters
     public LocalDate getPeriodStartDate() {
@@ -206,4 +203,9 @@ public class Payslip {
     public void setNetPay(double netPay) {
         this.netPay = netPay;
     }
+
+    public double getHourlyRate() {
+        return EmployeeDAO.getInstance().getHourlyRateById(this.getEmployeeId());
+    }
+
 }

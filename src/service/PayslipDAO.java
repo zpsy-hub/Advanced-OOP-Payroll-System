@@ -1,7 +1,10 @@
+package service;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +66,7 @@ public class PayslipDAO {
         return false;
     }
 
-    // Method to retrieve payslip records from the database
+    // Method to retrieve an employee's payslip records from the database
     public List<Payslip> getPayslips() {
         List<Payslip> payslips = new ArrayList<>();
         String sql = "SELECT * FROM payroll_system.payslip";
@@ -75,9 +78,9 @@ public class PayslipDAO {
             while (resultSet.next()) {
                 // Retrieve payslip information from the result set and create Payslip objects
                 Payslip payslip = new Payslip(
-                        resultSet.getDate("period_startdate").toLocalDate(),
+                		resultSet.getDate("period_startdate").toLocalDate(),
                         resultSet.getDate("period_enddate").toLocalDate(),
-                        resultSet.getString("emp_id"),
+                        resultSet.getInt("emp_id"),
                         resultSet.getString("emp_name"),
                         resultSet.getString("emp_position"),
                         resultSet.getDouble("hourlyRate"),
@@ -103,4 +106,50 @@ public class PayslipDAO {
         }
         return payslips;
     }
+
+    // Method to retrieve all employees payslip records for a specific month and year
+    public List<Payslip> getPayslipsByMonthYear(String monthYear) {
+        List<Payslip> payslips = new ArrayList<>();
+        String sql = "SELECT * FROM payroll_system.payslip WHERE period_startdate >= ? AND period_enddate <= ?";
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            LocalDate startDate = LocalDate.parse(monthYear + "-01");
+            LocalDate endDate = startDate.plusMonths(1).minusDays(1);
+            statement.setDate(1, java.sql.Date.valueOf(startDate));
+            statement.setDate(2, java.sql.Date.valueOf(endDate));
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Payslip payslip = new Payslip(
+                		resultSet.getDate("period_startdate").toLocalDate(),
+                        resultSet.getDate("period_enddate").toLocalDate(),
+                        resultSet.getInt("emp_id"),
+                        resultSet.getString("emp_name"),
+                        resultSet.getString("emp_position"),
+                        resultSet.getDouble("hourlyRate"),
+                        resultSet.getDouble("monthlyRate"),
+                        resultSet.getInt("totalHours"),
+                        resultSet.getInt("overtimeHours"),
+                        resultSet.getDouble("gross_income"),
+                        resultSet.getDouble("rice_subsidy"),
+                        resultSet.getDouble("phone_allowance"),
+                        resultSet.getDouble("clothing_allowance"),
+                        resultSet.getDouble("total_benefits"),
+                        resultSet.getDouble("sss_contrib"),
+                        resultSet.getDouble("philhealth_contrib"),
+                        resultSet.getDouble("pagibig_contrib"),
+                        resultSet.getDouble("withholding_tax"),
+                        resultSet.getDouble("total_deductions"),
+                        resultSet.getDouble("net_pay")
+                );
+                payslips.add(payslip);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving payslips by month and year: " + e.getMessage());
+        }
+        return payslips;
+    }
+
 }

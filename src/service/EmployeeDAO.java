@@ -189,7 +189,7 @@ public class EmployeeDAO {
     }
           
     // Method to get the hourly rate by employee ID
-    public double getHourlyRateById(int empId) {
+    public static double getHourlyRateById(int empId) {
         String sql = "SELECT hourly_rate FROM payroll_system.employees WHERE emp_id=?";
         try (Connection conn = SQL_client.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -66,19 +66,20 @@ public class DeductionCalculator {
 
     public static double calculateWithholdingTax(double taxableIncome) {
         double withholdingTax = 0.0;
-        double[] taxRates = {0.20, 0.25, 0.30, 0.32, 0.35};
-        double[] incomeBrackets = {20833, 33333, 66667, 166667, 666667};
-        double[] addOns = {0.0, 2500.0, 10833.0, 40833.33, 200833.33};
-
-        for (int i = 0; i < incomeBrackets.length; i++) {
-            if (taxableIncome > incomeBrackets[i]) {
-                withholdingTax += (incomeBrackets[i] - ((i == 0) ? 0 : incomeBrackets[i - 1])) * taxRates[i] + addOns[i];
-            } else {
-                withholdingTax += (taxableIncome - ((i == 0) ? 0 : incomeBrackets[i - 1])) * taxRates[i];
-                break;
-            }
+        if (taxableIncome <= 20832) {
+            withholdingTax = 0.0;
+        } else if (taxableIncome <= 33333) {
+            withholdingTax = (taxableIncome - 20833) * 0.20;
+        } else if (taxableIncome <= 66667) {
+            withholdingTax = 2500 + (taxableIncome - 33333) * 0.25;
+        } else if (taxableIncome <= 166667) {
+            withholdingTax = 10833 + (taxableIncome - 66667) * 0.30;
+        } else if (taxableIncome <= 666667) {
+            withholdingTax = 40833.33 + (taxableIncome - 166667) * 0.32;
+        } else {
+            withholdingTax = 200833.33 + (taxableIncome - 666667) * 0.35;
         }
-
+        
         return withholdingTax;
     }
 

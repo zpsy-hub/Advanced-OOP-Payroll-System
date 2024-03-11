@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -13,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -20,8 +22,13 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import model.Employee;
+import model.Payslip;
 import model.User;
+import service.EmployeeDAO;
+import service.PayslipService;
 import service.TimesheetDAO;
+import service.PayslipDAO;
 import util.SessionManager;
 
 import javax.swing.JScrollPane;
@@ -57,6 +64,7 @@ public class GUI_PayrollSalaryCalculation {
 	private JTable salarycalculationTable;
     private JComboBox<String> monthComboBox;
     private static User loggedInEmployee;
+    private JButton btnCalculateHoursWorked;
 
 	/**
 	 * Launch the application.
@@ -95,42 +103,37 @@ public class GUI_PayrollSalaryCalculation {
 		payrollsalarycalc.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		payrollsalarycalc.getContentPane().setLayout(null);
 		
+		JButton btnCalculateHoursWorked = new JButton("Calculate Monthly Hours Worked");
+		
 		// JComboBox for selecting month
         monthComboBox = new JComboBox<>();
         monthComboBox.setMaximumRowCount(13);
         monthComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        monthComboBox.setBounds(770, 42, 200, 30);
+        monthComboBox.setBounds(745, 42, 200, 30);
         payrollsalarycalc.getContentPane().add(monthComboBox);
         monthComboBox.addItem("All Records");
         
-                // Action listener for monthComboBox
-                monthComboBox.addActionListener(new ActionListener() {
-                	public void actionPerformed(ActionEvent e) {
-		                String selectedMonthYear = (String) monthComboBox.getSelectedItem();
-		                if (!selectedMonthYear.equals("All Records")) {
-		                    filterRecordsByMonthYear(selectedMonthYear);
-		                } else {
-		                    populateTable();
-		                }
-		            }
-		        });
-		
+        // Action listener for monthComboBox
+        monthComboBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String selectedMonthYear = (String) monthComboBox.getSelectedItem();
+                if (!selectedMonthYear.equals("All Records")) {
+                    filterRecordsByMonthYear(selectedMonthYear);
+                    // Enable the calculate button when a specific month is selected
+                    btnCalculateHoursWorked.setEnabled(true);
+                } else {
+                    populateTable();
+                    // Disable the calculate button when "All Records" is selected
+                    btnCalculateHoursWorked.setEnabled(false);
+                }
+            }
+        });
+
 		JPanel mainPanel = new JPanel();
 		mainPanel.setBackground(new Color(255, 255, 255));
 		mainPanel.setBounds(0, 0, 1312, 733);
 		payrollsalarycalc.getContentPane().add(mainPanel);
 		mainPanel.setLayout(null);
-		
-		JLabel lblEmployeePayslip = new JLabel("Employee Payslip");
-		lblEmployeePayslip.setHorizontalAlignment(SwingConstants.CENTER);
-		lblEmployeePayslip.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
-		lblEmployeePayslip.setBounds(998, 64, 293, 24);
-		mainPanel.add(lblEmployeePayslip);
-		
-		JLabel lblPayPeriod = new JLabel("Pay Period:");
-		lblPayPeriod.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		lblPayPeriod.setBounds(673, 39, 215, 33);
-		mainPanel.add(lblPayPeriod);
 		
 		JPanel sidePanel = new JPanel();
 		sidePanel.setBackground(new Color(255, 255, 255));
@@ -246,13 +249,13 @@ public class GUI_PayrollSalaryCalculation {
 		signoutButton.setBounds(1160, 10, 131, 31);
 		mainPanel.add(signoutButton);		
 		
-		JLabel lblPayPeriodMonth = new JLabel("Attendance");
+		JLabel lblPayPeriodMonth = new JLabel("Timesheet Records");
 		lblPayPeriodMonth.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		lblPayPeriodMonth.setBounds(324, 79, 215, 33);
+		lblPayPeriodMonth.setBounds(324, 73, 215, 33);
 		mainPanel.add(lblPayPeriodMonth);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(324, 110, 648, 230);
+		scrollPane.setBounds(324, 104, 623, 188);
 		mainPanel.add(scrollPane);
 		
 		employeeattendanceTable = new JTable();
@@ -265,64 +268,56 @@ public class GUI_PayrollSalaryCalculation {
         // Call populateTable initially to populate the attendance table with all records
         populateTable();
 			
-		JButton viewButton = new JButton("View");
+		JButton viewButton = new JButton("Generate Payslip");
+		viewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		viewButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		viewButton.setBackground(Color.WHITE);
-		viewButton.setBounds(324, 690, 154, 33);
+		viewButton.setBounds(324, 691, 226, 33);
 		mainPanel.add(viewButton);
 		
-		JButton editButton = new JButton("Edit");
-		editButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		editButton.setBackground(Color.WHITE);
-		editButton.setBounds(510, 690, 154, 33);
-		mainPanel.add(editButton);
-		
-		JButton deleteButton = new JButton("Delete");
+		JButton deleteButton = new JButton("Save");
 		deleteButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		deleteButton.setBackground(Color.WHITE);
-		deleteButton.setBounds(693, 690, 154, 33);
+		deleteButton.setBounds(582, 691, 154, 33);
 		mainPanel.add(deleteButton);
-		
-		JButton calculateButton = new JButton("Calculate");
-		calculateButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		calculateButton.setBackground(Color.WHITE);
-		calculateButton.setBounds(841, 363, 131, 33);
-		mainPanel.add(calculateButton);
 		
 		JLabel lblPayslip = new JLabel("Payslip No.");
 		lblPayslip.setForeground(new Color(30, 55, 101));
 		lblPayslip.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		lblPayslip.setBounds(982, 118, 67, 13);
+		lblPayslip.setBounds(982, 96, 67, 13);
 		mainPanel.add(lblPayslip);
 		
 		JLabel lblStartDate = new JLabel("Period Start Date");
 		lblStartDate.setForeground(new Color(30, 55, 101));
 		lblStartDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		lblStartDate.setBounds(1136, 116, 85, 13);
+		lblStartDate.setBounds(1136, 94, 85, 13);
 		mainPanel.add(lblStartDate);
 		
 		JLabel lblEmployeeId = new JLabel("Employee ID");
 		lblEmployeeId.setForeground(new Color(30, 55, 101));
 		lblEmployeeId.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		lblEmployeeId.setBounds(982, 147, 67, 13);
+		lblEmployeeId.setBounds(982, 125, 67, 13);
 		mainPanel.add(lblEmployeeId);
 		
 		JLabel lblEnddate = new JLabel("Period EndDate");
 		lblEnddate.setForeground(new Color(30, 55, 101));
 		lblEnddate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		lblEnddate.setBounds(1136, 145, 85, 13);
+		lblEnddate.setBounds(1136, 123, 85, 13);
 		mainPanel.add(lblEnddate);
 		
 		JLabel lblEmployeeName = new JLabel("Employee Name");
 		lblEmployeeName.setForeground(new Color(30, 55, 101));
 		lblEmployeeName.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		lblEmployeeName.setBounds(982, 173, 85, 13);
+		lblEmployeeName.setBounds(982, 153, 85, 13);
 		mainPanel.add(lblEmployeeName);
 		
 		textfieldPayslipNo = new JTextField();
 		textfieldPayslipNo.setEditable(false);
 		textfieldPayslipNo.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textfieldPayslipNo.setBounds(1048, 112, 76, 19);
+		textfieldPayslipNo.setBounds(1048, 90, 76, 19);
 		mainPanel.add(textfieldPayslipNo);
 		textfieldPayslipNo.setColumns(10);
 		
@@ -330,87 +325,81 @@ public class GUI_PayrollSalaryCalculation {
 		textfieldEmployeeID.setEditable(false);
 		textfieldEmployeeID.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		textfieldEmployeeID.setColumns(10);
-		textfieldEmployeeID.setBounds(1048, 141, 76, 19);
+		textfieldEmployeeID.setBounds(1048, 119, 76, 19);
 		mainPanel.add(textfieldEmployeeID);
 		
 		textfieldEmployeeName = new JTextField();
 		textfieldEmployeeName.setEditable(false);
 		textfieldEmployeeName.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		textfieldEmployeeName.setColumns(10);
-		textfieldEmployeeName.setBounds(1065, 170, 226, 19);
+		textfieldEmployeeName.setBounds(1065, 150, 226, 19);
 		mainPanel.add(textfieldEmployeeName);
 		
 		textfieldStartDate = new JTextField();
 		textfieldStartDate.setEditable(false);
 		textfieldStartDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		textfieldStartDate.setColumns(10);
-		textfieldStartDate.setBounds(1224, 111, 67, 19);
+		textfieldStartDate.setBounds(1224, 89, 67, 19);
 		mainPanel.add(textfieldStartDate);
 		
 		textfieldEndDate = new JTextField();
 		textfieldEndDate.setEditable(false);
 		textfieldEndDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		textfieldEndDate.setColumns(10);
-		textfieldEndDate.setBounds(1224, 141, 67, 19);
+		textfieldEndDate.setBounds(1224, 119, 67, 19);
 		mainPanel.add(textfieldEndDate);
 		
 		JLabel lblPosition = new JLabel("Position/Dept.");
 		lblPosition.setForeground(new Color(30, 55, 101));
 		lblPosition.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		lblPosition.setBounds(982, 207, 85, 13);
+		lblPosition.setBounds(982, 184, 85, 13);
 		mainPanel.add(lblPosition);
 		
 		textfieldPositionDept = new JTextField();
 		textfieldPositionDept.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		textfieldPositionDept.setEditable(false);
 		textfieldPositionDept.setColumns(10);
-		textfieldPositionDept.setBounds(1065, 204, 226, 19);
+		textfieldPositionDept.setBounds(1065, 181, 226, 19);
 		mainPanel.add(textfieldPositionDept);
 		
 		JLabel lblEarnings = new JLabel("Earnings");
 		lblEarnings.setForeground(new Color(30, 55, 101));
 		lblEarnings.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
-		lblEarnings.setBounds(982, 230, 85, 24);
+		lblEarnings.setBounds(982, 207, 85, 24);
 		mainPanel.add(lblEarnings);
 		
 		JLabel lblMonthlyRate = new JLabel("Monthly Rate");
 		lblMonthlyRate.setForeground(new Color(30, 55, 101));
 		lblMonthlyRate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		lblMonthlyRate.setBounds(982, 255, 85, 13);
+		lblMonthlyRate.setBounds(982, 237, 85, 13);
 		mainPanel.add(lblMonthlyRate);
 		
 		JLabel lblDailyRate = new JLabel("Daily Rate");
 		lblDailyRate.setForeground(new Color(30, 55, 101));
 		lblDailyRate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		lblDailyRate.setBounds(982, 274, 85, 13);
+		lblDailyRate.setBounds(982, 260, 85, 13);
 		mainPanel.add(lblDailyRate);
 		
 		JLabel lblDaysWorked = new JLabel("Days Worked");
 		lblDaysWorked.setForeground(new Color(30, 55, 101));
 		lblDaysWorked.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		lblDaysWorked.setBounds(982, 292, 85, 13);
+		lblDaysWorked.setBounds(982, 284, 85, 13);
 		mainPanel.add(lblDaysWorked);
-		
-		JLabel lblGrossIncome = new JLabel("Gross Income");
-		lblGrossIncome.setForeground(new Color(30, 55, 101));
-		lblGrossIncome.setFont(new Font("Tw Cen MT", Font.BOLD, 15));
-		lblGrossIncome.setBounds(982, 315, 103, 19);
-		mainPanel.add(lblGrossIncome);
 		
 		JPanel separator_1 = new JPanel();
 		separator_1.setBackground(new Color(30, 55, 101));
-		separator_1.setBounds(1048, 241, 243, 4);
+		separator_1.setBounds(1048, 218, 243, 4);
 		mainPanel.add(separator_1);
 		
 		JLabel lblBenefits = new JLabel("Benefits");
 		lblBenefits.setForeground(new Color(30, 55, 101));
 		lblBenefits.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
-		lblBenefits.setBounds(982, 339, 85, 24);
+		lblBenefits.setBounds(982, 328, 85, 24);
 		mainPanel.add(lblBenefits);
 		
 		JPanel separator_1_1 = new JPanel();
 		separator_1_1.setBackground(new Color(30, 55, 101));
-		separator_1_1.setBounds(1048, 350, 243, 4);
+		separator_1_1.setBounds(1048, 339, 243, 4);
 		mainPanel.add(separator_1_1);
 		
 		JLabel lblTotal = new JLabel("Total");
@@ -510,36 +499,29 @@ public class GUI_PayrollSalaryCalculation {
 		JLabel lblTakeHomePay = new JLabel("TAKE HOME PAY");
 		lblTakeHomePay.setForeground(new Color(30, 55, 101));
 		lblTakeHomePay.setFont(new Font("Tw Cen MT", Font.BOLD, 15));
-		lblTakeHomePay.setBounds(982, 675, 111, 19);
+		lblTakeHomePay.setBounds(982, 655, 111, 19);
 		mainPanel.add(lblTakeHomePay);
 		
 		txtfieldMonthlyRate = new JTextField();
 		txtfieldMonthlyRate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		txtfieldMonthlyRate.setEditable(false);
 		txtfieldMonthlyRate.setColumns(10);
-		txtfieldMonthlyRate.setBounds(1099, 252, 192, 19);
+		txtfieldMonthlyRate.setBounds(1099, 234, 192, 19);
 		mainPanel.add(txtfieldMonthlyRate);
 		
 		txtfieldDailyRate = new JTextField();
 		txtfieldDailyRate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		txtfieldDailyRate.setEditable(false);
 		txtfieldDailyRate.setColumns(10);
-		txtfieldDailyRate.setBounds(1099, 271, 192, 19);
+		txtfieldDailyRate.setBounds(1099, 257, 192, 19);
 		mainPanel.add(txtfieldDailyRate);
 		
 		txtfieldDaysWorked = new JTextField();
 		txtfieldDaysWorked.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		txtfieldDaysWorked.setEditable(false);
 		txtfieldDaysWorked.setColumns(10);
-		txtfieldDaysWorked.setBounds(1099, 289, 192, 19);
+		txtfieldDaysWorked.setBounds(1099, 281, 192, 19);
 		mainPanel.add(txtfieldDaysWorked);
-		
-		txtfieldGrossIncome = new JTextField();
-		txtfieldGrossIncome.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		txtfieldGrossIncome.setEditable(false);
-		txtfieldGrossIncome.setColumns(10);
-		txtfieldGrossIncome.setBounds(1099, 315, 192, 19);
-		mainPanel.add(txtfieldGrossIncome);
 		
 		txtfieldRiceSubsidy = new JTextField();
 		txtfieldRiceSubsidy.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
@@ -629,18 +611,97 @@ public class GUI_PayrollSalaryCalculation {
 		txtfieldTakeHomePay.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		txtfieldTakeHomePay.setEditable(false);
 		txtfieldTakeHomePay.setColumns(10);
-		txtfieldTakeHomePay.setBounds(1099, 675, 192, 19);
+		txtfieldTakeHomePay.setBounds(1099, 655, 192, 19);
 		mainPanel.add(txtfieldTakeHomePay);
 		
-		salarycalculationTable = new JTable();
-		salarycalculationTable.setBorder(new LineBorder(new Color(0, 0, 0)));
-		salarycalculationTable.setBounds(324, 400, 648, 280);
-		mainPanel.add(salarycalculationTable);
-		
 		JPanel payslippanel = new JPanel();
-		payslippanel.setBounds(982, 51, 320, 650);
+		payslippanel.setBounds(966, 44, 336, 637);
 		mainPanel.add(payslippanel);
+		payslippanel.setLayout(null);
+		
+		JLabel lblEmployeePayslip = new JLabel("Employee Payslip");
+		lblEmployeePayslip.setBounds(79, 5, 178, 28);
+		payslippanel.add(lblEmployeePayslip);
+		lblEmployeePayslip.setHorizontalAlignment(SwingConstants.CENTER);
+		lblEmployeePayslip.setFont(new Font("Tw Cen MT", Font.PLAIN, 25));
+		
+		txtfieldGrossIncome = new JTextField();
+		txtfieldGrossIncome.setBounds(134, 269, 192, 19);
+		payslippanel.add(txtfieldGrossIncome);
+		txtfieldGrossIncome.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldGrossIncome.setEditable(false);
+		txtfieldGrossIncome.setColumns(10);
+		
+		JLabel lblGrossIncome = new JLabel("Gross Income");
+		lblGrossIncome.setBounds(21, 269, 103, 19);
+		payslippanel.add(lblGrossIncome);
+		lblGrossIncome.setForeground(new Color(30, 55, 101));
+		lblGrossIncome.setFont(new Font("Tw Cen MT", Font.BOLD, 15));
+		
+		JLabel lblPayPeriod = new JLabel("Pay Period:");
+		lblPayPeriod.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		lblPayPeriod.setBounds(646, 39, 215, 33);
+		mainPanel.add(lblPayPeriod);
+		
+		JLabel lblEmployeeMonthlyAttendance = new JLabel("Employee Monthly Attendance Records");
+		lblEmployeeMonthlyAttendance.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		lblEmployeeMonthlyAttendance.setBounds(334, 306, 340, 33);
+		mainPanel.add(lblEmployeeMonthlyAttendance);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(324, 350, 623, 331);
+		mainPanel.add(scrollPane_1);
+		
+		salarycalculationTable = new JTable();
+		scrollPane_1.setViewportView(salarycalculationTable);
+		salarycalculationTable.setBorder(new LineBorder(new Color(0, 0, 0)));
+		
+		
+		btnCalculateHoursWorked.setFont(new Font("Tw Cen MT", Font.PLAIN, 14));
+		btnCalculateHoursWorked.setBackground(Color.WHITE);
+		btnCalculateHoursWorked.setBounds(721, 306, 226, 33);
+		mainPanel.add(btnCalculateHoursWorked);
+		btnCalculateHoursWorked.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        // Retrieve selected month-year from the combo box
+		        String selectedMonthYear = (String) monthComboBox.getSelectedItem();
+
+		        // Retrieve list of employees from your data source
+		        List<Employee> employees = EmployeeDAO.getInstance().getAllEmployees();
+
+		        // Calculate payslip information for each employee for the selected month-year
+		        PayslipService payslipService = new PayslipService();
+		        int successfulInsertions = 0;
+		        List<Integer> failedEmployeeIds = new ArrayList<>();
+
+		        for (Employee employee : employees) {
+		            // Generate payslip for the employee for the selected month-year
+		            Payslip payslip = payslipService.generatePayslip(employee.getEmpId(), selectedMonthYear);
+
+		            // Insert the payslip into the database
+		            boolean inserted = PayslipDAO.getInstance().insertPayslip(payslip);
+		            if (inserted) {
+		                successfulInsertions++;
+		            } else {
+		                failedEmployeeIds.add(employee.getEmpId());
+		            }
+		        }
+
+		        // Display the result of the insertion process
+		        if (successfulInsertions == employees.size()) {
+		            JOptionPane.showMessageDialog(null, "Payslips added successfully for all employees.", "Success", JOptionPane.INFORMATION_MESSAGE);
+		        } else if (successfulInsertions == 0) {
+		            JOptionPane.showMessageDialog(null, "Failed to add payslips for all employees.", "Error", JOptionPane.ERROR_MESSAGE);
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Payslips added successfully for " + successfulInsertions + " employees.\nFailed to add payslips for the following employee(s): " + failedEmployeeIds.toString(), "Partial Success", JOptionPane.WARNING_MESSAGE);
+		        }
+
+		        // Refresh the salary calculation table to reflect the updated data from the database
+		        refreshSalaryCalculationTable(selectedMonthYear);
+		    }
+		});
 	}
+
 	
 	
 
@@ -699,4 +760,38 @@ public class GUI_PayrollSalaryCalculation {
 
         employeeattendanceTable.setModel(model);
     }
+    
+    // Modify the method to populate the salary calculation table with the desired data
+    private void refreshSalaryCalculationTable(String selectedMonthYear) {
+        // Retrieve payslip records for the selected month-year from the database
+        List<Payslip> payslips = PayslipDAO.getInstance().getPayslipsByMonthYear(selectedMonthYear);
+
+        DefaultTableModel salaryModel = new DefaultTableModel();
+        salaryModel.addColumn("Employee ID");
+        salaryModel.addColumn("Employee Name");
+        salaryModel.addColumn("Employee Position");
+        salaryModel.addColumn("Hourly Rate");
+        salaryModel.addColumn("Total Hours Worked");
+        salaryModel.addColumn("Overtime Hours");
+        salaryModel.addColumn("Gross Income");
+
+        if (payslips.isEmpty()) {
+            salaryModel.addRow(new Object[]{"No records", "", "", "", "", "", ""});
+        } else {
+            for (Payslip payslip : payslips) {
+                salaryModel.addRow(new Object[]{
+                    payslip.getEmployeeId(),
+                    payslip.getEmployeeName(),
+                    payslip.getEmployeePosition(),
+                    payslip.getHourlyRate(),
+                    payslip.getTotalHours(),
+                    payslip.getOvertimeHours(),
+                    payslip.getGrossIncome()
+                });
+            }
+        }
+
+        salarycalculationTable.setModel(salaryModel);
+    }
+
 }

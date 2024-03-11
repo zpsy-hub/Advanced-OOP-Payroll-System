@@ -206,11 +206,15 @@ public class PayslipService {
 
     // Method to calculate net pay for a specific employee for a given month and year
     public double calculateNetPay(int empId, String monthYear) {
-        double taxableIncome = calculateTaxableIncome(empId, monthYear);
+        double grossSalary = calculateGrossSalary(empId, monthYear);
         double totalBenefits = calculateTotalBenefits(empId);
-        double netPay = taxableIncome + totalBenefits;
+        double totalDeductions = calculateTotalDeductions(empId, monthYear);
+        double withholdingTax = calculateWithholdingTax(empId, monthYear);
+
+        double netPay = grossSalary - totalDeductions - withholdingTax + totalBenefits;
         return netPay;
     }
+
 
     
     private double calculateWithholdingTax(int empId, String monthYear) {
@@ -233,7 +237,7 @@ public class PayslipService {
         return totalBenefits;
     }
     
- // Method to generate a payslip for a specific employee for a given month and year
+    // Method to generate a payslip for a specific employee for a given month and year
     public Payslip generatePayslip(int empId, String monthYear) {
         // Retrieve employee details
         Employee employee = employeeDAO.getEmployeeById(empId);
@@ -271,33 +275,35 @@ public class PayslipService {
         // Retrieve pay period start and end dates from TimesheetDAO
         LocalDate payPeriodStartDate = timesheetDAO.calculatePayPeriodStartDate(monthYear);
         LocalDate payPeriodEndDate = timesheetDAO.calculatePayPeriodEndDate(monthYear);
+        
+     // Retrieve hourly rate from the EmployeeDAO or calculate it based on your logic
+        double hourlyRate = employeeDAO.getHourlyRateById(empId);
 
         // Create and return the payslip object
         return new Payslip(
-                payPeriodStartDate,
-                payPeriodEndDate,
-                empId,
-                empName,
-                empPosition,
-                monthlyRate,
-                calculateTotalHoursWorked(timesheetDAO.getFilteredTimesheetRecords(empId, monthYear)),
-                countOvertimeHours(empId, monthYear),
-                grossSalary,
-                riceSubsidy,
-                phoneAllowance,
-                clothingAllowance,
-                totalBenefits,
-                sssContribution,
-                philhealthContribution,
-                pagibigContribution,
-                withholdingTax,
-                totalDeductions,
-                netPay
-        );
+        	    payPeriodStartDate,
+        	    payPeriodEndDate,
+        	    empId,
+        	    empName,
+        	    empPosition,
+        	    hourlyRate, 
+        	    monthlyRate,
+        	    calculateTotalHoursWorked(timesheetDAO.getFilteredTimesheetRecords(empId, monthYear)),
+        	    countOvertimeHours(empId, monthYear),
+        	    grossSalary, 
+        	    riceSubsidy,
+        	    phoneAllowance,
+        	    clothingAllowance,
+        	    totalBenefits,
+        	    sssContribution,
+        	    philhealthContribution,
+        	    pagibigContribution,
+        	    withholdingTax,
+        	    totalDeductions,
+        	    netPay
+        	);
     }
-
-
-
+    
        
     // Method to display total hours worked for a specific employee in a given month
     public void displayTotalHours(int empId, String monthYear) {
@@ -356,5 +362,6 @@ public class PayslipService {
         System.out.println("Philhealth Contribution: $" + payslip.getPhilhealthContribution());
         System.out.println("Pagibig Contribution: $" + payslip.getPagibigContribution());
         System.out.println("Withholding Tax: $" + payslip.getWithholdingTax());
+        System.out.println("Net Pay: " + payslip.getNetPay());
     }
 }
