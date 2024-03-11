@@ -106,6 +106,46 @@ public class PayslipDAO {
         }
         return payslips;
     }
+    
+    public Payslip getPayslipByEmployeeId(String employeeId) {
+        Payslip payslip = null;
+        String sql = "SELECT * FROM payroll_system.payslip WHERE emp_id = ?";
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, employeeId);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                payslip = new Payslip(
+                    resultSet.getDate("period_startdate").toLocalDate(),
+                    resultSet.getDate("period_enddate").toLocalDate(),
+                    resultSet.getInt("emp_id"),
+                    resultSet.getString("emp_name"),
+                    resultSet.getString("emp_position"),
+                    resultSet.getDouble("hourlyRate"),
+                    resultSet.getDouble("monthlyRate"),
+                    resultSet.getInt("totalHours"),
+                    resultSet.getInt("overtimeHours"),
+                    resultSet.getDouble("gross_income"),
+                    resultSet.getDouble("rice_subsidy"),
+                    resultSet.getDouble("phone_allowance"),
+                    resultSet.getDouble("clothing_allowance"),
+                    resultSet.getDouble("total_benefits"),
+                    resultSet.getDouble("sss_contrib"),
+                    resultSet.getDouble("philhealth_contrib"),
+                    resultSet.getDouble("pagibig_contrib"),
+                    resultSet.getDouble("withholding_tax"),
+                    resultSet.getDouble("total_deductions"),
+                    resultSet.getDouble("net_pay")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving payslip by employee ID: " + e.getMessage());
+        }
+        return payslip;
+    }
+
 
     // Method to retrieve all employees payslip records for a specific month and year
     public List<Payslip> getPayslipsByMonthYear(String monthYear) {
@@ -151,5 +191,111 @@ public class PayslipDAO {
         }
         return payslips;
     }
+    
+	// Method to retrieve all payslip records from the database
+    public List<Payslip> getAllPayslips() {
+        List<Payslip> payslips = new ArrayList<>();
+        String sql = "SELECT * FROM payroll_system.payslip";
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                Payslip payslip = new Payslip(
+                    resultSet.getDate("period_startdate").toLocalDate(),
+                    resultSet.getDate("period_enddate").toLocalDate(),
+                    resultSet.getInt("emp_id"),
+                    resultSet.getString("emp_name"),
+                    resultSet.getString("emp_position"),
+                    resultSet.getDouble("hourlyRate"),
+                    resultSet.getDouble("monthlyRate"),
+                    resultSet.getInt("totalHours"),
+                    resultSet.getInt("overtimeHours"),
+                    resultSet.getDouble("gross_income"),
+                    resultSet.getDouble("rice_subsidy"),
+                    resultSet.getDouble("phone_allowance"),
+                    resultSet.getDouble("clothing_allowance"),
+                    resultSet.getDouble("total_benefits"),
+                    resultSet.getDouble("sss_contrib"),
+                    resultSet.getDouble("philhealth_contrib"),
+                    resultSet.getDouble("pagibig_contrib"),
+                    resultSet.getDouble("withholding_tax"),
+                    resultSet.getDouble("total_deductions"),
+                    resultSet.getDouble("net_pay")
+                );
+                payslips.add(payslip);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving all payslips: " + e.getMessage());
+        }
+        return payslips;
+    }
+    
+    public List<Integer> getPayslipNumbersByEmployeeIdAndMonthYear(String employeeId, String monthYear) {
+        List<Integer> payslipNumbers = new ArrayList<>();
+        String sql = "SELECT payslip_no FROM payroll_system.payslip WHERE emp_id = ? AND " +
+                     "period_startdate >= ? AND period_enddate <= ?";
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            LocalDate startDate = LocalDate.parse(monthYear + "-01");
+            LocalDate endDate = startDate.plusMonths(1).minusDays(1);
+            statement.setString(1, employeeId);
+            statement.setDate(2, java.sql.Date.valueOf(startDate));
+            statement.setDate(3, java.sql.Date.valueOf(endDate));
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int payslipNumber = resultSet.getInt("payslip_no");
+                payslipNumbers.add(payslipNumber);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving payslip numbers by employee ID and month-year: " + e.getMessage());
+        }
+        return payslipNumbers;
+    }
+    
+    private Payslip getPayslipDetailsByNumber(int payslipNumber) {
+        Payslip payslip = null;
+        String sql = "SELECT * FROM payroll_system.payslip WHERE payslip_no = ?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setInt(1, payslipNumber);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                // Retrieve payslip information from the result set and create a Payslip object
+                payslip = new Payslip(
+                        resultSet.getDate("period_startdate").toLocalDate(),
+                        resultSet.getDate("period_enddate").toLocalDate(),
+                        resultSet.getInt("emp_id"),
+                        resultSet.getString("emp_name"),
+                        resultSet.getString("emp_position"),
+                        resultSet.getDouble("hourlyRate"),
+                        resultSet.getDouble("monthlyRate"),
+                        resultSet.getInt("totalHours"),
+                        resultSet.getInt("overtimeHours"),
+                        resultSet.getDouble("gross_income"),
+                        resultSet.getDouble("rice_subsidy"),
+                        resultSet.getDouble("phone_allowance"),
+                        resultSet.getDouble("clothing_allowance"),
+                        resultSet.getDouble("total_benefits"),
+                        resultSet.getDouble("sss_contrib"),
+                        resultSet.getDouble("philhealth_contrib"),
+                        resultSet.getDouble("pagibig_contrib"),
+                        resultSet.getDouble("withholding_tax"),
+                        resultSet.getDouble("total_deductions"),
+                        resultSet.getDouble("net_pay")
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving payslip details by payslip number: " + e.getMessage());
+        }
+        return payslip;
+    }
+
+
+    
 
 }
