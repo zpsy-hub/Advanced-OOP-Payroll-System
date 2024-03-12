@@ -6,12 +6,15 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -111,21 +114,20 @@ public class GUI_PayrollSalaryCalculation {
         monthComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
         monthComboBox.setBounds(745, 42, 200, 30);
         payrollsalarycalc.getContentPane().add(monthComboBox);
-        monthComboBox.addItem("All Records");
+        monthComboBox.addItem("Select Month-Year");
         
      // Action listener for monthComboBox
         monthComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String selectedMonthYear = (String) monthComboBox.getSelectedItem();
-                if (!selectedMonthYear.equals("All Records")) {
+                if (!selectedMonthYear.equals("Select Month-Year")) {
                     filterRecordsByMonthYear(selectedMonthYear);
                     refreshSalaryCalculationTable(selectedMonthYear); // Update salary calculation table based on selected month-year
                     // Enable the calculate button when a specific month is selected
                     btnCalculateHoursWorked.setEnabled(true);
                 } else {
-                    populateTable();
-                    populateSalaryCalculationTable(); // Populate salary calculation table with all records
-                    // Disable the calculate button when "All Records" is selected
+                    clearTablesAndDisplayMessage();
+                    // Disable the calculate button when "Select Month-Year" is selected
                     btnCalculateHoursWorked.setEnabled(false);
                 }
             }
@@ -270,9 +272,6 @@ public class GUI_PayrollSalaryCalculation {
         // Populate monthComboBox with month-year combinations
         populateMonthComboBox();
         
-        // Call populateTable initially to populate the attendance table with all records
-        populateTable();
-        
         JButton generatepayslipButton = new JButton("Generate Payslip");
         generatepayslipButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -322,11 +321,37 @@ public class GUI_PayrollSalaryCalculation {
 		generatepayslipButton.setBounds(324, 691, 226, 33);
 		mainPanel.add(generatepayslipButton);
 		
-		JButton deleteButton = new JButton("Save");
-		deleteButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-		deleteButton.setBackground(Color.WHITE);
-		deleteButton.setBounds(582, 691, 154, 33);
-		mainPanel.add(deleteButton);
+		JButton exportButton = new JButton("Export");
+		exportButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		exportButton.setBackground(Color.WHITE);
+		exportButton.setBounds(582, 691, 154, 33);
+		mainPanel.add(exportButton);
+		exportButton.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        int selectedRowIndex = salarycalculationTable.getSelectedRow();
+
+		        if (selectedRowIndex != -1) {
+		            Object employeeIdObject = salarycalculationTable.getValueAt(selectedRowIndex, 0);
+		            if (employeeIdObject != null) {
+		                String employeeId = employeeIdObject.toString();
+		                // Proceed with the rest of the method
+		                Payslip payslip = PayslipDAO.getInstance().getPayslipByEmployeeId(employeeId);
+
+		                if (payslip != null) {
+		                    writePayslipDetailsToFile(payslip);
+		                } else {
+		                    JOptionPane.showMessageDialog(null, "Payslip details not found for selected employee.", "Error", JOptionPane.ERROR_MESSAGE);
+		                }
+		            } else {
+		                JOptionPane.showMessageDialog(null, "Employee ID is null for selected row.", "Error", JOptionPane.ERROR_MESSAGE);
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Please select a row in the salary calculation table.", "No Row Selected", JOptionPane.WARNING_MESSAGE);
+		        }
+		    }
+		});
+
 		
 		JLabel lblEmployeeMonthlyAttendance = new JLabel("Employee Monthly Hours Worked");
 		lblEmployeeMonthlyAttendance.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
@@ -340,9 +365,7 @@ public class GUI_PayrollSalaryCalculation {
 		salarycalculationTable = new JTable();
 		scrollPane_1.setViewportView(salarycalculationTable);
 		salarycalculationTable.setBorder(new LineBorder(new Color(0, 0, 0)));
-		
-		// Call to initially populate the salary calculation table with all records
-        populateSalaryCalculationTable();			
+
 		
 		btnCalculateHoursWorked.setFont(new Font("Tw Cen MT", Font.PLAIN, 14));
 		btnCalculateHoursWorked.setBackground(Color.WHITE);
@@ -811,7 +834,7 @@ public class GUI_PayrollSalaryCalculation {
         employeeattendanceTable.setModel(model);
     }
     
- // Modify the method to populate the salary calculation table with all records by default
+    // Modify the method to populate the salary calculation table with all records by default
     private void populateSalaryCalculationTable() {
         // Retrieve all payslip records from the database
         List<Payslip> payslips = PayslipDAO.getInstance().getAllPayslips();
@@ -945,5 +968,116 @@ public class GUI_PayrollSalaryCalculation {
         double netPay = payslip.getGrossIncome() - totalDeductions + totalBenefits - withholdingTax;
         txtfieldTakeHomePay.setText(String.valueOf(netPay));
     }
+    
+    private void exportPayslipDetails() {
+        int selectedRowIndex = salarycalculationTable.getSelectedRow();
+
+        if (selectedRowIndex != -1) {
+            Object employeeIdObject = salarycalculationTable.getValueAt(selectedRowIndex, 0);
+            if (employeeIdObject != null) {
+                String employeeId = employeeIdObject.toString();
+                Payslip payslip = PayslipDAO.getInstance().getPayslipByEmployeeId(employeeId);
+
+                if (payslip != null) {
+                    writePayslipDetailsToFile(payslip); // Call the method to write payslip details to a file
+                } else {
+                    JOptionPane.showMessageDialog(null, "Payslip details not found for selected employee.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Employee ID is null for selected row.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a row in the salary calculation table.", "No Row Selected", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    
+    private void writePayslipDetailsToFile(Payslip payslip) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Payslip Details");
+        
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            try {
+                FileWriter writer = new FileWriter(fileChooser.getSelectedFile() + ".txt");
+                
+                // Header
+                writer.write("==============  MotorPH  ==============\n");
+                writer.write("7 Jupiter Avenue cor. F. Sandoval Jr. \n");
+                writer.write("Bagong Nayon, Quezon City\n");
+                writer.write("Phone: (028) 911-5071 / (028) 911-5072\n");
+                writer.write("Email: corporate@motorph.com\n\n");
+                writer.write("=========== EMPLOYEE PAYSLIP ===========\n\n");   
+                
+                // Write Employee Details
+                writer.write("Employee Details -----------------------\n");
+                writer.write("Employee ID: " + payslip.getEmployeeId() + "\n");
+                writer.write("Employee Name: " + payslip.getEmployeeName() + "\n");
+                writer.write("Position: " + payslip.getEmployeePosition() + "\n");
+                writer.write("Period Start Date: " + payslip.getPeriodStartDate() + "\n");
+                writer.write("Period End Date: " + payslip.getPeriodEndDate() + "\n\n");
+
+                // Write Earnings
+                writer.write("Earnings -------------------------------\n");
+                writer.write("Monthly Rate: " + payslip.getMonthlyRate() + "\n");
+                writer.write("Daily Rate: " + payslip.getHourlyRate() + "\n");
+                writer.write("Hours Worked: " + payslip.getTotalHours() + "\n");
+                writer.write("Gross Income: " + payslip.getGrossIncome() + "\n\n");
+
+                // Write Benefits
+                writer.write("Benefits -------------------------------\n");
+                writer.write("Rice Subsidy: " + payslip.getRiceSubsidy() + "\n");
+                writer.write("Phone Allowance: " + payslip.getPhoneAllowance() + "\n");
+                writer.write("Clothing Allowance: " + payslip.getClothingAllowance() + "\n");
+                double totalBenefits = payslip.getRiceSubsidy() + payslip.getPhoneAllowance() + payslip.getClothingAllowance();
+                writer.write("Total Benefits: " + totalBenefits + "\n\n");
+
+                // Write Deductions
+                writer.write("Deductions -----------------------------\n");
+                writer.write("SSS Contribution: " + payslip.getSssContribution() + "\n");
+                writer.write("Philhealth Contribution: " + payslip.getPhilhealthContribution() + "\n");
+                writer.write("Pag-ibig Contribution: " + payslip.getPagibigContribution() + "\n");
+                double totalDeductions = payslip.getSssContribution() + payslip.getPhilhealthContribution() + payslip.getPagibigContribution();
+                writer.write("Total Deductions: " + totalDeductions + "\n\n");
+
+                // Write Summary
+                writer.write("Summary --------------------------------\n");
+                writer.write("Gross Income: " + payslip.getGrossIncome() + "\n");
+                writer.write("Total Benefits: " + totalBenefits + "\n");
+                writer.write("Total Deductions: " + totalDeductions + "\n");
+                writer.write("Withholding Tax: " + payslip.getWithholdingTax() + "\n");
+                double netPay = payslip.getGrossIncome() - totalDeductions + totalBenefits - payslip.getWithholdingTax();
+                writer.write("Net Pay: " + netPay + "\n");
+
+            writer.close();
+            JOptionPane.showMessageDialog(null, "Payslip details exported successfully.", "Export Successful", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error exporting payslip details: " + e.getMessage(), "Export Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
+    
+    private void clearTablesAndDisplayMessage() {
+        // Clear both tables
+        clearAttendanceTable();
+        clearSalaryCalculationTable();
+        // Display message to select a month-year
+        JOptionPane.showMessageDialog(null, "Please select a month-year.", "No Month-Year Selected", JOptionPane.WARNING_MESSAGE);
+    }
+
+    // Method to clear the attendance table
+    private void clearAttendanceTable() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(new String[]{"Record ID", "Employee ID", "Last Name", "First Name", "Date", "Time In", "Time Out"});
+        employeeattendanceTable.setModel(model);
+    }
+
+    // Method to clear the salary calculation table
+    private void clearSalaryCalculationTable() {
+        DefaultTableModel model = new DefaultTableModel();
+        model.setColumnIdentifiers(new String[]{"Employee ID", "Employee Name", "Employee Position", "Hourly Rate", "Total Hours Worked", "Overtime Hours", "Gross Income"});
+        salarycalculationTable.setModel(model);
+    }
+    
 
 }
