@@ -1,0 +1,31 @@
+Employee Details:
+Employee ID: 1
+Employee Name: Manuel III Garcia
+Position: Chief Executive Officer
+Period Start Date: 2023-01-02
+Period End Date: 2023-01-31
+
+Earnings:
+Monthly Rate: 90000.0
+Daily Rate: 535.71
+Hours Worked: 162
+Gross Income: 86785.02
+
+Benefits:
+Rice Subsidy: 1500.0
+Phone Allowance: 2000.0
+Clothing Allowance: 1000.0
+Total Benefits: 4500.0
+
+Deductions:
+SSS Contribution: 1125.0
+Philhealth Contribution: 900.0
+Pag-ibig Contribution: 100.0
+Total Deductions: 2125.0
+
+Summary:
+Gross Income: 86785.02
+Total Benefits: 4500.0
+Total Deductions: 2125.0
+Withholding Tax: 16230.906
+Net Pay: 72929.114

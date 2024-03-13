@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import model.Employee;
 import model.Payslip;
 import model.User;
 import service.EmployeeDAO;
+import service.PayrollSalaryCalculationService;
 import service.PayslipService;
 import service.TimesheetDAO;
 import service.PayslipDAO;
@@ -49,7 +51,7 @@ public class GUI_PayrollSalaryCalculation {
 	private JTextField textfieldEndDate;
 	private JTextField textfieldPositionDept;
 	private JTextField txtfieldMonthlyRate;
-	private JTextField txtfieldDailyRate;
+	private JTextField txtfieldHourlyRate;
 	private JTextField txtfieldHoursWorked;
 	private JTextField txtfieldGrossIncome;
 	private JTextField txtfieldRiceSubsidy;
@@ -66,6 +68,7 @@ public class GUI_PayrollSalaryCalculation {
 	private JTextField txtfieldTakeHomePay;
     private JComboBox<String> monthComboBox;
     private static User loggedInEmployee;
+    private PayrollSalaryCalculationService service;
     private JButton btnCalculateHoursWorked;
     private JTextField textFieldwithholdingtax;
 
@@ -92,6 +95,7 @@ public class GUI_PayrollSalaryCalculation {
 	 */
 	public GUI_PayrollSalaryCalculation(User loggedInEmployee) {
 		GUI_PayrollSalaryCalculation.loggedInEmployee = loggedInEmployee; 
+		this.service = new PayrollSalaryCalculationService();
 		initialize();
 	}
 
@@ -116,13 +120,13 @@ public class GUI_PayrollSalaryCalculation {
         payrollsalarycalc.getContentPane().add(monthComboBox);
         monthComboBox.addItem("Select Month-Year");
         
-     // Action listener for monthComboBox
+        // Action listener for monthComboBox
         monthComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String selectedMonthYear = (String) monthComboBox.getSelectedItem();
                 if (!selectedMonthYear.equals("Select Month-Year")) {
-                    filterRecordsByMonthYear(selectedMonthYear);
-                    refreshSalaryCalculationTable(selectedMonthYear); // Update salary calculation table based on selected month-year
+                    service.filterRecordsByMonthYear(selectedMonthYear, employeeattendanceTable);
+                    service.refreshSalaryCalculationTable(selectedMonthYear, salarycalculationTable); // Update salary calculation table based on selected month-year
                     // Enable the calculate button when a specific month is selected
                     btnCalculateHoursWorked.setEnabled(true);
                 } else {
@@ -270,7 +274,7 @@ public class GUI_PayrollSalaryCalculation {
 		employeeattendanceTable.setBorder(new LineBorder(new Color(0, 0, 0)));
 
         // Populate monthComboBox with month-year combinations
-        populateMonthComboBox();
+        service.populateMonthComboBox(monthComboBox);
         
         JButton generatepayslipButton = new JButton("Generate Payslip");
         generatepayslipButton.addActionListener(new ActionListener() {
@@ -339,7 +343,7 @@ public class GUI_PayrollSalaryCalculation {
 		                Payslip payslip = PayslipDAO.getInstance().getPayslipByEmployeeId(employeeId);
 
 		                if (payslip != null) {
-		                    writePayslipDetailsToFile(payslip);
+		                    service.writePayslipDetailsToFile(payslip);
 		                } else {
 		                    JOptionPane.showMessageDialog(null, "Payslip details not found for selected employee.", "Error", JOptionPane.ERROR_MESSAGE);
 		                }
@@ -381,35 +385,28 @@ public class GUI_PayrollSalaryCalculation {
 
 		        // Calculate payslip information for each employee for the selected month-year
 		        PayslipService payslipService = new PayslipService();
-		        int successfulInsertions = 0;
-		        List<Integer> failedEmployeeIds = new ArrayList<>();
+		        List<Payslip> payslips = new ArrayList<>(); // List to store all generated payslips
 
 		        for (Employee employee : employees) {
 		            // Generate payslip for the employee for the selected month-year
 		            Payslip payslip = payslipService.generatePayslip(employee.getEmpId(), selectedMonthYear);
-
-		            // Insert the payslip into the database
-		            boolean inserted = PayslipDAO.getInstance().insertPayslip(payslip);
-		            if (inserted) {
-		                successfulInsertions++;
-		            } else {
-		                failedEmployeeIds.add(employee.getEmpId());
-		            }
+		            payslips.add(payslip); // Add payslip to the list
 		        }
 
-		        // Display the result of the insertion process
-		        if (successfulInsertions == employees.size()) {
-		            JOptionPane.showMessageDialog(null, "Payslips added successfully for all employees.", "Success", JOptionPane.INFORMATION_MESSAGE);
-		        } else if (successfulInsertions == 0) {
-		            JOptionPane.showMessageDialog(null, "Failed to add payslips for all employees.", "Error", JOptionPane.ERROR_MESSAGE);
+		        // Batch insert payslips into the database
+		        boolean allInserted = PayslipDAO.getInstance().batchInsertPayslips(payslips);
+
+		        if (allInserted) {
+		            JOptionPane.showMessageDialog(null, "Payslips added successfully for all employees for " + selectedMonthYear + ".", "Success", JOptionPane.INFORMATION_MESSAGE);
 		        } else {
-		            JOptionPane.showMessageDialog(null, "Payslips added successfully for " + successfulInsertions + " employees.\nFailed to add payslips for the following employee(s): " + failedEmployeeIds.toString(), "Partial Success", JOptionPane.WARNING_MESSAGE);
+		            JOptionPane.showMessageDialog(null, "Failed to add payslips for all employees for " + selectedMonthYear + ".", "Error", JOptionPane.ERROR_MESSAGE);
 		        }
 
 		        // Refresh the salary calculation table to reflect the updated data from the database
-		        refreshSalaryCalculationTable(selectedMonthYear);
+		        service.refreshSalaryCalculationTable(selectedMonthYear, salarycalculationTable);
 		    }
 		});
+
 		
 		JLabel lblPayslip = new JLabel("Payslip No.");
 		lblPayslip.setForeground(new Color(30, 55, 101));
@@ -636,12 +633,12 @@ public class GUI_PayrollSalaryCalculation {
 		txtfieldMonthlyRate.setBounds(1099, 234, 192, 19);
 		mainPanel.add(txtfieldMonthlyRate);
 		
-		txtfieldDailyRate = new JTextField();
-		txtfieldDailyRate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		txtfieldDailyRate.setEditable(false);
-		txtfieldDailyRate.setColumns(10);
-		txtfieldDailyRate.setBounds(1099, 257, 192, 19);
-		mainPanel.add(txtfieldDailyRate);
+		txtfieldHourlyRate = new JTextField();
+		txtfieldHourlyRate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldHourlyRate.setEditable(false);
+		txtfieldHourlyRate.setColumns(10);
+		txtfieldHourlyRate.setBounds(1099, 257, 192, 19);
+		mainPanel.add(txtfieldHourlyRate);
 		
 		txtfieldHoursWorked = new JTextField();
 		txtfieldHoursWorked.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
@@ -775,136 +772,10 @@ public class GUI_PayrollSalaryCalculation {
 		
 	}
 
-	
-	
-
 	public void openWindow() {
-		payrollsalarycalc.setVisible(true);
-		
+		payrollsalarycalc.setVisible(true);		
 	}
-	
-	// Method to populate the monthComboBox with month-year combinations
-    private void populateMonthComboBox() {
-        TimesheetDAO dao = TimesheetDAO.getInstance();
-        List<String> monthYearCombinations = dao.getUniqueMonthYearCombinations();
-        for (String monthYear : monthYearCombinations) {
-            monthComboBox.addItem(monthYear);
-        }
-    }
-
-    // Method to populate the attendance table with all records
-    private void populateTable() {
-        TimesheetDAO dao = TimesheetDAO.getInstance();
-        List<String[]> allRecords = dao.getAllTimesheetRecords();
-
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Record ID");
-        model.addColumn("Employee ID");
-        model.addColumn("Last Name");
-        model.addColumn("First Name");
-        model.addColumn("Date");
-        model.addColumn("Time In");
-        model.addColumn("Time Out");
-
-        for (String[] record : allRecords) {
-            model.addRow(record);
-        }
-
-        employeeattendanceTable.setModel(model);
-    }
-
-    // Method to filter attendance records by selected month
-    private void filterRecordsByMonthYear(String selectedMonthYear) {
-        TimesheetDAO dao = TimesheetDAO.getInstance();
-        List<String[]> filteredRecords = dao.getFilteredTimesheetRecords(selectedMonthYear);
-
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Record ID");
-        model.addColumn("Employee ID");
-        model.addColumn("Last Name");
-        model.addColumn("First Name");
-        model.addColumn("Date");
-        model.addColumn("Time In");
-        model.addColumn("Time Out");
-
-        for (String[] record : filteredRecords) {
-            model.addRow(record);
-        }
-
-        employeeattendanceTable.setModel(model);
-    }
-    
-    // Modify the method to populate the salary calculation table with all records by default
-    private void populateSalaryCalculationTable() {
-        // Retrieve all payslip records from the database
-        List<Payslip> payslips = PayslipDAO.getInstance().getAllPayslips();
-
-        DefaultTableModel salaryModel = new DefaultTableModel();
-        salaryModel.addColumn("Employee ID");
-        salaryModel.addColumn("Employee Name");
-        salaryModel.addColumn("Employee Position");
-        salaryModel.addColumn("Hourly Rate");
-        salaryModel.addColumn("Total Hours Worked");
-        salaryModel.addColumn("Overtime Hours");
-        salaryModel.addColumn("Gross Income");
-
-        if (payslips.isEmpty()) {
-            salaryModel.addRow(new Object[]{"No records", "", "", "", "", "", ""});
-        } else {
-            for (Payslip payslip : payslips) {
-                salaryModel.addRow(new Object[]{
-                    payslip.getEmployeeId(),
-                    payslip.getEmployeeName(),
-                    payslip.getEmployeePosition(),
-                    payslip.getHourlyRate(),
-                    payslip.getTotalHours(),
-                    payslip.getOvertimeHours(),
-                    payslip.getGrossIncome()
-                });
-            }
-        }
-
-        salarycalculationTable.setModel(salaryModel);
-    }
-
-    // Modify the method to populate the salary calculation table based on selected month-year
-    private void refreshSalaryCalculationTable(String selectedMonthYear) {
-        if (selectedMonthYear.equals("All Records")) {
-            populateSalaryCalculationTable();
-            return;
-        }
-
-        // Retrieve payslip records for the selected month-year from the database
-        List<Payslip> payslips = PayslipDAO.getInstance().getPayslipsByMonthYear(selectedMonthYear);
-
-        DefaultTableModel salaryModel = new DefaultTableModel();
-        salaryModel.addColumn("Employee ID");
-        salaryModel.addColumn("Employee Name");
-        salaryModel.addColumn("Employee Position");
-        salaryModel.addColumn("Hourly Rate");
-        salaryModel.addColumn("Total Hours Worked");
-        salaryModel.addColumn("Overtime Hours");
-        salaryModel.addColumn("Gross Income");
-
-        if (payslips.isEmpty()) {
-            salaryModel.addRow(new Object[]{"No records", "", "", "", "", "", ""});
-        } else {
-            for (Payslip payslip : payslips) {
-                salaryModel.addRow(new Object[]{
-                    payslip.getEmployeeId(),
-                    payslip.getEmployeeName(),
-                    payslip.getEmployeePosition(),
-                    payslip.getHourlyRate(),
-                    payslip.getTotalHours(),
-                    payslip.getOvertimeHours(),
-                    payslip.getGrossIncome()
-                });
-            }
-        }
-
-        salarycalculationTable.setModel(salaryModel);
-    }
-    
+	   
     private void generatePayslip() {
         int selectedRowIndex = salarycalculationTable.getSelectedRow();
 
@@ -927,6 +798,12 @@ public class GUI_PayrollSalaryCalculation {
             JOptionPane.showMessageDialog(null, "Please select a row in the salary calculation table.", "No Row Selected", JOptionPane.WARNING_MESSAGE);
         }
     }
+    
+    // Method to format decimal values with two decimal places
+    private String formatDecimal(double value) {
+        DecimalFormat df = new DecimalFormat("#.##"); 
+        return df.format(value);
+    }
 
 
     private void populateTextFieldsWithPayslip(Payslip payslip) {
@@ -938,125 +815,39 @@ public class GUI_PayrollSalaryCalculation {
         textfieldEndDate.setText(String.valueOf(payslip.getPeriodEndDate()));
 
         // Earnings
-        txtfieldMonthlyRate.setText(String.valueOf(payslip.getMonthlyRate()));
-        txtfieldDailyRate.setText(String.valueOf(payslip.getHourlyRate()));
+        txtfieldMonthlyRate.setText(formatDecimal(payslip.getMonthlyRate()));
+        txtfieldHourlyRate.setText(formatDecimal(payslip.getHourlyRate()));
         txtfieldHoursWorked.setText(String.valueOf(payslip.getTotalHours()));
-        txtfieldGrossIncome.setText(String.valueOf(payslip.getGrossIncome()));
+        txtfieldGrossIncome.setText(formatDecimal(payslip.getGrossIncome()));
 
         // Benefits
-        txtfieldRiceSubsidy.setText(String.valueOf(payslip.getRiceSubsidy()));
-        txtfieldPhoneAllowance.setText(String.valueOf(payslip.getPhoneAllowance()));
-        txtfieldClothingAllowance.setText(String.valueOf(payslip.getClothingAllowance()));
+        txtfieldRiceSubsidy.setText(formatDecimal(payslip.getRiceSubsidy()));
+        txtfieldPhoneAllowance.setText(formatDecimal(payslip.getPhoneAllowance()));
+        txtfieldClothingAllowance.setText(formatDecimal(payslip.getClothingAllowance()));
         double totalBenefits = payslip.getRiceSubsidy() + payslip.getPhoneAllowance() + payslip.getClothingAllowance();
-        txtfieldTotalBenefits.setText(String.valueOf(totalBenefits));
+        txtfieldTotalBenefits.setText(formatDecimal(totalBenefits));
 
         // Deductions
-        txtfieldSSS.setText(String.valueOf(payslip.getSssContribution()));
-        txtfieldPhilhealth.setText(String.valueOf(payslip.getPhilhealthContribution()));
-        txtfieldPagIbig.setText(String.valueOf(payslip.getPagibigContribution()));
+        txtfieldSSS.setText(formatDecimal(payslip.getSssContribution()));
+        txtfieldPhilhealth.setText(formatDecimal(payslip.getPhilhealthContribution()));
+        txtfieldPagIbig.setText(formatDecimal(payslip.getPagibigContribution()));
         double totalDeductions = payslip.getSssContribution() + payslip.getPhilhealthContribution() + payslip.getPagibigContribution();
-        txtfieldTotalDeductions.setText(String.valueOf(totalDeductions));
+        txtfieldTotalDeductions.setText(formatDecimal(totalDeductions));
 
         // Summary
-        txtfieldSummaryGrossIncome.setText(String.valueOf(payslip.getGrossIncome()));
-        txtfieldSummaryBenefits.setText(String.valueOf(totalBenefits));
-        txtfieldSummaryDeductions.setText(String.valueOf(totalDeductions));
+        txtfieldSummaryGrossIncome.setText(formatDecimal(payslip.getGrossIncome()));
+        txtfieldSummaryBenefits.setText(formatDecimal(totalBenefits));
+        txtfieldSummaryDeductions.setText(formatDecimal(totalDeductions));
         double withholdingTax = payslip.getWithholdingTax();
-        textFieldwithholdingtax.setText(String.valueOf(withholdingTax));
+        textFieldwithholdingtax.setText(formatDecimal(withholdingTax));
 
         // Net Pay
         double netPay = payslip.getGrossIncome() - totalDeductions + totalBenefits - withholdingTax;
-        txtfieldTakeHomePay.setText(String.valueOf(netPay));
-    }
-    
-    private void exportPayslipDetails() {
-        int selectedRowIndex = salarycalculationTable.getSelectedRow();
-
-        if (selectedRowIndex != -1) {
-            Object employeeIdObject = salarycalculationTable.getValueAt(selectedRowIndex, 0);
-            if (employeeIdObject != null) {
-                String employeeId = employeeIdObject.toString();
-                Payslip payslip = PayslipDAO.getInstance().getPayslipByEmployeeId(employeeId);
-
-                if (payslip != null) {
-                    writePayslipDetailsToFile(payslip); // Call the method to write payslip details to a file
-                } else {
-                    JOptionPane.showMessageDialog(null, "Payslip details not found for selected employee.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "Employee ID is null for selected row.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Please select a row in the salary calculation table.", "No Row Selected", JOptionPane.WARNING_MESSAGE);
-        }
+        txtfieldTakeHomePay.setText(formatDecimal(netPay));
     }
 
     
-    private void writePayslipDetailsToFile(Payslip payslip) {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Save Payslip Details");
-        
-        int userSelection = fileChooser.showSaveDialog(null);
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            try {
-                FileWriter writer = new FileWriter(fileChooser.getSelectedFile() + ".txt");
-                
-                // Header
-                writer.write("==============  MotorPH  ==============\n");
-                writer.write("7 Jupiter Avenue cor. F. Sandoval Jr. \n");
-                writer.write("Bagong Nayon, Quezon City\n");
-                writer.write("Phone: (028) 911-5071 / (028) 911-5072\n");
-                writer.write("Email: corporate@motorph.com\n\n");
-                writer.write("=========== EMPLOYEE PAYSLIP ===========\n\n");   
-                
-                // Write Employee Details
-                writer.write("Employee Details -----------------------\n");
-                writer.write("Employee ID: " + payslip.getEmployeeId() + "\n");
-                writer.write("Employee Name: " + payslip.getEmployeeName() + "\n");
-                writer.write("Position: " + payslip.getEmployeePosition() + "\n");
-                writer.write("Period Start Date: " + payslip.getPeriodStartDate() + "\n");
-                writer.write("Period End Date: " + payslip.getPeriodEndDate() + "\n\n");
-
-                // Write Earnings
-                writer.write("Earnings -------------------------------\n");
-                writer.write("Monthly Rate: " + payslip.getMonthlyRate() + "\n");
-                writer.write("Daily Rate: " + payslip.getHourlyRate() + "\n");
-                writer.write("Hours Worked: " + payslip.getTotalHours() + "\n");
-                writer.write("Gross Income: " + payslip.getGrossIncome() + "\n\n");
-
-                // Write Benefits
-                writer.write("Benefits -------------------------------\n");
-                writer.write("Rice Subsidy: " + payslip.getRiceSubsidy() + "\n");
-                writer.write("Phone Allowance: " + payslip.getPhoneAllowance() + "\n");
-                writer.write("Clothing Allowance: " + payslip.getClothingAllowance() + "\n");
-                double totalBenefits = payslip.getRiceSubsidy() + payslip.getPhoneAllowance() + payslip.getClothingAllowance();
-                writer.write("Total Benefits: " + totalBenefits + "\n\n");
-
-                // Write Deductions
-                writer.write("Deductions -----------------------------\n");
-                writer.write("SSS Contribution: " + payslip.getSssContribution() + "\n");
-                writer.write("Philhealth Contribution: " + payslip.getPhilhealthContribution() + "\n");
-                writer.write("Pag-ibig Contribution: " + payslip.getPagibigContribution() + "\n");
-                double totalDeductions = payslip.getSssContribution() + payslip.getPhilhealthContribution() + payslip.getPagibigContribution();
-                writer.write("Total Deductions: " + totalDeductions + "\n\n");
-
-                // Write Summary
-                writer.write("Summary --------------------------------\n");
-                writer.write("Gross Income: " + payslip.getGrossIncome() + "\n");
-                writer.write("Total Benefits: " + totalBenefits + "\n");
-                writer.write("Total Deductions: " + totalDeductions + "\n");
-                writer.write("Withholding Tax: " + payslip.getWithholdingTax() + "\n");
-                double netPay = payslip.getGrossIncome() - totalDeductions + totalBenefits - payslip.getWithholdingTax();
-                writer.write("Net Pay: " + netPay + "\n");
-
-            writer.close();
-            JOptionPane.showMessageDialog(null, "Payslip details exported successfully.", "Export Successful", JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error exporting payslip details: " + e.getMessage(), "Export Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-}
-    
+   
     private void clearTablesAndDisplayMessage() {
         // Clear both tables
         clearAttendanceTable();

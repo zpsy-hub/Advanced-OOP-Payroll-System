@@ -3,23 +3,24 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.List;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
-
+import model.Payslip;
 import model.User;
+import service.PayrollSalaryCalculationService;
+import service.PayslipDAO;
 import util.SessionManager;
 import javax.swing.JTextField;
 
@@ -27,30 +28,31 @@ public class GUIPayslip {
 
 	JFrame payslipScreen;
 	private static User loggedInEmployee;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTextField textField_6;
-	private JTextField textField_7;
-	private JTextField textField_8;
-	private JTextField textField_9;
-	private JTextField textField_10;
-	private JTextField textField_11;
-	private JTextField textField_12;
-	private JTextField textField_13;
-	private JTextField textField_14;
-	private JTextField textField_15;
-	private JTextField textField_16;
-	private JTextField textField_17;
-	private JTextField textField_18;
-	private JTextField textField_19;
-	private JTextField textField_20;
-	private JTextField textField_21;
-	private JTextField textField_22;
+	private JTextField textfieldPositionDept;
+	private JTextField textfieldEmployeeName;
+	private JTextField textfieldEmployeeID;
+	private JTextField textfieldPayslipNo;
+	private JTextField textfieldStartDate;
+	private JTextField textfieldEndDate;
+	private JTextField txtfieldMonthlyRate;
+	private JTextField txtfieldHourlyRate;
+	private JTextField txtfieldHoursWorked;
+	private JTextField txtfieldRiceSubsidy;
+	private JTextField txtfieldPhoneAllowance;
+	private JTextField txtfieldClothingAllowance;
+	private JTextField txtfieldTotalBenefits;
+	private JTextField txtfieldPagIbig;
+	private JTextField txtfieldTotalDeductions;
+	private JTextField txtfieldSSS;
+	private JTextField txtfieldPhilhealth;
+	private JTextField txtfieldSummaryGrossIncome;
+	private JTextField txtfieldSummaryBenefits;
+	private JTextField txtfieldSummaryDeductions;
+	private JTextField txtfieldTakeHomePay;
+	private JTextField txtfieldGrossIncome;
+	private JTextField textFieldwithholdingtax;
     private JComboBox<String> monthComboBox;
+    private PayrollSalaryCalculationService service;
 
 	/**
 	 * Launch the application.
@@ -75,6 +77,7 @@ public class GUIPayslip {
 	 */
 	public GUIPayslip(User loggedInEmployee) {
         GUIPayslip.loggedInEmployee = loggedInEmployee;
+        this.service = new PayrollSalaryCalculationService();
         initialize();
     }
 
@@ -118,7 +121,7 @@ public class GUIPayslip {
 		dashboardButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 openDashboard(loggedInEmployee);
-                payslipScreen.dispose(); // Optionally dispose the current window
+                payslipScreen.dispose(); 
             }
 
             // Define the openDashboard method here within the ActionListener class
@@ -187,7 +190,6 @@ public class GUIPayslip {
 		        try {
 					openLeaveRequest(loggedInEmployee);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 		        payslipScreen.dispose(); // Optionally dispose the current window
@@ -211,20 +213,29 @@ public class GUIPayslip {
 		
 		JLabel payslipLabel = new JLabel("Payslip");
 		payslipLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
-		payslipLabel.setBounds(340, 22, 205, 33);
+		payslipLabel.setBounds(322, 22, 205, 33);
 		mainPanel.add(payslipLabel);
 		
 		JLabel payperiodLabel = new JLabel("Pay Period");
 		payperiodLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 22));
-		payperiodLabel.setBounds(508, 22, 98, 33);
+		payperiodLabel.setBounds(680, 70, 98, 33);
 		mainPanel.add(payperiodLabel);
 		
 		monthComboBox = new JComboBox<>();
 		monthComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
-		monthComboBox.setModel(new DefaultComboBoxModel(new String[] {"Date"}));
-		monthComboBox.setBounds(617, 22, 250, 30);
-		mainPanel.add(monthComboBox);
+		monthComboBox.setBounds(789, 71, 250, 30);		
+		monthComboBox.addItem("Select Month-Year");
+		// Populate monthComboBox with month-year combinations
+        service.populateMonthComboBox(monthComboBox);
 		
+		mainPanel.add(monthComboBox);
+		monthComboBox.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        generatePayslip();
+		    }
+		});
+	
 		JButton signoutButton = new JButton("Sign Out");
 		signoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -235,13 +246,13 @@ public class GUIPayslip {
 		});
 		signoutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
 		signoutButton.setBackground(Color.WHITE);
-		signoutButton.setBounds(1160, 36, 103, 31);
+		signoutButton.setBounds(1142, 23, 103, 31);
 		mainPanel.add(signoutButton);
 		
 		JLabel employeeNameLabel = new JLabel("");
 		employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		employeeNameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
-		employeeNameLabel.setBounds(750, 36, 400, 33);
+		employeeNameLabel.setBounds(732, 22, 400, 33);
 		mainPanel.add(employeeNameLabel);
 		
 		JPanel separator_1 = new JPanel();
@@ -255,19 +266,19 @@ public class GUIPayslip {
 		lblEarnings.setBounds(338, 228, 85, 24);
 		mainPanel.add(lblEarnings);
 		
-		textField = new JTextField();
-		textField.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField.setEditable(false);
-		textField.setColumns(10);
-		textField.setBounds(421, 202, 226, 19);
-		mainPanel.add(textField);
+		textfieldPositionDept = new JTextField();
+		textfieldPositionDept.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		textfieldPositionDept.setEditable(false);
+		textfieldPositionDept.setColumns(10);
+		textfieldPositionDept.setBounds(421, 202, 226, 19);
+		mainPanel.add(textfieldPositionDept);
 		
-		textField_1 = new JTextField();
-		textField_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_1.setEditable(false);
-		textField_1.setColumns(10);
-		textField_1.setBounds(421, 171, 226, 19);
-		mainPanel.add(textField_1);
+		textfieldEmployeeName = new JTextField();
+		textfieldEmployeeName.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		textfieldEmployeeName.setEditable(false);
+		textfieldEmployeeName.setColumns(10);
+		textfieldEmployeeName.setBounds(421, 171, 226, 19);
+		mainPanel.add(textfieldEmployeeName);
 		
 		JLabel lblEmployeeName = new JLabel("Employee Name");
 		lblEmployeeName.setForeground(new Color(30, 55, 101));
@@ -281,12 +292,12 @@ public class GUIPayslip {
 		lblEmployeeId.setBounds(338, 146, 67, 13);
 		mainPanel.add(lblEmployeeId);
 		
-		textField_2 = new JTextField();
-		textField_2.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_2.setEditable(false);
-		textField_2.setColumns(10);
-		textField_2.setBounds(404, 140, 76, 19);
-		mainPanel.add(textField_2);
+		textfieldEmployeeID = new JTextField();
+		textfieldEmployeeID.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		textfieldEmployeeID.setEditable(false);
+		textfieldEmployeeID.setColumns(10);
+		textfieldEmployeeID.setBounds(404, 140, 76, 19);
+		mainPanel.add(textfieldEmployeeID);
 		
 		JLabel lblPosition = new JLabel("Position/Dept.");
 		lblPosition.setForeground(new Color(30, 55, 101));
@@ -294,12 +305,12 @@ public class GUIPayslip {
 		lblPosition.setBounds(338, 205, 85, 13);
 		mainPanel.add(lblPosition);
 		
-		textField_3 = new JTextField();
-		textField_3.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_3.setEditable(false);
-		textField_3.setColumns(10);
-		textField_3.setBounds(404, 111, 76, 19);
-		mainPanel.add(textField_3);
+		textfieldPayslipNo = new JTextField();
+		textfieldPayslipNo.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		textfieldPayslipNo.setEditable(false);
+		textfieldPayslipNo.setColumns(10);
+		textfieldPayslipNo.setBounds(404, 111, 76, 19);
+		mainPanel.add(textfieldPayslipNo);
 		
 		JLabel lblPayslip = new JLabel("Payslip No.");
 		lblPayslip.setForeground(new Color(30, 55, 101));
@@ -313,19 +324,19 @@ public class GUIPayslip {
 		lblStartDate.setBounds(492, 115, 85, 13);
 		mainPanel.add(lblStartDate);
 		
-		textField_4 = new JTextField();
-		textField_4.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_4.setEditable(false);
-		textField_4.setColumns(10);
-		textField_4.setBounds(580, 110, 67, 19);
-		mainPanel.add(textField_4);
+		textfieldStartDate = new JTextField();
+		textfieldStartDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		textfieldStartDate.setEditable(false);
+		textfieldStartDate.setColumns(10);
+		textfieldStartDate.setBounds(580, 110, 67, 19);
+		mainPanel.add(textfieldStartDate);
 		
-		textField_5 = new JTextField();
-		textField_5.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_5.setEditable(false);
-		textField_5.setColumns(10);
-		textField_5.setBounds(580, 140, 67, 19);
-		mainPanel.add(textField_5);
+		textfieldEndDate = new JTextField();
+		textfieldEndDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		textfieldEndDate.setEditable(false);
+		textfieldEndDate.setColumns(10);
+		textfieldEndDate.setBounds(580, 140, 67, 19);
+		mainPanel.add(textfieldEndDate);
 		
 		JLabel lblEnddate = new JLabel("Period EndDate");
 		lblEnddate.setForeground(new Color(30, 55, 101));
@@ -333,12 +344,12 @@ public class GUIPayslip {
 		lblEnddate.setBounds(492, 144, 85, 13);
 		mainPanel.add(lblEnddate);
 		
-		textField_6 = new JTextField();
-		textField_6.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_6.setEditable(false);
-		textField_6.setColumns(10);
-		textField_6.setBounds(455, 255, 192, 19);
-		mainPanel.add(textField_6);
+		txtfieldMonthlyRate = new JTextField();
+		txtfieldMonthlyRate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldMonthlyRate.setEditable(false);
+		txtfieldMonthlyRate.setColumns(10);
+		txtfieldMonthlyRate.setBounds(455, 255, 192, 19);
+		mainPanel.add(txtfieldMonthlyRate);
 		
 		JLabel lblMonthlyRate = new JLabel("Monthly Rate");
 		lblMonthlyRate.setForeground(new Color(30, 55, 101));
@@ -358,19 +369,19 @@ public class GUIPayslip {
 		lblDaysWorked.setBounds(338, 305, 85, 13);
 		mainPanel.add(lblDaysWorked);
 		
-		textField_7 = new JTextField();
-		textField_7.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_7.setEditable(false);
-		textField_7.setColumns(10);
-		textField_7.setBounds(455, 278, 192, 19);
-		mainPanel.add(textField_7);
+		txtfieldHourlyRate = new JTextField();
+		txtfieldHourlyRate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldHourlyRate.setEditable(false);
+		txtfieldHourlyRate.setColumns(10);
+		txtfieldHourlyRate.setBounds(455, 278, 192, 19);
+		mainPanel.add(txtfieldHourlyRate);
 		
-		textField_8 = new JTextField();
-		textField_8.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_8.setEditable(false);
-		textField_8.setColumns(10);
-		textField_8.setBounds(455, 302, 192, 19);
-		mainPanel.add(textField_8);
+		txtfieldHoursWorked = new JTextField();
+		txtfieldHoursWorked.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldHoursWorked.setEditable(false);
+		txtfieldHoursWorked.setColumns(10);
+		txtfieldHoursWorked.setBounds(455, 302, 192, 19);
+		mainPanel.add(txtfieldHoursWorked);
 		
 		JPanel separator_1_1 = new JPanel();
 		separator_1_1.setBackground(new Color(30, 55, 101));
@@ -407,33 +418,33 @@ public class GUIPayslip {
 		lblTotal.setBounds(338, 445, 110, 17);
 		mainPanel.add(lblTotal);
 		
-		textField_9 = new JTextField();
-		textField_9.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_9.setEditable(false);
-		textField_9.setColumns(10);
-		textField_9.setBounds(455, 382, 192, 19);
-		mainPanel.add(textField_9);
+		txtfieldRiceSubsidy = new JTextField();
+		txtfieldRiceSubsidy.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldRiceSubsidy.setEditable(false);
+		txtfieldRiceSubsidy.setColumns(10);
+		txtfieldRiceSubsidy.setBounds(455, 382, 192, 19);
+		mainPanel.add(txtfieldRiceSubsidy);
 		
-		textField_10 = new JTextField();
-		textField_10.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_10.setEditable(false);
-		textField_10.setColumns(10);
-		textField_10.setBounds(455, 401, 192, 19);
-		mainPanel.add(textField_10);
+		txtfieldPhoneAllowance = new JTextField();
+		txtfieldPhoneAllowance.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldPhoneAllowance.setEditable(false);
+		txtfieldPhoneAllowance.setColumns(10);
+		txtfieldPhoneAllowance.setBounds(455, 401, 192, 19);
+		mainPanel.add(txtfieldPhoneAllowance);
 		
-		textField_11 = new JTextField();
-		textField_11.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_11.setEditable(false);
-		textField_11.setColumns(10);
-		textField_11.setBounds(455, 419, 192, 19);
-		mainPanel.add(textField_11);
+		txtfieldClothingAllowance = new JTextField();
+		txtfieldClothingAllowance.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldClothingAllowance.setEditable(false);
+		txtfieldClothingAllowance.setColumns(10);
+		txtfieldClothingAllowance.setBounds(455, 419, 192, 19);
+		mainPanel.add(txtfieldClothingAllowance);
 		
-		textField_12 = new JTextField();
-		textField_12.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_12.setEditable(false);
-		textField_12.setColumns(10);
-		textField_12.setBounds(455, 443, 192, 19);
-		mainPanel.add(textField_12);
+		txtfieldTotalBenefits = new JTextField();
+		txtfieldTotalBenefits.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldTotalBenefits.setEditable(false);
+		txtfieldTotalBenefits.setColumns(10);
+		txtfieldTotalBenefits.setBounds(455, 443, 192, 19);
+		mainPanel.add(txtfieldTotalBenefits);
 		
 		JPanel separator_1_1_1 = new JPanel();
 		separator_1_1_1.setBackground(new Color(30, 55, 101));
@@ -470,33 +481,33 @@ public class GUIPayslip {
 		lblTotalDeductions.setBounds(338, 553, 111, 20);
 		mainPanel.add(lblTotalDeductions);
 		
-		textField_13 = new JTextField();
-		textField_13.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_13.setEditable(false);
-		textField_13.setColumns(10);
-		textField_13.setBounds(455, 527, 192, 19);
-		mainPanel.add(textField_13);
+		txtfieldPagIbig = new JTextField();
+		txtfieldPagIbig.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldPagIbig.setEditable(false);
+		txtfieldPagIbig.setColumns(10);
+		txtfieldPagIbig.setBounds(455, 527, 192, 19);
+		mainPanel.add(txtfieldPagIbig);
 		
-		textField_14 = new JTextField();
-		textField_14.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_14.setEditable(false);
-		textField_14.setColumns(10);
-		textField_14.setBounds(455, 554, 192, 19);
-		mainPanel.add(textField_14);
+		txtfieldTotalDeductions = new JTextField();
+		txtfieldTotalDeductions.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldTotalDeductions.setEditable(false);
+		txtfieldTotalDeductions.setColumns(10);
+		txtfieldTotalDeductions.setBounds(455, 554, 192, 19);
+		mainPanel.add(txtfieldTotalDeductions);
 		
-		textField_15 = new JTextField();
-		textField_15.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_15.setEditable(false);
-		textField_15.setColumns(10);
-		textField_15.setBounds(455, 490, 192, 19);
-		mainPanel.add(textField_15);
+		txtfieldSSS = new JTextField();
+		txtfieldSSS.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldSSS.setEditable(false);
+		txtfieldSSS.setColumns(10);
+		txtfieldSSS.setBounds(455, 490, 192, 19);
+		mainPanel.add(txtfieldSSS);
 		
-		textField_16 = new JTextField();
-		textField_16.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_16.setEditable(false);
-		textField_16.setColumns(10);
-		textField_16.setBounds(455, 509, 192, 19);
-		mainPanel.add(textField_16);
+		txtfieldPhilhealth = new JTextField();
+		txtfieldPhilhealth.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldPhilhealth.setEditable(false);
+		txtfieldPhilhealth.setColumns(10);
+		txtfieldPhilhealth.setBounds(455, 509, 192, 19);
+		mainPanel.add(txtfieldPhilhealth);
 		
 		JLabel lblSummary = new JLabel("Summary");
 		lblSummary.setForeground(new Color(30, 55, 101));
@@ -509,33 +520,33 @@ public class GUIPayslip {
 		separator_1_1_2.setBounds(413, 590, 234, 4);
 		mainPanel.add(separator_1_1_2);
 		
-		textField_17 = new JTextField();
-		textField_17.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_17.setEditable(false);
-		textField_17.setColumns(10);
-		textField_17.setBounds(455, 610, 192, 19);
-		mainPanel.add(textField_17);
+		txtfieldSummaryGrossIncome = new JTextField();
+		txtfieldSummaryGrossIncome.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldSummaryGrossIncome.setEditable(false);
+		txtfieldSummaryGrossIncome.setColumns(10);
+		txtfieldSummaryGrossIncome.setBounds(455, 610, 192, 19);
+		mainPanel.add(txtfieldSummaryGrossIncome);
 		
-		textField_18 = new JTextField();
-		textField_18.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_18.setEditable(false);
-		textField_18.setColumns(10);
-		textField_18.setBounds(455, 629, 192, 19);
-		mainPanel.add(textField_18);
+		txtfieldSummaryBenefits = new JTextField();
+		txtfieldSummaryBenefits.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldSummaryBenefits.setEditable(false);
+		txtfieldSummaryBenefits.setColumns(10);
+		txtfieldSummaryBenefits.setBounds(455, 629, 192, 19);
+		mainPanel.add(txtfieldSummaryBenefits);
 		
-		textField_19 = new JTextField();
-		textField_19.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_19.setEditable(false);
-		textField_19.setColumns(10);
-		textField_19.setBounds(455, 647, 192, 19);
-		mainPanel.add(textField_19);
+		txtfieldSummaryDeductions = new JTextField();
+		txtfieldSummaryDeductions.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldSummaryDeductions.setEditable(false);
+		txtfieldSummaryDeductions.setColumns(10);
+		txtfieldSummaryDeductions.setBounds(455, 647, 192, 19);
+		mainPanel.add(txtfieldSummaryDeductions);
 		
-		textField_20 = new JTextField();
-		textField_20.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_20.setEditable(false);
-		textField_20.setColumns(10);
-		textField_20.setBounds(455, 690, 192, 19);
-		mainPanel.add(textField_20);
+		txtfieldTakeHomePay = new JTextField();
+		txtfieldTakeHomePay.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldTakeHomePay.setEditable(false);
+		txtfieldTakeHomePay.setColumns(10);
+		txtfieldTakeHomePay.setBounds(455, 690, 192, 19);
+		mainPanel.add(txtfieldTakeHomePay);
 		
 		JLabel lblTakeHomePay = new JLabel("TAKE HOME PAY");
 		lblTakeHomePay.setForeground(new Color(30, 55, 101));
@@ -578,12 +589,12 @@ public class GUIPayslip {
 		lblGrossIncome.setBounds(21, 261, 103, 19);
 		payslippanel.add(lblGrossIncome);
 		
-		textField_21 = new JTextField();
-		textField_21.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_21.setEditable(false);
-		textField_21.setColumns(10);
-		textField_21.setBounds(134, 261, 192, 19);
-		payslippanel.add(textField_21);
+		txtfieldGrossIncome = new JTextField();
+		txtfieldGrossIncome.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		txtfieldGrossIncome.setEditable(false);
+		txtfieldGrossIncome.setColumns(10);
+		txtfieldGrossIncome.setBounds(134, 261, 192, 19);
+		payslippanel.add(txtfieldGrossIncome);
 		
 		JLabel lblWithholdingTax = new JLabel("Withholding Tax");
 		lblWithholdingTax.setForeground(new Color(30, 55, 101));
@@ -591,12 +602,47 @@ public class GUIPayslip {
 		lblWithholdingTax.setBounds(18, 606, 92, 13);
 		payslippanel.add(lblWithholdingTax);
 		
-		textField_22 = new JTextField();
-		textField_22.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
-		textField_22.setEditable(false);
-		textField_22.setColumns(10);
-		textField_22.setBounds(134, 603, 192, 19);
-		payslippanel.add(textField_22);
+		textFieldwithholdingtax = new JTextField();
+		textFieldwithholdingtax.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
+		textFieldwithholdingtax.setEditable(false);
+		textFieldwithholdingtax.setColumns(10);
+		textFieldwithholdingtax.setBounds(134, 603, 192, 19);
+		payslippanel.add(textFieldwithholdingtax);
+		
+		JButton exportButton = new JButton("Export");
+		exportButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		exportButton.setBackground(Color.WHITE);
+		exportButton.setBounds(885, 133, 154, 33);
+		mainPanel.add(exportButton);
+		exportButton.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        // Get the logged-in employee's ID from the logged-in user object
+		        int loggedInEmployeeId = loggedInEmployee.getId();
+
+		        // Get the selected month and year from the payslipScreen
+		        String selectedMonthYear = (String) monthComboBox.getSelectedItem();
+
+		        // If a month-year is selected
+		        if (!selectedMonthYear.equals("Date")) {
+		            // Retrieve the payslip for the logged-in employee and selected month-year
+		            Payslip payslip = PayslipDAO.getInstance().getPayslipByEmployeeIdAndMonthYear(String.valueOf(loggedInEmployeeId), selectedMonthYear);
+
+		            // If a payslip is found for the logged-in employee and selected month-year
+		            if (payslip != null) {
+		                // Proceed with exporting the payslip details to a file
+		                service.writePayslipDetailsToFile(payslip);
+		            } else {
+		                // If no payslip is found, display an error message
+		                JOptionPane.showMessageDialog(null, "Payslip details not found for the selected month and year.", "Error", JOptionPane.ERROR_MESSAGE);
+		            }
+		        } else {
+		            // If no month-year is selected, display an error message
+		            JOptionPane.showMessageDialog(null, "Please select a valid month and year.", "Error", JOptionPane.ERROR_MESSAGE);
+		        }
+		    }
+		});
+		
 		
 		// Set employee name dynamically
         if (loggedInEmployee != null) {
@@ -607,4 +653,88 @@ public class GUIPayslip {
 	public void openWindow() {
 	    payslipScreen.setVisible(true);
 	}
+	
+	   // Method to format decimal values with two decimal places
+    private String formatDecimal(double value) {
+        DecimalFormat df = new DecimalFormat("#.##"); 
+        return df.format(value);
+    }
+	
+    private void populateTextFieldsWithPayslip(Payslip payslip, int payslipNumber) {
+        // Employee Details
+    	 textfieldPayslipNo.setText(String.valueOf(payslipNumber));
+        textfieldEmployeeID.setText(String.valueOf(payslip.getEmployeeId()));
+        textfieldEmployeeName.setText(payslip.getEmployeeName());
+        textfieldPositionDept.setText(payslip.getEmployeePosition());
+        textfieldStartDate.setText(String.valueOf(payslip.getPeriodStartDate()));
+        textfieldEndDate.setText(String.valueOf(payslip.getPeriodEndDate()));
+
+        // Earnings
+        txtfieldMonthlyRate.setText(formatDecimal(payslip.getMonthlyRate()));
+        txtfieldHourlyRate.setText(formatDecimal(payslip.getHourlyRate()));
+        txtfieldHoursWorked.setText(String.valueOf(payslip.getTotalHours()));
+        txtfieldGrossIncome.setText(formatDecimal(payslip.getGrossIncome()));
+
+        // Benefits
+        txtfieldRiceSubsidy.setText(formatDecimal(payslip.getRiceSubsidy()));
+        txtfieldPhoneAllowance.setText(formatDecimal(payslip.getPhoneAllowance()));
+        txtfieldClothingAllowance.setText(formatDecimal(payslip.getClothingAllowance()));
+        double totalBenefits = payslip.getRiceSubsidy() + payslip.getPhoneAllowance() + payslip.getClothingAllowance();
+        txtfieldTotalBenefits.setText(formatDecimal(totalBenefits));
+
+        // Deductions
+        txtfieldSSS.setText(formatDecimal(payslip.getSssContribution()));
+        txtfieldPhilhealth.setText(formatDecimal(payslip.getPhilhealthContribution()));
+        txtfieldPagIbig.setText(formatDecimal(payslip.getPagibigContribution()));
+        double totalDeductions = payslip.getSssContribution() + payslip.getPhilhealthContribution() + payslip.getPagibigContribution();
+        txtfieldTotalDeductions.setText(formatDecimal(totalDeductions));
+
+        // Summary
+        txtfieldSummaryGrossIncome.setText(formatDecimal(payslip.getGrossIncome()));
+        txtfieldSummaryBenefits.setText(formatDecimal(totalBenefits));
+        txtfieldSummaryDeductions.setText(formatDecimal(totalDeductions));
+        double withholdingTax = payslip.getWithholdingTax();
+        textFieldwithholdingtax.setText(formatDecimal(withholdingTax));
+
+        // Net Pay
+        double netPay = payslip.getGrossIncome() - totalDeductions + totalBenefits - withholdingTax;
+        txtfieldTakeHomePay.setText(formatDecimal(netPay));
+    }
+    
+    private void generatePayslip() {
+        // Get the logged-in employee's ID from the logged-in user object
+        int loggedInEmployeeId = loggedInEmployee.getId();
+
+        // Get the selected month and year from the monthComboBox
+        String selectedMonthYear = (String) monthComboBox.getSelectedItem();
+
+        // If a month-year is selected
+        if (!selectedMonthYear.equals("Date")) {
+            // Split the selected month-year to extract the month and year
+            String[] parts = selectedMonthYear.split("-");
+            int month = Integer.parseInt(parts[0]);
+            int year = Integer.parseInt(parts[1]);
+
+            // Retrieve the payslip for the selected month and year
+            Payslip payslip = PayslipDAO.getInstance().getPayslipByEmployeeIdAndMonthYear(String.valueOf(loggedInEmployeeId), selectedMonthYear);
+
+            // Retrieve the payslip numbers for the selected employee ID and month-year
+            List<Integer> payslipNumbers = PayslipDAO.getInstance().getPayslipNumbersByEmployeeIdAndMonthYear(String.valueOf(loggedInEmployeeId), selectedMonthYear);
+
+            // If a payslip is found for the selected month and year
+            if (payslip != null) {
+                // Get the first payslip number (assuming there's only one payslip per month)
+                int payslipNumber = payslipNumbers.isEmpty() ? 0 : payslipNumbers.get(0);
+
+                // Populate the text fields with the payslip details and payslip number
+                populateTextFieldsWithPayslip(payslip, payslipNumber);
+            } else {
+                // If no payslip is found, display an error message
+                JOptionPane.showMessageDialog(payslipScreen, "Payslip not found for selected month and year.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            // If no month-year is selected, display an error message
+            JOptionPane.showMessageDialog(payslipScreen, "Please select a valid month and year.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 }

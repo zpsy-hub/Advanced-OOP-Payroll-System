@@ -1,4 +1,5 @@
 package model;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 
 import service.EmployeeDAO;
@@ -207,5 +208,7 @@ public class Payslip {
     public double getHourlyRate() {
         return EmployeeDAO.getInstance().getHourlyRateById(this.getEmployeeId());
     }
+    
+
 
 }
