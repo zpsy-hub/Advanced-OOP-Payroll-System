@@ -257,6 +257,33 @@ public class GUIDashboard {
 		Payroll_MonthlyReportsButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	GUI_PayrollMonthlySummary window = new GUI_PayrollMonthlySummary(loggedInEmployee);
+		    	window.payrollmontlysummary.setVisible(true);
+		    	dashboardScreen.dispose(); 
+		    }
+		});
+		
+		JButton IT_PermissionsManagement = new JButton("Permissions Management");
+		IT_PermissionsManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		IT_PermissionsManagement.setBackground(Color.WHITE);
+		IT_PermissionsManagement.setBounds(37, 383, 227, 31);
+		sidebarPanel.add(IT_PermissionsManagement);
+		IT_PermissionsManagement.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_ITPermissions window = new GUI_ITPermissions(loggedInEmployee);
+				window.permissionsFrame.setVisible(true);
+		    	dashboardScreen.dispose(); 
+		    }
+		});
+		
+		
+		JButton IT_UserManagement = new JButton("User Management");
+		IT_UserManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		IT_UserManagement.setBackground(Color.WHITE);
+		IT_UserManagement.setBounds(37, 438, 227, 31);
+		sidebarPanel.add(IT_UserManagement);
+		IT_UserManagement.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_PayrollMonthlySummary window = new GUI_PayrollMonthlySummary(loggedInEmployee);
 				window.payrollmontlysummary.setVisible(true);
 				dashboardScreen.dispose(); 
 		    }
@@ -272,24 +299,40 @@ public class GUIDashboard {
 		    HR_EmpMngmntButton.setVisible(true);
 		    HR_AttendanceMngmntButton.setVisible(true);
 		    HR_LeaveMngmntButton.setVisible(true);
-		    // Hide payroll buttons
+		    // Hide payroll and IT buttons
 		    Payroll_SalaryCalculationButton.setVisible(false);
 		    Payroll_MonthlyReportsButton.setVisible(false);
+		    IT_PermissionsManagement.setVisible(false);
+		    IT_UserManagement.setVisible(false);
 		} else if (userRole == UserRole.PAYROLL) {
 		    // If the user is in the payroll department, make the payroll buttons visible
 		    Payroll_SalaryCalculationButton.setVisible(true);
 		    Payroll_MonthlyReportsButton.setVisible(true);
-		    // Hide HR management buttons
+		    // Hide HR and IT buttons
 		    HR_EmpMngmntButton.setVisible(false);
 		    HR_AttendanceMngmntButton.setVisible(false);
 		    HR_LeaveMngmntButton.setVisible(false);
-		} else {
-		    // If the user is not in HR or payroll, hide all management buttons
+		    IT_PermissionsManagement.setVisible(false);
+		    IT_UserManagement.setVisible(false);
+		} else if (userRole == UserRole.IT) {
+		    // If the user is in the IT department, make the IT buttons visible
+		    IT_PermissionsManagement.setVisible(true);
+		    IT_UserManagement.setVisible(true);
+		    // Hide HR and payroll buttons
 		    HR_EmpMngmntButton.setVisible(false);
 		    HR_AttendanceMngmntButton.setVisible(false);
 		    HR_LeaveMngmntButton.setVisible(false);
 		    Payroll_SalaryCalculationButton.setVisible(false);
 		    Payroll_MonthlyReportsButton.setVisible(false);
+		} else {
+		    // If the user is not in HR, payroll, or IT, hide all management buttons
+		    HR_EmpMngmntButton.setVisible(false);
+		    HR_AttendanceMngmntButton.setVisible(false);
+		    HR_LeaveMngmntButton.setVisible(false);
+		    Payroll_SalaryCalculationButton.setVisible(false);
+		    Payroll_MonthlyReportsButton.setVisible(false);
+		    IT_PermissionsManagement.setVisible(false);
+		    IT_UserManagement.setVisible(false);
 		}
 
 		JLabel dashboardLabel = new JLabel("Dashboard");

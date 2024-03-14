@@ -51,10 +51,13 @@ public class UserRepository {
                    position.equalsIgnoreCase("HR Team Leader") || 
                    position.equalsIgnoreCase("HR Rank and File")) {
             return UserRole.HR;
+        } else if (position.equalsIgnoreCase("IT Operations and Systems")) {
+            return UserRole.IT;
         } else {
             return UserRole.EMPLOYEE;
         }
     }
+
 
     // Get employee ID based on the username
     public int getEmployeeIdByUsername(String username, String password) { // Changed return type to int
