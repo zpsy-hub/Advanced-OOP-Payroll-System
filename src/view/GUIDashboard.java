@@ -7,6 +7,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.Connection;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,10 +20,13 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 import model.Employee;
+import model.Permission;
 import model.User;
 import util.UserRole;
 import service.EmployeeDAO;
 import service.EmployeeService;
+import service.PermissionService;
+import service.SQL_client;
 import util.SessionManager;
 import util.UserRepository;
 
@@ -81,7 +86,6 @@ public class GUIDashboard {
         initialize();
     }
 
-    // Static getter for loggedInEmployee
     public static User getLoggedInEmployee() {
         return loggedInEmployee;
     }
@@ -94,6 +98,7 @@ public class GUIDashboard {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	private void initialize() {
 		dashboardScreen = new JFrame();
 		dashboardScreen.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
@@ -207,7 +212,6 @@ public class GUIDashboard {
 		    }
 		});
 		
-		//hrattendancemngmnt
 		JButton HR_AttendanceMngmntButton = new JButton("Attendance management");
 		HR_AttendanceMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_AttendanceMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
@@ -274,8 +278,7 @@ public class GUIDashboard {
 		    	dashboardScreen.dispose(); 
 		    }
 		});
-		
-		
+				
 		JButton IT_UserManagement = new JButton("User Management");
 		IT_UserManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		IT_UserManagement.setBackground(Color.WHITE);
@@ -290,50 +293,20 @@ public class GUIDashboard {
 		});
 		
 		
-		// Check the user role
-		UserRole userRole = loggedInEmployee != null ? loggedInEmployee.getRole() : null;
+		// Inside your GUI dashboard class
+		Connection connection = SQL_client.getInstance().getConnection();
+		PermissionService permissionsService = PermissionService.getInstance();
+		List<Permission> userPermissions = permissionsService.getPermissionsForEmployee(loggedInEmployee.getId(), connection);
 
-		// Check the user role and set button visibility accordingly
-		if (userRole == UserRole.HR) {
-		    // If the user is HR, make the HR management buttons visible
-		    HR_EmpMngmntButton.setVisible(true);
-		    HR_AttendanceMngmntButton.setVisible(true);
-		    HR_LeaveMngmntButton.setVisible(true);
-		    // Hide payroll and IT buttons
-		    Payroll_SalaryCalculationButton.setVisible(false);
-		    Payroll_MonthlyReportsButton.setVisible(false);
-		    IT_PermissionsManagement.setVisible(false);
-		    IT_UserManagement.setVisible(false);
-		} else if (userRole == UserRole.PAYROLL) {
-		    // If the user is in the payroll department, make the payroll buttons visible
-		    Payroll_SalaryCalculationButton.setVisible(true);
-		    Payroll_MonthlyReportsButton.setVisible(true);
-		    // Hide HR and IT buttons
-		    HR_EmpMngmntButton.setVisible(false);
-		    HR_AttendanceMngmntButton.setVisible(false);
-		    HR_LeaveMngmntButton.setVisible(false);
-		    IT_PermissionsManagement.setVisible(false);
-		    IT_UserManagement.setVisible(false);
-		} else if (userRole == UserRole.IT) {
-		    // If the user is in the IT department, make the IT buttons visible
-		    IT_PermissionsManagement.setVisible(true);
-		    IT_UserManagement.setVisible(true);
-		    // Hide HR and payroll buttons
-		    HR_EmpMngmntButton.setVisible(false);
-		    HR_AttendanceMngmntButton.setVisible(false);
-		    HR_LeaveMngmntButton.setVisible(false);
-		    Payroll_SalaryCalculationButton.setVisible(false);
-		    Payroll_MonthlyReportsButton.setVisible(false);
-		} else {
-		    // If the user is not in HR, payroll, or IT, hide all management buttons
-		    HR_EmpMngmntButton.setVisible(false);
-		    HR_AttendanceMngmntButton.setVisible(false);
-		    HR_LeaveMngmntButton.setVisible(false);
-		    Payroll_SalaryCalculationButton.setVisible(false);
-		    Payroll_MonthlyReportsButton.setVisible(false);
-		    IT_PermissionsManagement.setVisible(false);
-		    IT_UserManagement.setVisible(false);
-		}
+		// Map permissions to button visibility
+		HR_EmpMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 1)); // Employee Management
+		HR_AttendanceMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 2)); // Attendance Management
+		HR_LeaveMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3)); // Leave Management
+		Payroll_SalaryCalculationButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 4)); // Salary Calculation
+		Payroll_MonthlyReportsButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 5)); // Monthly Summary Report
+		IT_PermissionsManagement.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 7)); // Permission Management
+		IT_UserManagement.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6 || permission.getPermissionId() == 8)); // View Login Logs or User Credentials Management
+
 
 		JLabel dashboardLabel = new JLabel("Dashboard");
 		dashboardLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
