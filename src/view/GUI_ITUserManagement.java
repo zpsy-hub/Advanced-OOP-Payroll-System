@@ -36,7 +36,7 @@ public class GUI_ITUserManagement {
 	 */
 	private void initialize() {
 		usermngmntFrame = new JFrame();
-		usermngmntFrame.setBounds(100, 100, 450, 300);
+		usermngmntFrame.setBounds(100, 100, 1315, 770);
 		usermngmntFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
