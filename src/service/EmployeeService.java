@@ -4,13 +4,12 @@ import model.Employee;
 import model.User;
 import service.EmployeeDAO;
 import util.SessionManager;
-import util.UserRepository;
 
 public class EmployeeService {
     private final EmployeeDAO employeeDAO;
     private final User sessionManager;
 
-    public EmployeeService(UserRepository userRepository, User loggedInEmployee) {
+    public EmployeeService(LoginDAO userRepository, User loggedInEmployee) {
         this.employeeDAO = new EmployeeDAO(); 
         this.sessionManager = loggedInEmployee;
     }

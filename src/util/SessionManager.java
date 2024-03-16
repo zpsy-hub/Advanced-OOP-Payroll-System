@@ -1,6 +1,7 @@
 package util;
 
 import model.User;
+import service.LoginDAO;
 import service.SQL_client;
 
 import java.io.IOException;
@@ -11,9 +12,9 @@ import java.sql.Types;
 
 public class SessionManager {
 	private static User loggedInUser;
-    private UserRepository userRepository;
+    private LoginDAO userRepository;
 
-    public SessionManager(UserRepository userRepository) {
+    public SessionManager(LoginDAO userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -48,7 +49,7 @@ public class SessionManager {
             String query = "INSERT INTO payroll_system.login_attempts (emp_id, username, timestamp, success) VALUES (?, ?, CURRENT_TIMESTAMP, ?)";
             
             try (PreparedStatement ps = conn.prepareStatement(query)) {
-                ps.setInt(1, empId != null ? empId : 0); // Assuming emp_id is not nullable, use 0 if empId is null
+                ps.setInt(1, empId != null ? empId : 0); 
                 ps.setString(2, username);
                 ps.setBoolean(3, success); 
                 ps.executeUpdate();

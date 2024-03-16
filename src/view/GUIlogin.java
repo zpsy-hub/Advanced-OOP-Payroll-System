@@ -19,10 +19,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import model.User;
+import service.LoginDAO;
 import service.LoginService;
 import util.EmployeeData;
 import util.SessionManager;
-import util.UserRepository;
 import service.SQL_client;
 
 public class GUIlogin {
@@ -31,7 +31,7 @@ public class GUIlogin {
     private JTextField usernameTextField1;
     private LoginService loginService;
     private SessionManager sessionManager;
-    private UserRepository userRepository;
+    private LoginDAO userRepository;
     private JPasswordField passwordField;
 
     /**
@@ -58,7 +58,7 @@ public class GUIlogin {
      */
     public GUIlogin() {
         initialize();
-        UserRepository userRepository = new UserRepository();
+        LoginDAO userRepository = new LoginDAO();
         sessionManager = new SessionManager(userRepository);
     }
 

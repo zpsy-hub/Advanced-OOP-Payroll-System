@@ -7,13 +7,12 @@ import java.time.format.DateTimeFormatter;
 
 import model.User;
 import model.UserRole;
-import util.UserRepository;
 
 public class LoginService {
-    private UserRepository userRepository;
+    private LoginDAO userRepository;
     private String loginLogFilePath = "src/data/Login Log.csv";
 
-    public LoginService(UserRepository userRepository) {
+    public LoginService(LoginDAO userRepository) {
         this.userRepository = userRepository;
     }
 

@@ -25,10 +25,10 @@ import model.User;
 import util.UserRole;
 import service.EmployeeDAO;
 import service.EmployeeService;
+import service.LoginDAO;
 import service.PermissionService;
 import service.SQL_client;
 import util.SessionManager;
-import util.UserRepository;
 
 public class GUIDashboard {
 
@@ -498,7 +498,7 @@ public class GUIDashboard {
 		// Set employee info
 		if (loggedInEmployee != null) {
 		    // Assuming you have an instance of EmployeeService and EmployeeDAO
-			UserRepository userRepository = new UserRepository();
+			LoginDAO userRepository = new LoginDAO();
 			EmployeeService employeeService = new EmployeeService(userRepository, loggedInEmployee);
 
 		    // Retrieve the employee by ID using the service
@@ -518,7 +518,7 @@ public class GUIDashboard {
 	    // Check if a user is logged in
 	    if (loggedInEmployee != null) {
 	        // Create an instance of EmployeeService using EmployeeDAO
-	        UserRepository userRepository = new UserRepository();
+	        LoginDAO userRepository = new LoginDAO();
 	        EmployeeService employeeService = new EmployeeService(userRepository, loggedInEmployee);
 
 	        // Retrieve the employee's information from the database using their ID

@@ -1,16 +1,13 @@
-package util;
+package service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import util.UserRole;
 import model.User;
-import service.SQL_client;
 
-public class UserRepository {
-    public UserRepository() {
-        // Constructor
+public class LoginDAO {
+    public LoginDAO() {
     }
 
     public User authenticateUser(String username, String password) {
@@ -32,32 +29,13 @@ public class UserRepository {
                 String lastName = rs.getString("employee_lastname");
                 String firstName = rs.getString("employee_firstname");
                 String position = rs.getString("position");
-                UserRole role = determineUserRole(position);
-                return new User(username, password, employeeNumber, lastName, firstName, position, role);
+                return new User(username, password, employeeNumber, lastName, firstName, position);
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Log the exception
         }
         return null; // Authentication failed or database error occurred
     }
-
-    private UserRole determineUserRole(String position) {
-        if (position.equalsIgnoreCase("Payroll Manager") || 
-            position.equalsIgnoreCase("Payroll Team Leader") || 
-            position.equalsIgnoreCase("Payroll Rank and File") ||
-            position.equalsIgnoreCase("Accounting Head")) {
-            return UserRole.PAYROLL;
-        } else if (position.equalsIgnoreCase("HR Manager") || 
-                   position.equalsIgnoreCase("HR Team Leader") || 
-                   position.equalsIgnoreCase("HR Rank and File")) {
-            return UserRole.HR;
-        } else if (position.equalsIgnoreCase("IT Operations and Systems")) {
-            return UserRole.IT;
-        } else {
-            return UserRole.EMPLOYEE;
-        }
-    }
-
 
     // Get employee ID based on the username
     public int getEmployeeIdByUsername(String username, String password) { // Changed return type to int

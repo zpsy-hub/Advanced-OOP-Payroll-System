@@ -1,5 +1,4 @@
 package model;
-import util.UserRole;
 
 public class User {
     private String username;
@@ -8,18 +7,16 @@ public class User {
     private String lastName;
     private String firstName;
     private String position;
-    private UserRole role;
     private Employee employee;
 
     // Constructor
-    public User(String username, String password, int employeeNumber, String lastName, String firstName, String position, UserRole role) {
+    public User(String username, String password, int employeeNumber, String lastName, String firstName, String position) {
         this.username = username;
         this.password = password;
         this.id = employeeNumber;
         this.lastName = lastName;
         this.firstName = firstName;
         this.position = position;
-        this.role = role;
     }
 
     // Getters and Setters
@@ -69,14 +66,6 @@ public class User {
 
     public void setPosition(String position) {
         this.position = position;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
     }
 
     public Employee getEmployee() {

@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import util.UserRepository;
-
 public class TimesheetDAO {
 	private LocalDate payPeriodStartDate;
     private LocalDate payPeriodEndDate;
