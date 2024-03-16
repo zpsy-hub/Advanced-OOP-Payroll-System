@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTabbedPane;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 
@@ -172,6 +173,28 @@ public class GUI_ITCredentialsManagement {
 		btnSaveChanges.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
 		btnSaveChanges.setBounds(316, 160, 148, 28);
 		ChangePWpanel.add(btnSaveChanges);
+		btnSaveChanges.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        String selectedUser = (String) comboBoxSelectUser.getSelectedItem();
+		        String newPassword = textField_NewPassword.getText();
+		        int employeeId = extractEmployeeId(selectedUser);
+		        boolean passwordUpdated = credentialsManagementDAO.updatePassword(employeeId, newPassword);
+		        if (passwordUpdated) {
+		            JOptionPane.showMessageDialog(null, "Password updated successfully for employee: " + selectedUser);
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Failed to update password for employee: " + selectedUser);
+		        }
+		    }
+		    
+		    // Helper method 
+		    private int extractEmployeeId(String selectedUser) {
+		    	// user string is in the format "empId - LastName, FirstName"
+		        String[] parts = selectedUser.split(" - ");
+		        return Integer.parseInt(parts[0]);
+		    }
+		    
+		});
+
 		
 		
 		JPanel DeleteUserpanel = new JPanel();
@@ -184,28 +207,19 @@ public class GUI_ITCredentialsManagement {
 		DeleteUserpanel.add(btnDeleteUser);
 		btnDeleteUser.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        // Get the selected user to delete
 		        String selectedUserToDelete = (String) comboBoxSelectUser_1.getSelectedItem();
-		        
-		        // Extract the employee ID from the selected user string
 		        int employeeIdToDelete = extractEmployeeId(selectedUserToDelete);
-		        
-		        // Perform delete operation using credentialsManagementDAO
-		        boolean userDeleted = credentialsManagementDAO.deleteUser(employeeIdToDelete);
-		        
-		        // Optionally, display a confirmation message to the user
+		        boolean userDeleted = credentialsManagementDAO.deleteUser(employeeIdToDelete);		        
 		        if (userDeleted) {
-		            // User deleted successfully
-		            System.out.println("User deleted successfully.");
+		            JOptionPane.showMessageDialog(null, "User deleted successfully: " + selectedUserToDelete);
 		        } else {
-		            // Failed to delete user
-		            System.out.println("Failed to delete user.");
+		            JOptionPane.showMessageDialog(null, "Failed to delete user: " + selectedUserToDelete);
 		        }
 		    }
 		    
-		    // Helper method to extract employee ID from the selected user string
+		    // Helper method 
 		    private int extractEmployeeId(String selectedUser) {
-		        // The selected user string is expected to be in the format "empId - LastName, FirstName"
+		        // user string is in the format "empId - LastName, FirstName"
 		        String[] parts = selectedUser.split(" - ");
 		        return Integer.parseInt(parts[0]);
 		    }
