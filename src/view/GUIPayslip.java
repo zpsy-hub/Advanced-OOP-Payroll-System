@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.Connection;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -18,9 +19,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import model.Payslip;
+import model.Permission;
 import model.User;
 import service.PayrollSalaryCalculationService;
 import service.PayslipDAO;
+import service.PermissionService;
+import service.SQL_client;
 import util.SessionManager;
 import javax.swing.JTextField;
 
@@ -124,12 +128,8 @@ public class GUIPayslip {
                 payslipScreen.dispose(); 
             }
 
-            // Define the openDashboard method here within the ActionListener class
             private void openDashboard(User loggedInEmployee) {
-                // Create an instance of GUIDashboard with the logged-in employee
                 GUIDashboard dashboard = new GUIDashboard(loggedInEmployee);
-
-                // Make the dashboard window visible
                 dashboard.getDashboardScreen().setVisible(true);
             }
         });
@@ -140,15 +140,11 @@ public class GUIPayslip {
 		timeInOutButton.setBackground(Color.WHITE);
 		timeInOutButton.setBounds(37, 155, 227, 31);
 		sidePanel.add(timeInOutButton);
-		
-		// Define action listener for the timeInOutButton
+
 		timeInOutButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        // Open GUITimeInOut with the logged-in employee
 		        GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
 		        timeInOut.openWindow();
-
-		        // Close the current dashboard window after
 		        if (payslipScreen != null) {
 		        	payslipScreen.dispose();
 		        }
@@ -161,22 +157,6 @@ public class GUIPayslip {
 		payslipButton.setBackground(Color.WHITE);
 		payslipButton.setBounds(37, 216, 227, 31);
 		sidePanel.add(payslipButton);
-		
-		payslipButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        openPayslip(loggedInEmployee);
-		        payslipScreen.dispose(); // Optionally dispose the current window
-		    }
-
-		    // Define the openPayslip method here within the ActionListener class
-		    private void openPayslip(User loggedInEmployee) {
-		        // Create an instance of GUIPayslip with the loggedInEmployee
-		        GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
-
-		        // Make the payslip window visible
-		        payslip.openWindow();
-		    }
-		});
 		
 		JButton leaverequestButton = new JButton("Leave Request");
 		leaverequestButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -192,15 +172,11 @@ public class GUIPayslip {
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-		        payslipScreen.dispose(); // Optionally dispose the current window
+		        payslipScreen.dispose(); 
 		    }
 
-		    // Define the openLeaveRequest method here within the ActionListener class
 		    private void openLeaveRequest(User loggedInEmployee) throws IOException {
-		        // Create an instance of GUILeaveRequest with the loggedInEmployee
 		        GUILeaveRequest leaveRequest = new GUILeaveRequest(loggedInEmployee);
-
-		        // Make the leave request window visible
 		        leaveRequest.openWindow();
 		    }
 		});
@@ -210,6 +186,141 @@ public class GUIPayslip {
 		helpButton.setBackground(Color.WHITE);
 		helpButton.setBounds(37, 669, 227, 31);
 		sidePanel.add(helpButton);
+		
+		JButton HR_EmpMngmntButton = new JButton("Employee management");
+		HR_EmpMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		HR_EmpMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		HR_EmpMngmntButton.setBackground(Color.WHITE);
+		HR_EmpMngmntButton.setBounds(37, 383, 227, 31);
+		sidePanel.add(HR_EmpMngmntButton);
+		HR_EmpMngmntButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        try {
+					openEmployeeManagement();
+					payslipScreen.dispose(); 
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+		    }
+
+		    private void openEmployeeManagement() throws IOException {
+		        GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(loggedInEmployee);
+		        employeeManagement.setVisible(true);
+		    }
+		});
+		
+		JButton HR_AttendanceMngmntButton = new JButton("Attendance management");
+		HR_AttendanceMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		HR_AttendanceMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		HR_AttendanceMngmntButton.setBackground(Color.WHITE);
+		HR_AttendanceMngmntButton.setBounds(37, 438, 227, 31);
+		sidePanel.add(HR_AttendanceMngmntButton);
+		HR_AttendanceMngmntButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_HRAttendanceManagement window = new GUI_HRAttendanceManagement(loggedInEmployee);
+				window.hrattendancemngmnt.setVisible(true);
+				payslipScreen.dispose(); 
+		    }
+		});
+						
+		JButton HR_LeaveMngmntButton = new JButton("Leave management");
+		HR_LeaveMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		HR_LeaveMngmntButton.setBackground(Color.WHITE);
+		HR_LeaveMngmntButton.setBounds(37, 491, 227, 31);
+		sidePanel.add(HR_LeaveMngmntButton);
+		HR_LeaveMngmntButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_HRLeaveManagement window = new GUI_HRLeaveManagement(loggedInEmployee);
+		    	window.hrleavemngmnt.setVisible(true);
+		    	payslipScreen.dispose(); 
+		    }
+		});
+		
+		JButton Payroll_SalaryCalculationButton = new JButton("Salary Calculation");
+		Payroll_SalaryCalculationButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		Payroll_SalaryCalculationButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		Payroll_SalaryCalculationButton.setBackground(Color.WHITE);
+		Payroll_SalaryCalculationButton.setBounds(37, 383, 227, 31);
+		sidePanel.add(Payroll_SalaryCalculationButton);
+		Payroll_SalaryCalculationButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_PayrollSalaryCalculation window = new GUI_PayrollSalaryCalculation(loggedInEmployee);
+		    	window.payrollsalarycalc.setVisible(true);
+		    	payslipScreen.dispose(); 
+		    }
+		});
+		
+		JButton Payroll_MonthlyReportsButton = new JButton("Monthly Summary Reports");
+		Payroll_MonthlyReportsButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		Payroll_MonthlyReportsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
+		Payroll_MonthlyReportsButton.setBackground(Color.WHITE);
+		Payroll_MonthlyReportsButton.setBounds(37, 438, 227, 31);
+		sidePanel.add(Payroll_MonthlyReportsButton);
+		Payroll_MonthlyReportsButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_PayrollMonthlySummary window = new GUI_PayrollMonthlySummary(loggedInEmployee);
+		    	window.payrollmontlysummary.setVisible(true);
+		    	payslipScreen.dispose(); 
+		    }
+		});
+		
+		JButton IT_PermissionsManagement = new JButton("Permissions Management");
+		IT_PermissionsManagement.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		IT_PermissionsManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		IT_PermissionsManagement.setBackground(Color.WHITE);
+		IT_PermissionsManagement.setBounds(37, 383, 227, 31);
+		sidePanel.add(IT_PermissionsManagement);
+		IT_PermissionsManagement.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_ITPermissions window = new GUI_ITPermissions(loggedInEmployee);
+				window.permissionsFrame.setVisible(true);
+				payslipScreen.dispose(); 
+		    }
+		});
+				
+		JButton IT_CredentialsManagement = new JButton("Credentials Management");
+		IT_CredentialsManagement.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		IT_CredentialsManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		IT_CredentialsManagement.setBackground(Color.WHITE);
+		IT_CredentialsManagement.setBounds(37, 438, 227, 31);
+		sidePanel.add(IT_CredentialsManagement);
+		IT_CredentialsManagement.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_ITCredentialsManagement window = new GUI_ITCredentialsManagement(loggedInEmployee);
+				window.usermngmntFrame.setVisible(true);
+				payslipScreen.dispose(); 
+		    }
+		});
+				
+		JButton IT_LogsButton = new JButton("Authentication Logs");
+		IT_LogsButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		IT_LogsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		IT_LogsButton.setBackground(Color.WHITE);
+		IT_LogsButton.setBounds(37, 491, 227, 31);
+		sidePanel.add(IT_LogsButton);
+		IT_LogsButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_ITLogs window = new GUI_ITLogs(loggedInEmployee);
+		    	window.authenticationlogs.setVisible(true);
+		    	payslipScreen.dispose(); 
+		    }
+		});
+				
+		// Inside your GUI dashboard class
+		Connection connection = SQL_client.getInstance().getConnection();
+		PermissionService permissionsService = PermissionService.getInstance();
+		List<Permission> userPermissions = permissionsService.getPermissionsForEmployee(loggedInEmployee.getId(), connection);
+
+		// Map permissions to button visibility
+		HR_EmpMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 1)); // Employee Management
+		HR_AttendanceMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 2)); // Attendance Management
+		HR_LeaveMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3)); // Leave Management
+		Payroll_SalaryCalculationButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 4)); // Salary Calculation
+		Payroll_MonthlyReportsButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 5)); // Monthly Summary Report
+		IT_PermissionsManagement.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 7)); // Permission Management
+		IT_CredentialsManagement.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 8 )); // User Credentials Management
+		IT_LogsButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6)); // View Login Logs
 		
 		JLabel payslipLabel = new JLabel("Payslip");
 		payslipLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
@@ -225,6 +336,7 @@ public class GUIPayslip {
 		monthComboBox.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
 		monthComboBox.setBounds(789, 71, 250, 30);		
 		monthComboBox.addItem("Select Month-Year");
+		
 		// Populate monthComboBox with month-year combinations
         service.populateMonthComboBox(monthComboBox);
 		
@@ -648,11 +760,10 @@ public class GUIPayslip {
         if (loggedInEmployee != null) {
             employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
         }
-	}
+		}
 
-	public void openWindow() {
-	    payslipScreen.setVisible(true);
-	}
+
+
 	
 	   // Method to format decimal values with two decimal places
     private String formatDecimal(double value) {
@@ -736,5 +847,11 @@ public class GUIPayslip {
             // If no month-year is selected, display an error message
             JOptionPane.showMessageDialog(payslipScreen, "Please select a valid month and year.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    
 }
+
+
+	public void openWindow() {
+		payslipScreen.setVisible(true);
+	    }
+	}

@@ -129,6 +129,7 @@ public class GUI_ITPermissions {
         sidebarPanel.add(helpButton);
 
         JButton IT_PermissionsManagement = new JButton("Permissions Management");
+        IT_PermissionsManagement.setEnabled(false);
         IT_PermissionsManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
         IT_PermissionsManagement.setBackground(Color.WHITE);
         IT_PermissionsManagement.setBounds(37, 383, 227, 31);
@@ -139,6 +140,12 @@ public class GUI_ITPermissions {
         IT_UserManagement.setBackground(Color.WHITE);
         IT_UserManagement.setBounds(37, 438, 227, 31);
         sidebarPanel.add(IT_UserManagement);
+        
+        JButton IT_UserManagement_1 = new JButton("Authentication Logs");
+        IT_UserManagement_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+        IT_UserManagement_1.setBackground(Color.WHITE);
+        IT_UserManagement_1.setBounds(37, 491, 227, 31);
+        sidebarPanel.add(IT_UserManagement_1);
 
         JLabel dashboardLabel = new JLabel("Permissions Management");
         dashboardLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));

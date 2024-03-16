@@ -202,12 +202,8 @@ public class GUIDashboard {
 				}
 		    }
 
-		    // Define the openEmployeeManagement method
 		    private void openEmployeeManagement() throws IOException {
-		        // Create an instance of GUI_HREmployeeManagement
 		        GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(loggedInEmployee);
-
-		        // Make the employee management window visible
 		        employeeManagement.setVisible(true);
 		    }
 		});
@@ -241,6 +237,7 @@ public class GUIDashboard {
 		});
 		
 		JButton Payroll_SalaryCalculationButton = new JButton("Salary Calculation");
+		Payroll_SalaryCalculationButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		Payroll_SalaryCalculationButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		Payroll_SalaryCalculationButton.setBackground(Color.WHITE);
 		Payroll_SalaryCalculationButton.setBounds(37, 383, 227, 31);
@@ -254,6 +251,7 @@ public class GUIDashboard {
 		});
 		
 		JButton Payroll_MonthlyReportsButton = new JButton("Monthly Summary Reports");
+		Payroll_MonthlyReportsButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		Payroll_MonthlyReportsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
 		Payroll_MonthlyReportsButton.setBackground(Color.WHITE);
 		Payroll_MonthlyReportsButton.setBounds(37, 438, 227, 31);
@@ -267,6 +265,7 @@ public class GUIDashboard {
 		});
 		
 		JButton IT_PermissionsManagement = new JButton("Permissions Management");
+		IT_PermissionsManagement.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		IT_PermissionsManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		IT_PermissionsManagement.setBackground(Color.WHITE);
 		IT_PermissionsManagement.setBounds(37, 383, 227, 31);
@@ -280,14 +279,29 @@ public class GUIDashboard {
 		});
 				
 		JButton IT_CredentialsManagement = new JButton("Credentials Management");
+		IT_CredentialsManagement.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		IT_CredentialsManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		IT_CredentialsManagement.setBackground(Color.WHITE);
 		IT_CredentialsManagement.setBounds(37, 438, 227, 31);
 		sidebarPanel.add(IT_CredentialsManagement);
 		IT_CredentialsManagement.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	GUI_PayrollMonthlySummary window = new GUI_PayrollMonthlySummary(loggedInEmployee);
-				window.payrollmontlysummary.setVisible(true);
+		    	GUI_ITCredentialsManagement window = new GUI_ITCredentialsManagement(loggedInEmployee);
+				window.usermngmntFrame.setVisible(true);
+		    	dashboardScreen.dispose(); 
+		    }
+		});
+				
+		JButton IT_LogsButton = new JButton("Authentication Logs");
+		IT_LogsButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		IT_LogsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		IT_LogsButton.setBackground(Color.WHITE);
+		IT_LogsButton.setBounds(37, 491, 227, 31);
+		sidebarPanel.add(IT_LogsButton);
+		IT_LogsButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_ITLogs window = new GUI_ITLogs(loggedInEmployee);
+		    	window.authenticationlogs.setVisible(true);
 				dashboardScreen.dispose(); 
 		    }
 		});
@@ -305,8 +319,8 @@ public class GUIDashboard {
 		Payroll_SalaryCalculationButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 4)); // Salary Calculation
 		Payroll_MonthlyReportsButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 5)); // Monthly Summary Report
 		IT_PermissionsManagement.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 7)); // Permission Management
-		IT_CredentialsManagement.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6 || permission.getPermissionId() == 8)); // View Login Logs or User Credentials Management
-
+		IT_CredentialsManagement.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 8 )); // User Credentials Management
+		IT_LogsButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6)); // View Login Logs
 
 		JLabel dashboardLabel = new JLabel("Dashboard");
 		dashboardLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
@@ -550,5 +564,4 @@ public class GUIDashboard {
 	        JOptionPane.showMessageDialog(dashboardScreen, "No user logged in.", "Error", JOptionPane.ERROR_MESSAGE);
 	    }
 	}
-    
 	}

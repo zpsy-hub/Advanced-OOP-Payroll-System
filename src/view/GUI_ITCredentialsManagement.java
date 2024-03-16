@@ -14,7 +14,9 @@ import java.util.List;
 import javax.swing.SwingConstants;
 
 import model.Employee;
+import model.User;
 import service.CredentialsManagementDAO;
+import util.SessionManager;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
@@ -24,10 +26,12 @@ import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
+import java.awt.Cursor;
 
 public class GUI_ITCredentialsManagement {
 
-	private JFrame usermngmntFrame;
+	private static User loggedInEmployee;
+	JFrame usermngmntFrame;
 	private JTextField textField_NewPassword;
 	private JComboBox<String> comboBoxSelectUser;
     private JComboBox<String> comboBoxSelectUser_1;
@@ -40,7 +44,8 @@ public class GUI_ITCredentialsManagement {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI_ITCredentialsManagement window = new GUI_ITCredentialsManagement();
+					User loggedInEmployee = SessionManager.getLoggedInUser();
+					GUI_ITCredentialsManagement window = new GUI_ITCredentialsManagement(loggedInEmployee);
 					window.usermngmntFrame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -52,7 +57,7 @@ public class GUI_ITCredentialsManagement {
 	/**
 	 * Create the application.
 	 */
-	public GUI_ITCredentialsManagement() {
+	public GUI_ITCredentialsManagement(User loggedInEmployee) {
 		credentialsManagementDAO = new CredentialsManagementDAO();
        	initialize();
        	 populateUserComboBoxes();
@@ -87,28 +92,60 @@ public class GUI_ITCredentialsManagement {
 		sidebarPanel.add(motorphLabel);
 		
 		JButton dashboardButton = new JButton("Dashboard");
+		dashboardButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		dashboardButton.setBackground(Color.WHITE);
 		dashboardButton.setBounds(37, 95, 227, 31);
 		sidebarPanel.add(dashboardButton);
+		dashboardButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUIDashboard window = new GUIDashboard(loggedInEmployee);
+                window.dashboardScreen.setVisible(true);
+                usermngmntFrame.dispose();
+		        }
+		});
 		
 		JButton timeInOutButton = new JButton("Time In/Out");
+		timeInOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		timeInOutButton.setBackground(Color.WHITE);
 		timeInOutButton.setBounds(37, 154, 227, 31);
 		sidebarPanel.add(timeInOutButton);
+		timeInOutButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
+		        timeInOut.openWindow();
+		        usermngmntFrame.dispose();
+		        }
+		});
 		
 		JButton payslipButton = new JButton("Payslip");
+		payslipButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		payslipButton.setBackground(Color.WHITE);
 		payslipButton.setBounds(37, 216, 227, 31);
 		sidebarPanel.add(payslipButton);
+		payslipButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
+		    	payslip.openWindow();
+		    	usermngmntFrame.dispose();		    		        	    
+		    }
+		});
 		
 		JButton leaverequestButton = new JButton("Leave Request");
+		leaverequestButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		leaverequestButton.setBackground(Color.WHITE);
 		leaverequestButton.setBounds(37, 277, 227, 31);
 		sidebarPanel.add(leaverequestButton);
+		leaverequestButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUIPayslip window = new GUIPayslip(loggedInEmployee);
+				window.payslipScreen.setVisible(true);
+				usermngmntFrame.dispose();	
+		    }
+		});	
 		
 		JButton helpButton = new JButton("Help & Support");
 		helpButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
@@ -117,17 +154,39 @@ public class GUI_ITCredentialsManagement {
 		sidebarPanel.add(helpButton);
 		
 		JButton IT_PermissionsManagement = new JButton("Permissions Management");
+		IT_PermissionsManagement.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		IT_PermissionsManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		IT_PermissionsManagement.setBackground(Color.WHITE);
 		IT_PermissionsManagement.setBounds(37, 383, 227, 31);
 		sidebarPanel.add(IT_PermissionsManagement);
+		IT_PermissionsManagement.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_ITPermissions window = new GUI_ITPermissions(loggedInEmployee);
+				window.permissionsFrame.setVisible(true);
+				usermngmntFrame.dispose();	
+		    }
+		});
 		
-		JButton IT_UserManagement = new JButton("Credentials Management");
-		IT_UserManagement.setEnabled(false);
-		IT_UserManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-		IT_UserManagement.setBackground(Color.WHITE);
-		IT_UserManagement.setBounds(37, 438, 227, 31);
-		sidebarPanel.add(IT_UserManagement);
+		JButton IT_CredentialsManagement = new JButton("Credentials Management");
+		IT_CredentialsManagement.setEnabled(false);
+		IT_CredentialsManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		IT_CredentialsManagement.setBackground(Color.WHITE);
+		IT_CredentialsManagement.setBounds(37, 438, 227, 31);
+		sidebarPanel.add(IT_CredentialsManagement);
+				
+		JButton IT_LogsButton = new JButton("Authentication Logs");
+		IT_LogsButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		IT_LogsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		IT_LogsButton.setBackground(Color.WHITE);
+		IT_LogsButton.setBounds(37, 491, 227, 31);
+		sidebarPanel.add(IT_LogsButton);
+		IT_LogsButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUI_ITLogs window = new GUI_ITLogs(loggedInEmployee);
+		    	window.authenticationlogs.setVisible(true);
+		    	usermngmntFrame.dispose();	
+		    }
+		});
 		
 		JLabel lblUserManagement = new JLabel("Credentials Management");
 		lblUserManagement.setBounds(340, 36, 379, 33);
@@ -135,10 +194,18 @@ public class GUI_ITCredentialsManagement {
 		mainPanel.add(lblUserManagement);
 		
 		JButton signoutButton = new JButton("Sign Out");
+		signoutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		signoutButton.setBounds(1160, 36, 103, 31);
 		signoutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
 		signoutButton.setBackground(Color.WHITE);
 		mainPanel.add(signoutButton);
+		signoutButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				GUIlogin login = new GUIlogin();
+				login.loginScreen1.setVisible(true);
+				usermngmntFrame.dispose();
+			}
+		});
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(340, 98, 630, 379);
@@ -256,7 +323,4 @@ public class GUI_ITCredentialsManagement {
 	        }
 	    }
 	}
-
-
-
 }
