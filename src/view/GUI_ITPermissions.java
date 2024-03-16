@@ -134,7 +134,7 @@ public class GUI_ITPermissions {
         IT_PermissionsManagement.setBounds(37, 383, 227, 31);
         sidebarPanel.add(IT_PermissionsManagement);
 
-        JButton IT_UserManagement = new JButton("User Management");
+        JButton IT_UserManagement = new JButton("Credentials Management");
         IT_UserManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
         IT_UserManagement.setBackground(Color.WHITE);
         IT_UserManagement.setBounds(37, 438, 227, 31);

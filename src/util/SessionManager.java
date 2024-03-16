@@ -23,7 +23,7 @@ public class SessionManager {
         loggedInUser = userRepository.authenticateUser(username, password);
         if (loggedInUser != null) {
             // Get the employee ID of the logged-in user
-            int employeeIdString = userRepository.getEmployeeIdByUsername(username, password);
+            int employeeIdString = userRepository.getEmployeeIdByUsername(username);
             Integer loggedInUserEmployeeId = null;
             try {
                 loggedInUserEmployeeId = Integer.valueOf(employeeIdString);

@@ -279,12 +279,12 @@ public class GUIDashboard {
 		    }
 		});
 				
-		JButton IT_UserManagement = new JButton("User Management");
-		IT_UserManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-		IT_UserManagement.setBackground(Color.WHITE);
-		IT_UserManagement.setBounds(37, 438, 227, 31);
-		sidebarPanel.add(IT_UserManagement);
-		IT_UserManagement.addActionListener(new ActionListener() {
+		JButton IT_CredentialsManagement = new JButton("Credentials Management");
+		IT_CredentialsManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
+		IT_CredentialsManagement.setBackground(Color.WHITE);
+		IT_CredentialsManagement.setBounds(37, 438, 227, 31);
+		sidebarPanel.add(IT_CredentialsManagement);
+		IT_CredentialsManagement.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	GUI_PayrollMonthlySummary window = new GUI_PayrollMonthlySummary(loggedInEmployee);
 				window.payrollmontlysummary.setVisible(true);
@@ -305,7 +305,7 @@ public class GUIDashboard {
 		Payroll_SalaryCalculationButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 4)); // Salary Calculation
 		Payroll_MonthlyReportsButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 5)); // Monthly Summary Report
 		IT_PermissionsManagement.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 7)); // Permission Management
-		IT_UserManagement.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6 || permission.getPermissionId() == 8)); // View Login Logs or User Credentials Management
+		IT_CredentialsManagement.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6 || permission.getPermissionId() == 8)); // View Login Logs or User Credentials Management
 
 
 		JLabel dashboardLabel = new JLabel("Dashboard");

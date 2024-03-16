@@ -1,49 +1,109 @@
 package service;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import model.User;
 
 public class LoginDAO {
+    private static final String HASH_ALGORITHM = "SHA-256";
+
     public LoginDAO() {
     }
 
     public User authenticateUser(String username, String password) {
         try {
-            Connection conn = SQL_client.getInstance().getConnection(); // Obtain database connection
+            Connection conn = SQL_client.getInstance().getConnection(); 
             if (conn == null) {
-                // Handle null connection (optional)
                 System.err.println("Database connection is null.");
                 return null;
             }
             
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM payroll_system.login_credentials WHERE username = ? AND password = ?");
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM payroll_system.login_credentials WHERE username = ?");
             ps.setString(1, username);
-            ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
             
             if (rs.next()) {
-                int employeeNumber = rs.getInt("emp_id");
-                String lastName = rs.getString("employee_lastname");
-                String firstName = rs.getString("employee_firstname");
-                String position = rs.getString("position");
-                return new User(username, password, employeeNumber, lastName, firstName, position);
+                String storedPassword = rs.getString("password");
+                if (verifyPassword(password, storedPassword)) {
+                    int employeeNumber = rs.getInt("emp_id");
+                    String lastName = rs.getString("employee_lastname");
+                    String firstName = rs.getString("employee_firstname");
+                    String position = rs.getString("position");
+                    return new User(username, null, employeeNumber, lastName, firstName, position);
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Log the exception
+            e.printStackTrace(); 
         }
-        return null; // Authentication failed or database error occurred
+        return null; 
     }
 
-    // Get employee ID based on the username
-    public int getEmployeeIdByUsername(String username, String password) { // Changed return type to int
-        User user = authenticateUser(username, password); // Get the user object
-        if (user != null) {
-            return user.getId(); // Return the employee ID of the user
-        } else {
-            return -1; // Return -1 if user not found
+    public int getEmployeeIdByUsername(String username) {
+        try {
+            Connection conn = SQL_client.getInstance().getConnection(); 
+            if (conn == null) {
+                System.err.println("Database connection is null.");
+                return -1;
+            }
+            
+            PreparedStatement ps = conn.prepareStatement("SELECT emp_id FROM payroll_system.login_credentials WHERE username = ?");
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getInt("emp_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(); 
+        }
+        return -1; 
+    }
+    
+    public boolean updatePassword(int employeeId, String newPassword) {
+        try {
+            Connection conn = SQL_client.getInstance().getConnection(); 
+            if (conn == null) {
+                System.err.println("Database connection is null.");
+                return false;
+            }
+            
+            String hashedPassword = hashPassword(newPassword);
+            
+            PreparedStatement ps = conn.prepareStatement("UPDATE payroll_system.login_credentials SET password = ? WHERE emp_id = ?");
+            ps.setString(1, hashedPassword);
+            ps.setInt(2, employeeId);
+            int rowsAffected = ps.executeUpdate();
+            
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace(); 
+            return false;
+        }
+    }
+
+    private boolean verifyPassword(String password, String storedPassword) {
+        return hashPassword(password).equals(storedPassword);
+    }
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
+            byte[] digest = md.digest(password.getBytes());
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : digest) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

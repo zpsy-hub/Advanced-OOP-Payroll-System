@@ -29,7 +29,6 @@ import model.Employee;
 import model.User;
 import service.EmployeeService;
 import service.LoginDAO;
-import service.TimeInOutHandler;
 import service.TimeSheetService;
 import service.TimesheetDAO;
 
@@ -42,7 +41,6 @@ public class GUITimeInOut {
     private JTable timeTable;
     private User loggedInEmployee;
     private JTable table;
-    private TimeInOutHandler timeInOutHandler;
     private boolean timeOutRecorded = false;
 
     // Constructor 

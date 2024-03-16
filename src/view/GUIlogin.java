@@ -170,13 +170,8 @@ public class GUIlogin {
 
    
     private void openDashboard(User loggedInEmployee) {
-        // Create an instance of GUIDashboard with the logged-in employee
         GUIDashboard dashboard = new GUIDashboard(loggedInEmployee);
-
-        // Make the dashboard window visible
         dashboard.getDashboardScreen().setVisible(true);
-
-        // Close the Login window
         loginScreen1.dispose();
     }
 
