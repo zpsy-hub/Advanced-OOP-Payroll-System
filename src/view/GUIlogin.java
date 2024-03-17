@@ -27,7 +27,7 @@ import service.SQL_client;
 
 public class GUIlogin {
 
-    JFrame loginScreen1;
+    public JFrame loginScreen1;
     private JTextField usernameTextField1;
     private LoginService loginService;
     private SessionManager sessionManager;
