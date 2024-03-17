@@ -159,8 +159,8 @@ public class GUI_HRAttendanceManagement {
 		sidebarPanel.add(leaverequestButton);
 		leaverequestButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	GUIPayslip window = new GUIPayslip(loggedInEmployee);
-				window.payslipScreen.setVisible(true);
+		    	GUILeaveRequest window = new GUILeaveRequest(loggedInEmployee);
+		    	leaverequestScreen.openWindow();
 				hrattendancemngmnt.dispose();
 		    }
 		});

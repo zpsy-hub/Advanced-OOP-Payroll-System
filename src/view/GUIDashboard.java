@@ -165,6 +165,13 @@ public class GUIDashboard {
 		payslipButton.setBackground(Color.WHITE);
 		payslipButton.setBounds(37, 216, 227, 31);
 		sidebarPanel.add(payslipButton);
+		payslipButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		    	GUIPayslip window = new GUIPayslip(loggedInEmployee);
+				window.payslipScreen.setVisible(true);
+				dashboardScreen.dispose(); 
+		    }
+		});
 		
 		JButton leaverequestButton = new JButton("Leave Request");
 		leaverequestButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -174,12 +181,20 @@ public class GUIDashboard {
 		sidebarPanel.add(leaverequestButton);
 		leaverequestButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	GUIPayslip window = new GUIPayslip(loggedInEmployee);
-				window.payslipScreen.setVisible(true);
+		    	GUILeaveRequest window = null;
+				try {
+					window = new GUILeaveRequest(loggedInEmployee);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		         window.leaverequestScreen.setVisible(true);
 				dashboardScreen.dispose(); 
 		    }
 		});
-						
+				
+		 
+         
 		JButton helpButton = new JButton("Help & Support");
 		helpButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		helpButton.setBackground(Color.WHITE);

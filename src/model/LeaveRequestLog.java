@@ -1,9 +1,10 @@
 package model;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class LeaveRequestLog {
-    private Date timestamp;
+    private Timestamp timestamp;
     private int id; 
     private String employeeLastName;
     private String employeeFirstName;
@@ -15,7 +16,7 @@ public class LeaveRequestLog {
     private String status;
 
     // Constructor
-    public LeaveRequestLog(Date timestamp, int id, String employeeLastName, String employeeFirstName, String leaveType,
+    public LeaveRequestLog(Timestamp timestamp, int id, String employeeLastName, String employeeFirstName, String leaveType,
                     Date dateStart, Date dateEnd, int daysTotal, int leaveBalance, String status) {
         this.timestamp = timestamp;
         this.id = id;
@@ -30,11 +31,11 @@ public class LeaveRequestLog {
     }
 
     // Getters and Setters
-    public Date getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 

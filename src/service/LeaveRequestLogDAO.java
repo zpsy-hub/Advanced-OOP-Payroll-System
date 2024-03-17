@@ -34,7 +34,7 @@ public class LeaveRequestLogDAO {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 LeaveRequestLog leaveLog = new LeaveRequestLog(
-                    resultSet.getDate("timestamp"),
+                    resultSet.getTimestamp("timestamp"),
                     resultSet.getInt("emp_id"),
                     resultSet.getString("employee_lastname"),
                     resultSet.getString("employee_firstname"),
@@ -109,7 +109,7 @@ public class LeaveRequestLogDAO {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 LeaveRequestLog leaveLog = new LeaveRequestLog(
-                    resultSet.getDate("timestamp"),
+                    resultSet.getTimestamp("timestamp"),
                     resultSet.getInt("emp_id"),
                     resultSet.getString("employee_lastname"),
                     resultSet.getString("employee_firstname"),
@@ -129,32 +129,14 @@ public class LeaveRequestLogDAO {
         }
         return leaveLogs;
     }
-
-
-
-    public static void main(String[] args) {
-        LeaveRequestLogDAO leaveRequestLogDAO = getInstance();
-        
-        // Retrieve all leave request logs
-        List<LeaveRequestLog> leaveLogs = leaveRequestLogDAO.getAllLeaveLogs();
-        
-        if (!leaveLogs.isEmpty()) {
-            System.out.println("All leave request logs:");
-            for (LeaveRequestLog leaveLog : leaveLogs) {
-                System.out.println(leaveLog);
-            }
-        } else {
-            System.out.println("No leave request logs found.");
-        }
-    }
-    
-    // Method to update the status of a leave request log
-    public void updateLeaveStatus(int logId, String status) {
+   
+    // Method to update the status of a specific leave request log identified by its timestamp
+    public void updateLeaveStatus(java.sql.Timestamp timestamp, String status) {
         try {
-            String sql = "UPDATE payroll_system.leave_request_log SET status = ? WHERE emp_id = ?";
+            String sql = "UPDATE payroll_system.leave_request_log SET status = ? WHERE timestamp = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setString(1, status);
-            statement.setInt(2, logId);
+            statement.setTimestamp(2, timestamp);
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {

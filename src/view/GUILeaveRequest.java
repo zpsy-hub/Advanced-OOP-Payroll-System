@@ -15,7 +15,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -41,11 +42,12 @@ import service.PermissionService;
 import service.SQL_client;
 import util.LeaveRequestComboPopulator;
 import util.LeaveRequestData;
+import util.SessionManager;
 
 public class GUILeaveRequest {
 
-	private JFrame leaverequestScreen;
-	private JTable leavehistoryTable;
+	JFrame leaverequestScreen;
+	private JTable leavehistoryTable_1;
     private User loggedInEmployee;
     private JLabel leaveTotal;
     private JLabel vacationTotal;
@@ -71,8 +73,7 @@ public class GUILeaveRequest {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    // Pass the loggedInEmployee when creating GUILeaveRequest instance
-                    User loggedInEmployee = new User(null, null, 0, null, null, null);
+                	User loggedInEmployee = SessionManager.getLoggedInUser();
                     GUILeaveRequest window = new GUILeaveRequest(loggedInEmployee);
                     window.leaverequestScreen.setVisible(true);
                     window.leaverequestScreen.setLocationRelativeTo(null);
@@ -301,7 +302,6 @@ public class GUILeaveRequest {
 		    }
 		});
 				
-		// Inside your GUI dashboard class
 		Connection connection = SQL_client.getInstance().getConnection();
 		PermissionService permissionsService = PermissionService.getInstance();
 		List<Permission> userPermissions = permissionsService.getPermissionsForEmployee(loggedInEmployee.getId(), connection);
@@ -516,6 +516,28 @@ public class GUILeaveRequest {
 		endyearComboBox.setBackground(Color.WHITE);
 		endyearComboBox.setBounds(628, 541, 82, 32);
 		mainPanel.add(endyearComboBox);
+		
+		
+		JPanel leavehistoryPanel = new JPanel();
+		leavehistoryPanel.setBounds(736, 331, 523, 381);
+		leavehistoryPanel.setBackground(new Color(255, 255, 255));
+		mainPanel.add(leavehistoryPanel);
+		leavehistoryPanel.setLayout(new GridLayout(1, 0, 0, 0));
+		
+		JScrollPane scrollPane = new JScrollPane();
+		leavehistoryPanel.add(scrollPane);
+		
+		leavehistoryTable_1 = new JTable();
+		scrollPane.setViewportView(leavehistoryTable_1);
+		leavehistoryTable_1.setRowHeight(28);
+		leavehistoryTable_1.setBounds(736, 331, 523, 381);
+		leavehistoryTable_1.setRowSelectionAllowed(false);
+		leavehistoryTable_1.setEnabled(false);
+		leavehistoryTable_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
+		leavehistoryTable_1.setBorder(new LineBorder(new Color(0, 0, 0)));
+		
+		// Set the table model using populateLeaveHistoryTable method
+		populateLeaveHistoryTable(leavehistoryTable_1);
 
 		JButton sendleaveButton = new JButton("Send Leave Request");
 		sendleaveButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 21));
@@ -537,13 +559,12 @@ public class GUILeaveRequest {
 		        boolean leaveSubmitted = leaveRequestService.submitLeaveRequest(loggedInEmployee, leaveType, startDate, endDate);
 		        if (leaveSubmitted) {
 		            // Refresh the leave history table
-		            refreshLeaveHistoryTable();
+		        	populateLeaveHistoryTable(leavehistoryTable_1);
 		            // Update leave balance data
 		            updateLeaveData();
 		        }
 		    }
 		});
-
 		
 		JPanel LineSeparator_1 = new JPanel();
 		LineSeparator_1.setBorder(new LineBorder(new Color(30, 55, 101), 0));
@@ -555,27 +576,8 @@ public class GUILeaveRequest {
 		leavehistoryLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
 		leavehistoryLabel.setBounds(736, 273, 335, 33);
 		mainPanel.add(leavehistoryLabel);
-		
-		JPanel leavehistoryPanel = new JPanel();
-		leavehistoryPanel.setBounds(736, 331, 523, 381);
-		leavehistoryPanel.setBackground(new Color(255, 255, 255));
-		mainPanel.add(leavehistoryPanel);
-		leavehistoryPanel.setLayout(new GridLayout(1, 0, 0, 0));
-		
-		JScrollPane scrollPane = new JScrollPane();
-		leavehistoryPanel.add(scrollPane);
-		
-		JTable leavehistoryTable = new JTable();
-		leavehistoryTable.setRowHeight(28);
-		leavehistoryTable.setRowSelectionAllowed(false);
-		leavehistoryTable.setEnabled(false);
-		scrollPane.setViewportView(leavehistoryTable);
-		leavehistoryTable.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
-		leavehistoryTable.setBorder(new LineBorder(new Color(0, 0, 0)));
-		
-		// Set the table model using populateLeaveHistoryTable method
-		populateLeaveHistoryTable(leavehistoryTable);
-		
+
+			
 		JButton signoutButton = new JButton("Sign Out");
 		signoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -638,8 +640,8 @@ public class GUILeaveRequest {
 	    });
 	    
         try {
-            populateComboBoxes(); // Populate combo boxes before using them
-            calculateTotalDays(); // Calculate total days after combo boxes are populated
+            populateComboBoxes(); 
+            calculateTotalDays();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -720,11 +722,11 @@ public class GUILeaveRequest {
     // Method to populate the combo boxes
     private void populateComboBoxes() throws IOException {
         LeaveRequestComboPopulator.populateMonths(startmonthComboBox);
-        LeaveRequestComboPopulator.populateDays(startdayComboBox);
-        LeaveRequestComboPopulator.populateYears(startyearComboBox);
+        LeaveRequestComboPopulator.populateDays(startdayComboBox, 1, 12);
+        LeaveRequestComboPopulator.populateCurrentYear(startyearComboBox);
         LeaveRequestComboPopulator.populateMonths(endmonthComboBox);
-        LeaveRequestComboPopulator.populateDays(enddayComboBox);
-        LeaveRequestComboPopulator.populateYears(endyearComboBox);
+        LeaveRequestComboPopulator.populateDays(enddayComboBox, 1, 12);
+        LeaveRequestComboPopulator.populateCurrentYear(endyearComboBox);
         LeaveRequestComboPopulator.populateLeaveTypes(leaveTypeComboBox);
     }
     
@@ -810,12 +812,11 @@ public class GUILeaveRequest {
         textField_ComputedDays.setText(String.valueOf(totalDays));
     }
 
-    
     private void populateLeaveHistoryTable(JTable table) {
         try {
             // Retrieve leave request logs for the logged-in employee
             List<LeaveRequestLog> leaveLogs = LeaveRequestLogDAO.getInstance().getLeaveLogsByEmployeeId(loggedInEmployee.getId());
-            
+
             // Create a DefaultTableModel
             DefaultTableModel model = new DefaultTableModel();
             model.addColumn("Timestamp");
@@ -828,7 +829,7 @@ public class GUILeaveRequest {
             model.addColumn("Total Days");
             model.addColumn("Leave Balance");
             model.addColumn("Status");
-            
+
             // Populate the model with leave request logs
             for (LeaveRequestLog leaveLog : leaveLogs) {
                 model.addRow(new Object[]{
@@ -844,24 +845,20 @@ public class GUILeaveRequest {
                     leaveLog.getStatus()
                 });
             }
-            
+
             // Set the model for the table
-            table.setModel(model);
+            leavehistoryTable_1.setModel(model);
+
+            
+            // Enable sorting
+            TableRowSorter<TableModel> sorter = new TableRowSorter<>(table.getModel());
+            table.setRowSorter(sorter);
         } catch (Exception e) {
             // Handle exceptions
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    private void refreshLeaveHistoryTable() {
-        DefaultTableModel model = (DefaultTableModel) leavehistoryTable.getModel();
-        model.setRowCount(0); // Clear existing rows
-        
-        // Repopulate the leave history table
-        populateLeaveHistoryTable(leavehistoryTable);
-    }
-
 
 
     

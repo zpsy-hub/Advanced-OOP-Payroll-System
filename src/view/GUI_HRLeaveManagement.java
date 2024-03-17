@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,11 +23,15 @@ import javax.swing.table.DefaultTableModel;
 
 import model.LeaveBalance;
 import model.LeaveRequestLog;
+import model.Permission;
 import model.User;
 import service.LeaveBalanceDAO;
 import service.LeaveRequestLogDAO;
+import service.PermissionService;
+import service.SQL_client;
 import util.LeaveLogData;
 import util.SessionManager;
+import java.awt.Cursor;
 
 public class GUI_HRLeaveManagement {
 
@@ -96,6 +101,7 @@ public class GUI_HRLeaveManagement {
 		sidebarPanel.add(motorphLabel);
 		
 		JButton dashboardButton = new JButton("Dashboard");
+		dashboardButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		dashboardButton.setBackground(Color.WHITE);
 		dashboardButton.setBounds(37, 95, 227, 31);
@@ -109,6 +115,7 @@ public class GUI_HRLeaveManagement {
 		});
 		
 		JButton timeInOutButton = new JButton("Time In/Out");
+		timeInOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		timeInOutButton.setBackground(Color.WHITE);
 		timeInOutButton.setBounds(37, 154, 227, 31);
@@ -122,6 +129,7 @@ public class GUI_HRLeaveManagement {
 		});
 		
 		JButton payslipButton = new JButton("Payslip");
+		payslipButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		payslipButton.setBackground(Color.WHITE);
 		payslipButton.setBounds(37, 216, 227, 31);
@@ -135,15 +143,22 @@ public class GUI_HRLeaveManagement {
 		});
 		
 		JButton leaverequestButton = new JButton("Leave Request");
+		leaverequestButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
 		leaverequestButton.setBackground(Color.WHITE);
 		leaverequestButton.setBounds(37, 277, 227, 31);
 		sidebarPanel.add(leaverequestButton);
 		leaverequestButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	GUIPayslip window = new GUIPayslip(loggedInEmployee);
-				window.payslipScreen.setVisible(true);
-				hrleavemngmnt.dispose();
+		    	GUILeaveRequest window = null;
+				try {
+					window = new GUILeaveRequest(loggedInEmployee);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		         window.leaverequestScreen.setVisible(true);
+		         hrleavemngmnt.dispose(); 
 		    }
 		});
 		
@@ -154,6 +169,7 @@ public class GUI_HRLeaveManagement {
 		sidebarPanel.add(helpButton);
 		
 		JButton HR_EmpMngmntButton = new JButton("Employee Management");
+		HR_EmpMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_EmpMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_EmpMngmntButton.setBackground(Color.WHITE);
 		HR_EmpMngmntButton.setBounds(37, 383, 227, 31);
@@ -179,6 +195,7 @@ public class GUI_HRLeaveManagement {
 		});
 		
 		JButton HR_AttendanceMngmntButton = new JButton("Attendance Management");
+		HR_AttendanceMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_AttendanceMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_AttendanceMngmntButton.setBackground(Color.WHITE);
 		HR_AttendanceMngmntButton.setBounds(37, 438, 227, 31);
@@ -198,17 +215,15 @@ public class GUI_HRLeaveManagement {
 		HR_LeaveMngmntButton.setBounds(37, 491, 227, 31);
 		sidebarPanel.add(HR_LeaveMngmntButton);
 		
-		JButton Payroll_SalaryCalculationButton = new JButton("Salary Calculation");
-		Payroll_SalaryCalculationButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-		Payroll_SalaryCalculationButton.setBackground(Color.WHITE);
-		Payroll_SalaryCalculationButton.setBounds(37, 383, 227, 31);
-		sidebarPanel.add(Payroll_SalaryCalculationButton);
+		Connection connection = SQL_client.getInstance().getConnection();
+		PermissionService permissionsService = PermissionService.getInstance();
+		List<Permission> userPermissions = permissionsService.getPermissionsForEmployee(loggedInEmployee.getId(), connection);
+
+		// Map permissions to button visibility
+		HR_EmpMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 1)); // Employee Management
+		HR_AttendanceMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 2)); // Attendance Management
+		HR_LeaveMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3)); // Leave Management
 		
-		JButton Payroll_MonthlyReportsButton = new JButton("Monthly Summary Reports");
-		Payroll_MonthlyReportsButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
-		Payroll_MonthlyReportsButton.setBackground(Color.WHITE);
-		Payroll_MonthlyReportsButton.setBounds(37, 438, 227, 31);
-		sidebarPanel.add(Payroll_MonthlyReportsButton);
 		
 		JPanel separator = new JPanel();
 		separator.setBackground(new Color(30, 55, 101));
@@ -226,6 +241,7 @@ public class GUI_HRLeaveManagement {
 		mainPanel.add(lblLeaveManagement);
 		
 		JButton signoutButton = new JButton("Sign Out");
+		signoutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		signoutButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				GUIlogin login = new GUIlogin();
@@ -255,27 +271,39 @@ public class GUI_HRLeaveManagement {
 		scrollPane.setViewportView(table_LeaveLog);
 		
 		JButton approveButton = new JButton("Approve");
+		approveButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		approveButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        int selectedRow = table_LeaveLog.getSelectedRow();
 		        if (selectedRow != -1) { // Ensure a row is selected
 		            try {
-		                // Get the ID and leave balance of the selected leave request log
-		                int logId = (int) table_LeaveLog.getValueAt(selectedRow, 1);
-		                int leaveBalance = (int) table_LeaveLog.getValueAt(selectedRow, 8);
-		                
+		                // Get the timestamp of the selected leave request log
+		                java.sql.Timestamp timestamp = (java.sql.Timestamp) table_LeaveLog.getValueAt(selectedRow, 0);
+
+		                // Check if the status of the selected leave request log is already "Approved"
+		                String currentStatus = (String) table_LeaveLog.getValueAt(selectedRow, 9);
+		                if ("Approved".equals(currentStatus)) {
+		                    JOptionPane.showMessageDialog(null, "Leave request is already approved.", "Error", JOptionPane.ERROR_MESSAGE);
+		                    return; // Exit the method if already approved
+		                }
+
 		                // Update the status of the leave request log to "Approved"
-		                LeaveRequestLogDAO.getInstance().updateLeaveStatus(logId, "Approved");
-		                
+		                LeaveRequestLogDAO.getInstance().updateLeaveStatus(timestamp, "Approved");
+
+		                // Get the employee ID, leave type, and number of days from the selected row
+		                int empId = (int) table_LeaveLog.getValueAt(selectedRow, 1);
+		                String leaveType = (String) table_LeaveLog.getValueAt(selectedRow, 4);
+		                int days = (int) table_LeaveLog.getValueAt(selectedRow, 7);
+
 		                // Update the leave balance in the database
-		                LeaveBalanceDAO.getInstance().updateNewLeaveBalance(logId);
-		                
+		                LeaveBalanceDAO.getInstance().updateNewLeaveBalance(empId, leaveType, days);
+
 		                // Refresh the leave history table
 		                populateAllLeaveHistoryTable(table_LeaveLog);
-		                
+
 		                // Refresh the employee leave balance table
 		                populateAllEmployeeLeaveBalanceTable(table_EmpLeaveBalance);
-		                
+
 		                JOptionPane.showMessageDialog(null, "Leave request approved successfully.");
 		            } catch (Exception ex) {
 		                ex.printStackTrace();
@@ -287,25 +315,35 @@ public class GUI_HRLeaveManagement {
 		    }
 		});
 
+
 		approveButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		approveButton.setBackground(Color.WHITE);
 		approveButton.setBounds(340, 350, 154, 35);
 		mainPanel.add(approveButton);
 		
 		JButton rejectButton = new JButton("Reject");
+		rejectButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		rejectButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        int selectedRow = table_LeaveLog.getSelectedRow();
 		        if (selectedRow != -1) { // Ensure a row is selected
 		            try {
-		                // Get the ID of the selected leave request log
-		                int logId = (int) table_LeaveLog.getValueAt(selectedRow, 1);
+		                // Get the timestamp of the selected leave request log
+		                java.sql.Timestamp timestamp = (java.sql.Timestamp) table_LeaveLog.getValueAt(selectedRow, 0);
 		                
-		                // Update the status of the leave request log to "Rejected"
-		                LeaveRequestLogDAO.getInstance().updateLeaveStatus(logId, "Rejected");
+		                // Check if the status of the selected leave request log is already "Rejected"
+		                String currentStatus = (String) table_LeaveLog.getValueAt(selectedRow, 9);
+		                if ("Rejected".equals(currentStatus)) {
+		                    JOptionPane.showMessageDialog(null, "Leave request is already rejected.", "Error", JOptionPane.ERROR_MESSAGE);
+		                    return; // Exit the method if already rejected
+		                }
+
+		                // Update the status of the selected leave request log to "Rejected"
+		                LeaveRequestLogDAO.getInstance().updateLeaveStatus(timestamp, "Rejected");
 		                
-		                // Refresh the leave history table
-		                populateAllLeaveHistoryTable(table_LeaveLog);
+		                // Refresh only the selected row in the leave history table
+		                DefaultTableModel model = (DefaultTableModel) table_LeaveLog.getModel();
+		                model.setValueAt("Rejected", selectedRow, 9); // Update the status column of the selected row
 		                
 		                JOptionPane.showMessageDialog(null, "Leave request rejected successfully.");
 		            } catch (Exception ex) {
@@ -317,6 +355,7 @@ public class GUI_HRLeaveManagement {
 		        }
 		    }
 		});
+
 		rejectButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
 		rejectButton.setBackground(Color.WHITE);
 		rejectButton.setBounds(544, 350, 154, 35);

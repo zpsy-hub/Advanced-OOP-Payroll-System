@@ -78,50 +78,36 @@ public class LeaveBalanceDAO {
         }
     }
     
-    //update Lave balance after approval of leave request
-    public void updateNewLeaveBalance(int empId) {
+    public void updateNewLeaveBalance(int empId, String leaveType, int days) {
         try {
-            // Retrieve the leave type and new leave balance from the leave request log
-            String sql = "SELECT leave_type, leave_balance FROM payroll_system.leave_request_log WHERE emp_id = ? AND status = 'Approved'";
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, empId);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                String leaveType = resultSet.getString("leave_type");
-                int newLeaveBalance = resultSet.getInt("leave_balance");
-
-                // Update the corresponding leave balance column in the leave_balance table
-                String updateSql;
-                switch (leaveType) {
-                    case "Sick Leave":
-                        updateSql = "UPDATE payroll_system.leave_balance SET sick_leave = ? WHERE emp_id = ?";
-                        break;
-                    case "Emergency Leave":
-                        updateSql = "UPDATE payroll_system.leave_balance SET emergency_leave = ? WHERE emp_id = ?";
-                        break;
-                    case "Vacation Leave":
-                        updateSql = "UPDATE payroll_system.leave_balance SET vacation_leave = ? WHERE emp_id = ?";
-                        break;
-                    default:
-                        // Handle unknown leave types or error cases
-                        System.err.println("Unknown leave type: " + leaveType);
-                        return;
-                }
-
-                PreparedStatement updateStatement = connection.prepareStatement(updateSql);
-                updateStatement.setInt(1, newLeaveBalance);
-                updateStatement.setInt(2, empId);
-                updateStatement.executeUpdate();
-                updateStatement.close();
-            } else {
-                System.err.println("No approved leave request found for empId: " + empId);
+            // Update the corresponding leave balance column in the leave_balance table
+            String updateSql;
+            switch (leaveType) {
+                case "Sick Leave":
+                    updateSql = "UPDATE payroll_system.leave_balance SET sick_leave = sick_leave - ? WHERE emp_id = ?";
+                    break;
+                case "Emergency Leave":
+                    updateSql = "UPDATE payroll_system.leave_balance SET emergency_leave = emergency_leave - ? WHERE emp_id = ?";
+                    break;
+                case "Vacation Leave":
+                    updateSql = "UPDATE payroll_system.leave_balance SET vacation_leave = vacation_leave - ? WHERE emp_id = ?";
+                    break;
+                default:
+                    // Handle unknown leave types or error cases
+                    System.err.println("Unknown leave type: " + leaveType);
+                    return;
             }
-            resultSet.close();
-            statement.close();
+
+            PreparedStatement updateStatement = connection.prepareStatement(updateSql);
+            updateStatement.setInt(1, days);
+            updateStatement.setInt(2, empId);
+            updateStatement.executeUpdate();
+            updateStatement.close();
         } catch (SQLException e) {
             handleSQLException(e);
         }
     }
+
 
     // Helper method to map ResultSet to LeaveBalance object
     private LeaveBalance mapResultSetToLeaveBalance(ResultSet resultSet) throws SQLException {
