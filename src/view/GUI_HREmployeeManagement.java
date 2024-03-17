@@ -529,28 +529,27 @@ public class GUI_HREmployeeManagement extends JFrame {
     }
     
     private void updateEmployee(DefaultTableModel model, int selectedRow) {
-        int selectedRow1 = table.getSelectedRow();
-        if (selectedRow1 != -1) {
+        if (selectedRow != -1) {
             // Extract data from the selected row
-            Integer id = (Integer) model.getValueAt(selectedRow1, 0);
-            String lastName = (String) model.getValueAt(selectedRow1, 1);
-            String firstName = (String) model.getValueAt(selectedRow1, 2);
-            String birthday = (String) model.getValueAt(selectedRow1, 3);
-            String address = (String) model.getValueAt(selectedRow1, 4);
-            String phoneNumber = (String) model.getValueAt(selectedRow1, 5);
-            String sssNumber = (String) model.getValueAt(selectedRow1, 6);
-            String philhealthNumber = (String) model.getValueAt(selectedRow1, 7);
-            String tinNumber = (String) model.getValueAt(selectedRow1, 8);
-            String pagibigNumber = (String) model.getValueAt(selectedRow1, 9);
-            String status = (String) model.getValueAt(selectedRow1, 10);
-            String position = (String) model.getValueAt(selectedRow1, 11);
-            String immediateSupervisor = (String) model.getValueAt(selectedRow1, 12);
-            float basicSalary = Float.parseFloat(model.getValueAt(selectedRow1, 13).toString());
-            float riceSubsidy = Float.parseFloat(model.getValueAt(selectedRow1, 14).toString());
-            float phoneAllowance = Float.parseFloat(model.getValueAt(selectedRow1, 15).toString());
-            float clothingAllowance = Float.parseFloat(model.getValueAt(selectedRow1, 16).toString());
-            float grossSemimonthlyRate = Float.parseFloat(model.getValueAt(selectedRow1, 17).toString());
-            double hourlyRate = Double.parseDouble(model.getValueAt(selectedRow1, 18).toString());
+            Integer id = (Integer) model.getValueAt(selectedRow, 0);
+            String lastName = (String) model.getValueAt(selectedRow, 1);
+            String firstName = (String) model.getValueAt(selectedRow, 2);
+            String birthday = (String) model.getValueAt(selectedRow, 3);
+            String address = (String) model.getValueAt(selectedRow, 4);
+            String phoneNumber = (String) model.getValueAt(selectedRow, 5);
+            String sssNumber = (String) model.getValueAt(selectedRow, 6);
+            String philhealthNumber = (String) model.getValueAt(selectedRow, 7);
+            String tinNumber = (String) model.getValueAt(selectedRow, 8);
+            String pagibigNumber = (String) model.getValueAt(selectedRow, 9);
+            String status = (String) model.getValueAt(selectedRow, 10);
+            String position = (String) model.getValueAt(selectedRow, 11);
+            String immediateSupervisor = (String) model.getValueAt(selectedRow, 12);
+            float basicSalary = Float.parseFloat(model.getValueAt(selectedRow, 13).toString());
+            float riceSubsidy = Float.parseFloat(model.getValueAt(selectedRow, 14).toString());
+            float phoneAllowance = Float.parseFloat(model.getValueAt(selectedRow, 15).toString());
+            float clothingAllowance = Float.parseFloat(model.getValueAt(selectedRow, 16).toString());
+            float grossSemimonthlyRate = Float.parseFloat(model.getValueAt(selectedRow, 17).toString());
+            double hourlyRate = Double.parseDouble(model.getValueAt(selectedRow, 18).toString());
 
             // Create an Employee object with the updated data
             Employee employee = new Employee(id, lastName, firstName, birthday, address, phoneNumber,
@@ -572,9 +571,5 @@ public class GUI_HREmployeeManagement extends JFrame {
             JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Please select a row to update.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-
-
-
 
 }
