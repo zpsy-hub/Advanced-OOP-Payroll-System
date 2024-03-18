@@ -1,5 +1,3 @@
-# MotorPH Automated Payroll System
-
 The MotorPH Automated Payroll System is an important initiative aimed at modernizing and streamlining MotorPH's payroll processes, in line with the company's growth objectives. The system prioritizes efficiency, accuracy, and legal compliance, and seeks to automate manual payroll tasks, reduce errors, and save time. It is designed to be scalable, adaptable, and secure, making it an integral part of MotorPH's organizational structure.
 
 ## Introduction
@@ -36,4 +34,37 @@ To support its ambitious expansion plans, MotorPH is overhauling its current pay
 - Internet Connectivity
   > A stable internet connection is necessary for accessing Laragon, which is needed for the system to run.
 
-## Using the Payroll System
+## Using Guide
+
+### Step 1: Access user credentials in this [spreadsheet](https://docs.google.com/spreadsheets/d/1bLY2s66_CvoyZGd1xOYZQPb6OOt20YWh24fv9Mfqu6E/edit#gid=436645740).
+### Step 2: Log in with valid credentials.
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/5fa2b7f2-a94f-4da3-970c-a0bcdc1114c5)
+*Each employee is given a unique username and password. In this example we used the CEO's credentials.*
+
+username: **garman** \
+password: **pZ3q9fG7**
+
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c5279ea7-8c26-4ad9-ba23-43ee127c747c)
+*After logging in, the user is directed to the Dashboard.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/bdbdc6b8-843c-45cd-8ef1-5d7ae54e05ed)
+
+### Step 3: Time In
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/885fed19-52fc-474b-a649-b7f8da4ab1a3)
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/77853dc7-9a9c-4a81-93b7-938b90206a07)
+
+
+
+
+## Technical Information
+
+### Use Case Diagram
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c9c1a96a-2a96-4847-964d-eef075c71b94)
+
+### Class Diagram
+
+### Testing
+[Test Cases](https://docs.google.com/spreadsheets/d/1IdAsLesw17KgByksMrziTsWmAmPS_WMahOdPHjtlP5M/edit?usp=sharing)
+
