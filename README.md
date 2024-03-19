@@ -34,12 +34,13 @@ To support its ambitious expansion plans, MotorPH is overhauling its current pay
 - Internet Connectivity
   > A stable internet connection is necessary for accessing Laragon, which is needed for the system to run.
 
-## Using Guide
+## User's Guide
 
+## Log-in
 ### Step 1: Access user credentials in this [spreadsheet](https://docs.google.com/spreadsheets/d/1bLY2s66_CvoyZGd1xOYZQPb6OOt20YWh24fv9Mfqu6E/edit#gid=436645740).
 ### Step 2: Log in with valid credentials.
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/5fa2b7f2-a94f-4da3-970c-a0bcdc1114c5)
-*Each employee is given a unique username and password. In this example we used the CEO's credentials.*
+*Each employee is given a unique username and password. In this example, we used the CEO's credentials.*
 
 username: **garman** \
 password: **pZ3q9fG7**
@@ -50,11 +51,43 @@ password: **pZ3q9fG7**
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/bdbdc6b8-843c-45cd-8ef1-5d7ae54e05ed)
 
-### Step 3: Time In
+## Time In/Time Out
+### Step 1: Time In
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/885fed19-52fc-474b-a649-b7f8da4ab1a3)
+*After pressing the Time In button, the user's current status will change from OUT to IN. This will also disable the Time In button after being clicked.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/77853dc7-9a9c-4a81-93b7-938b90206a07)
 
+### Step 2: Time Out
+*After pressing the Time Out button, the user's current status will change from IN to OUT. This will also disable both buttons after being clicked.*
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c7f2db68-c70e-4419-9108-662f13b1d53f)
+*All records can be sorted in ascending order*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/2c4c28e1-4384-4341-bb0b-328eefa3d6bb)
+*All records can be filtered and fetched by Month-Year.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/86a0cf6a-fa2c-4dfc-916a-6cd076205a1d)
+
+
+
+## Payslip
+### Step 1: Check Payslip
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/177aaba4-a18c-4e0e-bd39-62c00480a181)
+
+### Step 2: Select a pay period 
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/b3cffba9-872f-4060-ad0f-3375946d7f07)
+
+### Step 3: Export Payslip 
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/7a7be41d-3497-4249-909c-368b84a85f7d)
+*After exporting the payslip, the payslip details will be saved.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/b3088b1d-cb41-435f-a36e-0c735b477a3c)
+*Payslip will then be stored in your local storage.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/943f8ef5-b510-43de-951c-cf42954de6d0)
+*The exported payslip:*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/2939eae8-81ca-423c-9e50-dca269e92846)
 
 
 
