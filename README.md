@@ -90,6 +90,35 @@ password: **pZ3q9fG7**
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/2939eae8-81ca-423c-9e50-dca269e92846)
 
 
+## Leave Requests
+### Step 1: View leave balances
+*Upon clicking the Leave Request button, the user's leave balances can be seen at the top part of the screen.*
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/8bf2c103-ff11-40dc-961b-ad55462b087a)
+
+*The user's leave request history can be seen at the rightmost part of the screen.*
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/033df202-c626-44f6-af9c-9a83a3753ae4)
+
+### Step 2: Apply for a leave
+*An error will occur when the selected end date is earlier than the start date.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/7f01387c-ef12-44c4-9e97-dd7825986b48)
+*An error will occur if the user selects more than the available number of leaves.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/2d69c5b4-a487-4b8a-ad8a-faa57e433550)
+*Leave request with valid data input.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/f3c5cef4-e82a-4ec6-8308-e5a099666763)
+*A pop-up will show the confirmation message after sending in your leave request.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/edaf8340-cce3-4569-b18d-40d81d57df1e)
+*After sending in a valid request, the user's leave request history will be updated.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/06de0449-0bb4-4681-9221-131612d5d544)
+*A clear button is available to reset all the data that's been placed.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/02a30e90-0d89-4349-b8f4-ebd45f092f8a)
+
+
 
 ## Technical Information
 
