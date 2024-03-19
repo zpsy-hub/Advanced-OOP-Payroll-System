@@ -26,7 +26,7 @@ To support its ambitious expansion plans, MotorPH is overhauling its current pay
 - IDE Eclipse
 - MySQL Community and Laragon
 
-### Accesssing the System
+### Accessing the System
 - Login Credentials
   > Obtain valid login credentials from the system administrator or HR department.
 - Device Requirements
@@ -36,7 +36,7 @@ To support its ambitious expansion plans, MotorPH is overhauling its current pay
 
 ## User's Guide
 
-## Log-in
+## Log-in (Employee's POV)
 ### Step 1: Access user credentials in this [spreadsheet](https://docs.google.com/spreadsheets/d/1bLY2s66_CvoyZGd1xOYZQPb6OOt20YWh24fv9Mfqu6E/edit#gid=436645740).
 ### Step 2: Log in with valid credentials.
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/5fa2b7f2-a94f-4da3-970c-a0bcdc1114c5)
@@ -118,6 +118,11 @@ password: **pZ3q9fG7**
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/02a30e90-0d89-4349-b8f4-ebd45f092f8a)
 
+## Log-in (HR head's POV)
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/0757766e-195a-4976-8657-f8066ac3d5a6)
+*HR head's dashboard view.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/9498c422-e362-47c1-a448-7c4c4d531648)
 
 
 ## Technical Information
