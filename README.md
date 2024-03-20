@@ -12,6 +12,7 @@ To support its ambitious expansion plans, MotorPH is overhauling its current pay
 > - Payroll - To oversee payroll processing, tax calculations, and reporting. 
 > - IT - To oversee system integration, maintenance, and data security.
 
+
 ## Getting Started
 
 ### Hardware Prerequisites
@@ -34,7 +35,12 @@ To support its ambitious expansion plans, MotorPH is overhauling its current pay
 - Internet Connectivity
   > A stable internet connection is necessary for accessing Laragon, which is needed for the system to run.
 
+
+
 ## User's Guide
+This user guide serves as your comprehensive resource for the MotorPH Payroll System. Designed to empower users of all experience levels, this guide provides clear and concise instructions to navigate the system's functionalities effectively.Throughout this guide, you will find detailed explanations accompanied by informative screenshots,. Our goal is to equip you with the necessary knowledge to fully utilize the MotorPH Payroll System's features.
+
+We encourage you to explore this guide at your own pace, referencing specific sections as needed. Let's begin!
 
 ## Log-in (Employee's POV)
 ### Step 1: Access user credentials in this [spreadsheet](https://docs.google.com/spreadsheets/d/1bLY2s66_CvoyZGd1xOYZQPb6OOt20YWh24fv9Mfqu6E/edit#gid=436645740).
@@ -45,7 +51,6 @@ To support its ambitious expansion plans, MotorPH is overhauling its current pay
 username: **garman** \
 password: **pZ3q9fG7**
 
-
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c5279ea7-8c26-4ad9-ba23-43ee127c747c)
 *After logging in, the user is directed to the Dashboard.*
 
@@ -55,6 +60,7 @@ password: **pZ3q9fG7**
 ### Step 1: Time In
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/885fed19-52fc-474b-a649-b7f8da4ab1a3)
 *After pressing the Time In button, the user's current status will change from OUT to IN. This will also disable the Time In button after being clicked.*
+
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/77853dc7-9a9c-4a81-93b7-938b90206a07)
 
@@ -123,6 +129,43 @@ password: **pZ3q9fG7**
 *HR head's dashboard view.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/9498c422-e362-47c1-a448-7c4c4d531648)
+
+## Employee Management Module - Add Employee
+### Step 1: Open Employee Management Module
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/3b8a5f9d-b5ef-49e8-8515-f81fedb8cedd)
+*Default Employee Management Module view.*
+
+### Step 2: Press the Add Employee Button
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/d995c563-42ff-4473-826c-44291451dd6b)
+*After the user presses the add employee button, a new row at the end of the table is added where the user can input details .*
+
+### Step 3: Input New Employee Details and Press Save Changes
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/4d3bb159-68eb-4f33-9767-2bb65d9e2010)
+*System confirms the addition of the employee into the database. MySQL Database updates and adds employee to the Database**
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/1ac2753f-2970-41f7-ab8f-21d1af92005c)
+There's an issue with how Employee IDs are assigned in the application's table. When a new employee is added, the table automatically increases the ID by 1 based on the last employee shown. However, if an employee is deleted, the database remembers this and assigns the next available ID, creating a mismatch between the table and the database. For instance, if an employee with ID 35 is deleted, the table still expects the next employee to have ID 36, while the database recognizes ID 36 as available and assigns it to the next employee. This inconsistency can cause confusion and errors in the system. 
+That's why, in the pictures, even though the next employee added should have been assigned ID 39 according to the table, the database records it as 41 due to the discrepancy. However, after the completed addition, the table refreshes and corrects this issue promptly by synchronizing with the database.
+
+## Employee Management Module - Delete Employee
+### Step 1: Select the row of the employee to be deleted
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/744cf64b-bd13-4cbf-a290-5d23b3607515)
+*Suppose we wrongly made an entry like this one.**
+
+### Step 2: Employee Deletion Verification
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/51481089-31e9-4f32-b905-f5ec06ad375e)
+*The system implements a double-check mechanism when deleting an employee.*
+
+### Step 3: Employee Deletion Confirmation
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/9f03942a-be48-4fcb-9724-bf529836f538)
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/7abc963e-f575-423a-b7b9-3c27a0d89116)
+*The employee with emp id 38 is deleted from the database.*
+
+## Employee Management Module - Edit Employee
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/26df1854-1923-40f8-841d-5f318d248956)
+*Default view of the edit employee window.*
+
+
 
 
 ## Technical Information
