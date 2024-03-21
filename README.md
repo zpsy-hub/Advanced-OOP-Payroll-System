@@ -1,4 +1,4 @@
-<div align="center">
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/df758915-0d74-42d9-9d2a-a2356bade51d)<div align="center">
 <img src="https://github.com/Anmol-Baranwal/Cool-GIFs-For-GitHub/assets/74038190/80728820-e06b-4f96-9c9e-9df46f0cc0a5" width="1000">
 </div>
 <br><br>
@@ -370,6 +370,24 @@ password: **dG7s3eQ2**
 *IT head's dashboard view.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c64d5c17-8396-4964-8141-94463285ede6)
+
+### Permissions Management
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/616fb5b5-f76c-4be3-82d1-fad60217fde0)
+
+#### Step 1: Select Employee to show permissions
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/5353f947-d7e5-4153-982b-de0e7ba05e5d)
+
+#### Step 2: Grant access to the selected employee
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/546d9221-9066-433f-a5b6-072ef5cb119d)
+
+*After granting permission to the chosen employee, the button for that function will now appear on their dashboard view.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/301a8622-cf8a-4d87-8152-73bf254fb914)
+
+*Granting an employee the HR permissions.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/80d08042-b7f9-4055-be22-570f1a6a66ec)
+
 
 
 ## Technical Information
