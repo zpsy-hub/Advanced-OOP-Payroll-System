@@ -43,7 +43,7 @@ To support its ambitious expansion plans, MotorPH is overhauling its current pay
 
 
 ## User's Guide
-This user guide serves as your comprehensive resource for the MotorPH Payroll System. Designed to empower users of all experience levels, this guide provides clear and concise instructions to navigate the system's functionalities effectively.Through this guide, you will find detailed explanations accompanied by informative screenshots. Our goal is to equip you with the necessary knowledge to fully utilize the MotorPH Payroll System's features.
+This user guide serves as your comprehensive resource for the MotorPH Payroll System. Designed to empower users of all experience levels, this guide provides clear and concise instructions to navigate the system's functionalities effectively. Through this guide, you will find detailed explanations accompanied by informative screenshots. Our goal is to equip you with the necessary knowledge to fully utilize the MotorPH Payroll System's features.
 
 We encourage you to explore this guide at your own pace, referencing specific sections as needed. Let's begin!
 
@@ -60,23 +60,26 @@ password: **pZ3q9fG7**
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c5279ea7-8c26-4ad9-ba23-43ee127c747c)
 
-After logging in, the user is directed to the Dashboard.
+*After logging in, the user is directed to the Dashboard.*
+
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/bdbdc6b8-843c-45cd-8ef1-5d7ae54e05ed)
 
 
 ### Time In/Time Out
 #### Step 1: Time In
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/885fed19-52fc-474b-a649-b7f8da4ab1a3)
-*After pressing the Time In button, the user's current status will change from OUT to IN. This will also disable the Time In button after being clicked. The timestamp and date is also recorded in the table as seen in the first row od the table.*
+*After pressing the Time In button, the user's current status will change from OUT to IN. This will also disable the Time In button after being clicked. The timestamp and date are also recorded in the table as seen in the first row of the table.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/77853dc7-9a9c-4a81-93b7-938b90206a07)
 
 #### Step 2: Time Out
 *After pressing the Time Out button, the user's current status will change from IN to OUT. This will also disable both buttons after being clicked. The timestamp for time is recorded in the same row as the time in, as seen in the table.*
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c7f2db68-c70e-4419-9108-662f13b1d53f)
+
 *All records can be sorted in ascending order*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/2c4c28e1-4384-4341-bb0b-328eefa3d6bb)
+
 *All records can be filtered and fetched by Month-Year.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/86a0cf6a-fa2c-4dfc-916a-6cd076205a1d)
@@ -90,12 +93,15 @@ After logging in, the user is directed to the Dashboard.
 
 #### Step 3: Export Payslip 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/7a7be41d-3497-4249-909c-368b84a85f7d)
+
 *After exporting the payslip, the payslip details will be saved.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/b3088b1d-cb41-435f-a36e-0c735b477a3c)
+
 *Payslip will then be stored in your local storage.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/943f8ef5-b510-43de-951c-cf42954de6d0)
+
 *The exported payslip:*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/2939eae8-81ca-423c-9e50-dca269e92846)
@@ -113,18 +119,23 @@ After logging in, the user is directed to the Dashboard.
 *An error will occur when the selected end date is earlier than the start date.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/7f01387c-ef12-44c4-9e97-dd7825986b48)
+
 *An error will occur if the user selects more than the available number of leaves.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/2d69c5b4-a487-4b8a-ad8a-faa57e433550)
+
 *Leave request with valid data input.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/f3c5cef4-e82a-4ec6-8308-e5a099666763)
+
 *A pop-up will show the confirmation message after sending in your leave request.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/edaf8340-cce3-4569-b18d-40d81d57df1e)
+
 *After sending in a valid request, the user's leave request history will be updated.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/06de0449-0bb4-4681-9221-131612d5d544)
+
 *A clear button is available to reset all the data that's been placed.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/02a30e90-0d89-4349-b8f4-ebd45f092f8a)
@@ -135,7 +146,9 @@ After logging in, the user is directed to the Dashboard.
 username: **sanbra** \
 password: **aQ2w9mE5**
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/0757766e-195a-4976-8657-f8066ac3d5a6)
+
 *HR head's dashboard view.*
+
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/9498c422-e362-47c1-a448-7c4c4d531648)
 
 
@@ -150,11 +163,11 @@ password: **aQ2w9mE5**
 
 #### Step 3: Input New Employee Details and Press Save Changes
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/4d3bb159-68eb-4f33-9767-2bb65d9e2010)
-*System confirms the addition of the employee into the database. MySQL Database updates and adds employee to the Database**
+*System confirms the addition of the employee into the database. MySQL Database updates and adds employees to the Database**
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/1ac2753f-2970-41f7-ab8f-21d1af92005c)
-There's an issue with how Employee IDs are assigned in the application's table. When a new employee is added, the table automatically increases the ID by 1 based on the last employee shown. However, if an employee is deleted, the database remembers this and assigns the next available ID, creating a mismatch between the table and the database. For instance, if an employee with ID 35 is deleted, the table still expects the next employee to have ID 36, while the database recognizes ID 36 as available and assigns it to the next employee. This inconsistency can cause confusion and errors in the system. 
-That's why, in the pictures, even though the next employee added should have been assigned ID 39 according to the table, the database records it as 41 due to the discrepancy. However, after the completed addition, the table refreshes and corrects this issue promptly by synchronizing with the database.
+*There's an issue with how Employee IDs are assigned in the application's table. When a new employee is added, the table automatically increases the ID by 1 based on the last employee shown. However, if an employee is deleted, the database remembers this and assigns the next available ID, creating a mismatch between the table and the database. For instance, if an employee with ID 35 is deleted, the table still expects the next employee to have ID 36, while the database recognizes ID 36 as available and assigns it to the next employee. This inconsistency can cause confusion and errors in the system. 
+That's why, in the pictures, even though the next employee added should have been assigned ID 39 according to the table, the database records it as 41 due to the discrepancy. However, after the completed addition, the table refreshes and corrects this issue promptly by synchronizing with the database.*
 
 
 ### Employee Management - Delete Employee
@@ -174,12 +187,18 @@ That's why, in the pictures, even though the next employee added should have bee
 
 ### Employee Management - Edit Employee
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/26df1854-1923-40f8-841d-5f318d248956)
+
 *Default view of the edit employee window.*
+
 #### Step 1: Select Employee to edit details from the dropdown
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/1d32efc6-2265-4600-a764-4cff6de17a59)
+
 #### Step 2: Type the information detail change you wish to change in the textbox.
+
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/9dbe192e-d94d-4815-b3c4-bfb47af29e9a)
+
 *In this example, we are going to edit Manuel III Garcia's last name to Santos.*
+
 #### Step 3: Press Save Changes and Saved Changes Confirmation
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/1c69e907-0eb4-458d-8517-2c8671e9ebf0)
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/58b67c56-443c-4771-b775-247d95b5a8eb)
@@ -188,17 +207,20 @@ That's why, in the pictures, even though the next employee added should have bee
 
 ### Attendance Management 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/2c1ee90e-248f-49c4-a5c1-d3c6a2940e2e)
+
 *Default view of the attendance management window.*
 
 Records can be filtered by Year-Month.
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/ef88107c-50b0-4976-bbb6-81fea4194388)
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/af24cc1d-2074-4f53-8eb1-720e8719e8e1)
+
 *Records filtered by 2023-02 or February 2023.*
 
 You can also search for an employee. The search bar accepts both Employee Name and number.
+
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/5147d70a-4d72-45c2-b894-829d670ff68a)
 
-When searching for 'Santos,' both 'Delos Santos' and 'Santos' appear due to the search algorithm including partial matches. This means that names containing 'Santos' in any part of the string will be included in the search results.
+*When searching for 'Santos,' both 'Delos Santos' and 'Santos' appear due to the search algorithm including partial matches. This means that names containing 'Santos' in any part of the string will be included in the search results.*
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/c55c0c25-f3f5-42a7-86ea-e5cdaeb6469c)
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/9fb94e77-d5df-4712-bf25-0c937e9958c8)
 
@@ -206,26 +228,32 @@ When searching for 'Santos,' both 'Delos Santos' and 'Santos' appear due to the 
 
 ### Leave Management 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/91770cc1-2163-46fc-b19f-74546564c57d)
+
 *Default view of the leave management window. The first table shows the Leave Requests while the second table shows the Employees' Leave Balances.*
 
 #### Step 1: Select a Leave Application
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/7ac4477d-7ca1-42a8-8980-f21ffc20ee8b)
 
 #### Step 2: Press Approve
-![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/85b0d8d0-3dcd-4ac4-887d-9aea0e73e057)
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/85b0d8d0-3dcd-4ac4-887d-9aea0e73e057
+
 *In this example we are going to show how the leave approval works.*
 
 #### Step 3: After pressing Approve, Pop up Confirms Leave Approval  
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/4009733d-df18-487b-bdce-1d952545b921)
+
 *Table also updates the Leave Application from pending to Approved.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/dcd7683f-a660-484e-97b6-8e982e1f796d)
+
 *Leave Balance also updates to reflect the approved day/s.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/33de521a-c2d5-4cb8-9bb2-c9689db555fe)
+
 *Leave Log in the database also updates to reflect the change.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/98f975a8-baab-49c8-a5eb-2c8eed71243a)
+
 *Leave Balance in the database also updates to reflect the change.*
 
 Exception handling: If a Leave has already been Approved or Rejected, it cannot be changed again.
@@ -238,7 +266,9 @@ Exception handling: If a Leave has already been Approved or Rejected, it cannot 
 username: **alvrod** \
 password: **yH6t3eS7**
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/e94dfb6e-3e0f-4fb0-9f41-53cfc425fb48)
+
 *Accounting head's dashboard view.*
+
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/21487448-a8a2-4dde-9d9d-547176282c4c)
 
 
@@ -248,19 +278,28 @@ password: **yH6t3eS7**
 
 #### Step 1: Select a Pay Period
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/aa90f0ec-ce30-4495-9bd4-838c96189c1c)
-If records already exist it displays the information in the tables.
+
+*If records already exist it displays the information in the tables.*
+
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/4f29dfa2-e952-40a3-8c46-59b69396d8c5)
-If records don't exist yet it displays shows no records in the Employee Months Worked Table.
+
+*If records don't exist yet it displays shows no records in the Employee Months Worked Table.*
+
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/f7fb09f1-c191-4ce4-9b6f-40dad0884577)
-As can be seen here in the database, there are no records yet for 2023-04.
+
+*As can be seen here in the database, there are no records yet for 2023-04.*
+
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/91ffe7da-13d5-4a8b-ac35-e3665229c94e)
 
 #### Step 2: Press Calculate Monthly Hours Worked
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/997f5ec8-b8b1-4811-8792-d8476a7b0f7d)
+
 *The system verifies the calculation of monthly hours, confirming the recording of payslips. It's important to note that each payslip is added individually to the database, which may take some time for confirmation.*
+
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/8beea42b-a82d-481b-b9dd-06bda0366288)
 *Database now has records for 2023-04.*
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/cc17281d-118c-41b9-82fd-ecbf8ebcef3f)
+
 *Table inside the window also updates to show records*
 
 #### Step 2: Select Employee from the Table
@@ -271,7 +310,8 @@ As can be seen here in the database, there are no records yet for 2023-04.
 *The payslip details are displayed and automatically populate the text boxes with accurate information.*
 
 #### Step 4: Export Payslip
-![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/c15b35c7-e80f-4e44-9a76-01e2c67b0344)
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/c15b35c7-e80f-4e44-9a76-01e2c67b0344
+
 *After clicking "Export," a popup box will appear, allowing you to choose the location on your local computer where you want to save the file, and prompting you to enter the desired file name.*
 
 #### Step 5: Write Filename and Press Save
@@ -280,8 +320,46 @@ As can be seen here in the database, there are no records yet for 2023-04.
 
 #### Step 6: Open the payslip.txt file
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/551a4d6f-6511-41fb-b37b-bdff429a5cfc)
+
 *Find the file in the location where you saved it.*
+
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/94d4a1d8-f473-4b4b-8444-8e969f633abe)
+
+
+### Monthly Payroll Summary Report
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c33d3684-f6c6-4df4-a487-eaae4b01bc45)
+
+#### Step 1: Select a Pay Period
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/076cd652-3471-4398-92aa-6415dc887d8f)
+
+*The report for the selected pay period is shown in the table.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/6cf2543f-af3f-4956-8802-b0f612999403)
+
+*A summary of the report can be seen at the bottom.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/00800e30-cfb5-445d-8f10-584de4ecca7e)
+
+#### Step 2: Export the payroll summary report
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/142f7484-41b3-4e44-8387-4cb28be78a06)
+
+*Rename the CSV file.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/f5255fdc-7ae8-4024-8d7a-8efcc9eb6d24)
+
+*A pop-up will display after successfully exporting the summary report.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c5018791-36a5-474b-a4b1-5dd961af7762)
+
+*The exported summary report will then be saved to your Documents.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/2fa9b95a-a44a-4147-b1f7-6f82022fb35a)
+
+#### Step 3: Open the CSV file
+*This is what the monthly payroll summary report file would look like after opening it.*
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/fdf5902a-19b8-49a1-b46b-c2f33dd99334)
+
+
 
 
 ## Technical Information
@@ -316,7 +394,7 @@ The payroll system generates individual payslips with employee-specific salary d
 ### Use Case Diagram
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c9c1a96a-2a96-4847-964d-eef075c71b94)
 
-The MotorPH Payroll System operates on a modular architecture, featuring interconnected components that facilitate seamless data flow and task execution. This system accommodates four primary users: Employee, HR, Payroll, and IT, each with specific roles and functionalities. The use-case scenarios illustrate how the system facilitates interactions between users and the platform to achieve defined objectives. The login scenario allows users to access the system securely. For HR and Employee users, viewing and managing employee information are crucial functionalities, enabling them to access detailed records and make necessary updates. HR personnel can add, edit, or delete employee records, ensuring the database remains up-to-date. Employees can also access their information for reference, fostering transparency and accountability. Leave management functionalities, including requesting leave, checking balances, and approving or denying requests, streamline the process for both HR and employees, promoting efficient time-off management. Time and attendance tracking functionalities enable employees to record their work hours accurately, while HR can monitor attendance records for administrative purposes. The payroll administration functionalities encompass processing payroll, editing payroll data, generating payslips, and managing user roles and permissions. These features empower Payroll administrators to ensure timely and accurate salary payments while enabling IT administrators to maintain system security and user access control. Overall, the MotorPH Payroll System enhances operational efficiency, accuracy, and compliance, contributing to improved employee satisfaction and organizational productivity.
+The MotorPH Payroll System operates on a modular architecture, featuring interconnected components that facilitate seamless data flow and task execution. This system accommodates four primary users: Employee, HR, Payroll, and IT, each with specific roles and functionalities. The use-case scenarios illustrate how the system facilitates interactions between users and the platform to achieve defined objectives. The login scenario allows users to access the system securely. For HR and Employee users, viewing and managing employee information are crucial functionalities, enabling them to access detailed records and make necessary updates. HR personnel can add, edit, or delete employee records, ensuring the database remains up-to-date. Employees can also access their information for reference, fostering transparency and accountability. Leave management functionalities, including requesting leave, checking balances, and approving or denying requests, streamline the process for both HR and employees, promoting efficient time-off management. Time and attendance tracking functionalities enable employees to record their work hours accurately, while HR can monitor attendance records for administrative purposes. The payroll administration functionalities encompass processing payroll, editing payroll data, generating payslips, and managing user roles and permissions. These features empower Payroll administrators to ensure timely and accurate salary payments while enabling IT administrators to maintain system security and user access control. Overall, the MotorPH Payroll System enhances operational efficiency, accuracy, and compliance, contributing to improve employee satisfaction and organizational productivity.
 
 
 ## Class Diagram
