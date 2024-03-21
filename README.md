@@ -1,4 +1,4 @@
-![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/df758915-0d74-42d9-9d2a-a2356bade51d)<div align="center">
+<div align="center">
 <img src="https://github.com/Anmol-Baranwal/Cool-GIFs-For-GitHub/assets/74038190/80728820-e06b-4f96-9c9e-9df46f0cc0a5" width="1000">
 </div>
 <br><br>
