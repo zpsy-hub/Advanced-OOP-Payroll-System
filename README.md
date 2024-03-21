@@ -286,17 +286,63 @@ As can be seen here in the database, there are no records yet for 2023-04.
 
 ## Technical Information
 
+### Key Features and Functionalities
+<p>The key features and functionalities of MotorPH's proposed payroll technology solution encompass a comprehensive set of tools and capabilities designed to streamline payroll processes, enhance accuracy, ensure compliance, and empower employees through self-service functionalities.</p>
+
+#### Account Login
+The payroll system incorporates a secure login process, ensuring personalized access for employees and safeguarding sensitive payroll data.
+
+#### Employee Information Management
+A centralized database maintains comprehensive employee information, including personal details, salary structure, tax information, and relevant documents, ensuring data accuracy and accessibility.
+
+#### Time and Attendance Tracking
+Integration with a time and attendance system accurately records employees' clock-in and clock-out times, securely storing this information for efficient tracking of work hours.
+
+#### Salary Calculation
+Automated salary calculations based on work hours, overtime, bonuses, deductions, and taxes ensure compliance with local laws and regulations, minimizing errors and optimizing payroll accuracy.
+
+#### Employee Self-Service Portal
+A secure portal lets employees conveniently access their personal and payroll details, empowering them to apply for leave, record time in and out, and view personal attendance information. This self-service functionality enhances employee satisfaction and reduces administrative burden.
+
+#### User Role Specification
+<p>Implementation of various user roles and permissions ensures granular control over data access and maintains data security within the system.</p>
+
+#### Employee Leave Management
+Employees can easily apply for leave and view their leave balance, while HR administrators can track and manage leave requests and balances efficiently, ensuring smooth leave management processes.
+
+#### Report Generation
+The payroll system generates individual payslips with employee-specific salary details and deductions. Additionally, monthly summary reports compile key metrics such as total wages paid and taxes withheld for the entire workforce, facilitating informed decision-making and regulatory compliance.
+
 ### Use Case Diagram
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c9c1a96a-2a96-4847-964d-eef075c71b94)
 
-### Class Diagram
+The MotorPH Payroll System operates on a modular architecture, featuring interconnected components that facilitate seamless data flow and task execution. This system accommodates four primary users: Employee, HR, Payroll, and IT, each with specific roles and functionalities. The use-case scenarios illustrate how the system facilitates interactions between users and the platform to achieve defined objectives. The login scenario allows users to access the system securely. For HR and Employee users, viewing and managing employee information are crucial functionalities, enabling them to access detailed records and make necessary updates. HR personnel can add, edit, or delete employee records, ensuring the database remains up-to-date. Employees can also access their information for reference, fostering transparency and accountability. Leave management functionalities, including requesting leave, checking balances, and approving or denying requests, streamline the process for both HR and employees, promoting efficient time-off management. Time and attendance tracking functionalities enable employees to record their work hours accurately, while HR can monitor attendance records for administrative purposes. The payroll administration functionalities encompass processing payroll, editing payroll data, generating payslips, and managing user roles and permissions. These features empower Payroll administrators to ensure timely and accurate salary payments while enabling IT administrators to maintain system security and user access control. Overall, the MotorPH Payroll System enhances operational efficiency, accuracy, and compliance, contributing to improved employee satisfaction and organizational productivity.
+
+
+## Class Diagram
+#![ERD - Class Diagram (2)](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/deab9e61-2148-4556-9d15-aafebc909caf)
+
+The class diagram illustrates the structure of MotorPH's payroll system, with related classes visually highlighted to indicate their connections within the module. Each colored area represents a specific module or functionality, such as account login, employee information management, time and attendance tracking, salary calculation, employee self-service portal, user role specification, employee leave management, and report generation. By visually distinguishing related classes, the diagram provides a clear overview of how different components of the system interact and contribute to its overall functionality.
+
+![ERD - Class Diagram (3)](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/4cb219e0-5a16-432f-a7ca-abfe907d56e7)
 
 ### Testing
 [Test Cases](https://docs.google.com/spreadsheets/d/1IdAsLesw17KgByksMrziTsWmAmPS_WMahOdPHjtlP5M/edit?usp=sharing)
 
 ### Authors (MO-IT103 - Group Carpo)
 <div>
-<img src="https://user-images.githubusercontent.com/74038190/216655825-c639587f-6eb0-4841-b622-9f522f55d40e.gif" width="120" />
-<p>Zyra Camille Hachero | Shane Mishael Abrasaldo | Jogine Novillas</p>
+  <div>
+    <img src="https://user-images.githubusercontent.com/74038190/216655825-c639587f-6eb0-4841-b622-9f522f55d40e.gif" width="120" />
+    <p>Zyra Camille Hachero</p>
+  </div>
+  <div>
+    <img src="https://user-images.githubusercontent.com/74038190/216656971-9a208a88-e6ad-4b7a-88eb-c410e4cf0e00.gif" width="120" />
+    <p>Shane Mishael Abrasaldo</p>
+  </div>
+  <div>
+    <img src="https://user-images.githubusercontent.com/74038190/216656977-ef584e23-480a-4d1c-8c3f-7d045910ddc9.gif" width="120" />
+    <p>Jogine Novillas</p>
+  </div>
 </div>
+
 
