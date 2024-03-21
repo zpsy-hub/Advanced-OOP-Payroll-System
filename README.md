@@ -235,7 +235,7 @@ You can also search for an employee. The search bar accepts both Employee Name a
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/7ac4477d-7ca1-42a8-8980-f21ffc20ee8b)
 
 #### Step 2: Press Approve
-![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/85b0d8d0-3dcd-4ac4-887d-9aea0e73e057
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/85b0d8d0-3dcd-4ac4-887d-9aea0e73e057)
 
 *In this example we are going to show how the leave approval works.*
 
@@ -263,6 +263,7 @@ Exception handling: If a Leave has already been Approved or Rejected, it cannot 
 
 
 ### Log-in (Accounting head's POV)
+
 username: **alvrod** \
 password: **yH6t3eS7**
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/e94dfb6e-3e0f-4fb0-9f41-53cfc425fb48)
@@ -274,7 +275,7 @@ password: **yH6t3eS7**
 
 ### Salary Calculation and Payslip Generation
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/b21c01af-6c55-46b4-b5b5-2aa080d5dce2)
-*Default view of the Salary Calculatio window.*
+*Default view of the Salary Calculation window.*
 
 #### Step 1: Select a Pay Period
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/aa90f0ec-ce30-4495-9bd4-838c96189c1c)
@@ -360,6 +361,15 @@ password: **yH6t3eS7**
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/fdf5902a-19b8-49a1-b46b-c2f33dd99334)
 
 
+### Log-in (IT head's POV)
+
+username: **heredu** \
+password: **dG7s3eQ2**
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/8e8dba1f-7b09-4c36-9d0e-1d79f2b9169a)
+
+*IT head's dashboard view.*
+
+![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c64d5c17-8396-4964-8141-94463285ede6)
 
 
 ## Technical Information
