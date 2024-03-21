@@ -1,4 +1,6 @@
-<img src="https://github.com/Anmol-Baranwal/Cool-GIFs-For-GitHub/assets/74038190/80728820-e06b-4f96-9c9e-9df46f0cc0a5" width="600">
+<div align="center">
+<img src="https://github.com/Anmol-Baranwal/Cool-GIFs-For-GitHub/assets/74038190/80728820-e06b-4f96-9c9e-9df46f0cc0a5" width="1000">
+</div>
 <br><br>
 
 The MotorPH Automated Payroll System is an important initiative aimed at modernizing and streamlining MotorPH's payroll processes, in line with the company's growth objectives. The system prioritizes efficiency, accuracy, and legal compliance, and seeks to automate manual payroll tasks, reduce errors, and save time. It is designed to be scalable, adaptable, and secure, making it an integral part of MotorPH's organizational structure.
@@ -47,7 +49,7 @@ We encourage you to explore this guide at your own pace, referencing specific se
 
 
 
-### :page_facing_up: Log-in (Employee's POV)
+### Log-in (Employee's POV)
 #### Step 1: Access user credentials in this [spreadsheet](https://docs.google.com/spreadsheets/d/1bLY2s66_CvoyZGd1xOYZQPb6OOt20YWh24fv9Mfqu6E/edit#gid=436645740).
 #### Step 2: Log in with valid credentials.
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/5fa2b7f2-a94f-4da3-970c-a0bcdc1114c5)
@@ -62,7 +64,7 @@ After logging in, the user is directed to the Dashboard.
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/bdbdc6b8-843c-45cd-8ef1-5d7ae54e05ed)
 
 
-### :page_facing_up: Time In/Time Out
+### Time In/Time Out
 #### Step 1: Time In
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/885fed19-52fc-474b-a649-b7f8da4ab1a3)
 *After pressing the Time In button, the user's current status will change from OUT to IN. This will also disable the Time In button after being clicked. The timestamp and date is also recorded in the table as seen in the first row od the table.*
@@ -79,7 +81,7 @@ After logging in, the user is directed to the Dashboard.
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/86a0cf6a-fa2c-4dfc-916a-6cd076205a1d)
 
-### :page_facing_up: Payslip
+### Payslip
 #### Step 1: Open Payslip from the Side Bar
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/177aaba4-a18c-4e0e-bd39-62c00480a181)
 
@@ -99,7 +101,7 @@ After logging in, the user is directed to the Dashboard.
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/2939eae8-81ca-423c-9e50-dca269e92846)
 
 
-### :page_facing_up: Leave Requests
+### Leave Requests
 #### Step 1: View leave balances
 *Upon clicking the Leave Request button, the user's leave balances can be seen at the top part of the screen.*
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/8bf2c103-ff11-40dc-961b-ad55462b087a)
@@ -128,7 +130,7 @@ After logging in, the user is directed to the Dashboard.
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/02a30e90-0d89-4349-b8f4-ebd45f092f8a)
 
 
-### :page_facing_up: Log-in (HR head's POV)
+### Log-in (HR head's POV)
 
 username: **sanbra** \
 password: **aQ2w9mE5**
@@ -137,7 +139,7 @@ password: **aQ2w9mE5**
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/9498c422-e362-47c1-a448-7c4c4d531648)
 
 
-### :page_facing_up: Employee Management - Add Employee
+### Employee Management - Add Employee
 #### Step 1: Open Employee Management Module
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/3b8a5f9d-b5ef-49e8-8515-f81fedb8cedd)
 *Default Employee Management Module view.*
@@ -155,7 +157,7 @@ There's an issue with how Employee IDs are assigned in the application's table. 
 That's why, in the pictures, even though the next employee added should have been assigned ID 39 according to the table, the database records it as 41 due to the discrepancy. However, after the completed addition, the table refreshes and corrects this issue promptly by synchronizing with the database.
 
 
-### :page_facing_up: Employee Management - Delete Employee
+### Employee Management - Delete Employee
 #### Step 1: Select the row of the employee to be deleted
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/744cf64b-bd13-4cbf-a290-5d23b3607515)
 *Suppose we wrongly made an entry like this one.**
@@ -170,7 +172,7 @@ That's why, in the pictures, even though the next employee added should have bee
 *The employee with emp id 38 is deleted from the database.*
 
 
-### :page_facing_up: Employee Management - Edit Employee
+### Employee Management - Edit Employee
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/26df1854-1923-40f8-841d-5f318d248956)
 *Default view of the edit employee window.*
 #### Step 1: Select Employee to edit details from the dropdown
@@ -184,7 +186,7 @@ That's why, in the pictures, even though the next employee added should have bee
 *The change in last name to Santos is also reflected in the database.*
 
 
-### :page_facing_up: Attendance Management 
+### Attendance Management 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/2c1ee90e-248f-49c4-a5c1-d3c6a2940e2e)
 *Default view of the attendance management window.*
 
@@ -202,7 +204,7 @@ When searching for 'Santos,' both 'Delos Santos' and 'Santos' appear due to the 
 
 
 
-### :page_facing_up: Leave Management 
+### Leave Management 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/91770cc1-2163-46fc-b19f-74546564c57d)
 *Default view of the leave management window. The first table shows the Leave Requests while the second table shows the Employees' Leave Balances.*
 
@@ -232,7 +234,7 @@ Exception handling: If a Leave has already been Approved or Rejected, it cannot 
 
 
 
-### :page_facing_up: Log-in (Accounting head's POV)
+### Log-in (Accounting head's POV)
 username: **alvrod** \
 password: **yH6t3eS7**
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/e94dfb6e-3e0f-4fb0-9f41-53cfc425fb48)
@@ -240,7 +242,7 @@ password: **yH6t3eS7**
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/21487448-a8a2-4dde-9d9d-547176282c4c)
 
 
-### :page_facing_up: Salary Calculation and Payslip Generation
+### Salary Calculation and Payslip Generation
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/b21c01af-6c55-46b4-b5b5-2aa080d5dce2)
 *Default view of the Salary Calculatio window.*
 
@@ -293,6 +295,8 @@ As can be seen here in the database, there are no records yet for 2023-04.
 [Test Cases](https://docs.google.com/spreadsheets/d/1IdAsLesw17KgByksMrziTsWmAmPS_WMahOdPHjtlP5M/edit?usp=sharing)
 
 ### Authors (MO-IT103 - Group Carpo)
-<img src="https://user-images.githubusercontent.com/74038190/216655825-c639587f-6eb0-4841-b622-9f522f55d40e.gif" width="160" />
-Zyra Camille Hachero | Shane Mishael Abrasaldo | Jogine Novillas
+<div>
+<img src="https://user-images.githubusercontent.com/74038190/216655825-c639587f-6eb0-4841-b622-9f522f55d40e.gif" width="120" />
+<p>Zyra Camille Hachero | Shane Mishael Abrasaldo | Jogine Novillas</p>
+</div>
 
