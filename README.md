@@ -377,6 +377,8 @@ password: **dG7s3eQ2**
 #### Step 1: Select Employee to show permissions
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/5353f947-d7e5-4153-982b-de0e7ba05e5d)
 
+*Default view of the permissions management window. The first table shows the Employees and the 2nd Table shows the permission granted to a selected employee.*
+
 #### Step 2: Grant access to the selected employee
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/546d9221-9066-433f-a5b6-072ef5cb119d)
 
@@ -384,10 +386,34 @@ password: **dG7s3eQ2**
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/301a8622-cf8a-4d87-8152-73bf254fb914)
 
-*Granting an employee the HR permissions.*
+HR permissions.
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/80d08042-b7f9-4055-be22-570f1a6a66ec)
 
+Payroll permissions.
+
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/9e46175c-1b45-449a-acfb-1436249cdb71)
+
+IT permissions.
+
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/225465fb-8cd4-4fee-b732-7fe1d54b91e6)
+
+
+### Credentials Management - Change Password
+Here, the IT head can reset employee's passwords.
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/a7d63868-fa9b-4591-9892-37b85318befa)
+
+#### Step 1: Select the employee whose password you'd like to change.
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/6c354dbd-00ac-45a8-9a93-018d86518067)
+
+#### Step 2: Change the password for the selected user.
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/1ef0d518-d156-42d5-b024-5145bd91c83e)
+
+The system confirms that the password for the user was changed.
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/58110223-ec1e-4996-a47d-8e52556c5aa6)
+
+When changing a password, the system securely updates the saved password in the database using SHA-256 encryption. SHA-256 is a cryptographic hash function that converts input data into a fixed-size string of characters, ensuring data integrity and security. This encryption method is widely used in computer security applications due to its strong cryptographic properties.
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/c08de654-c4ff-4faf-b730-14e517d7ff34)
 
 
 ## Technical Information
