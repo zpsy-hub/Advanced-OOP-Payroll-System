@@ -37,7 +37,7 @@ The MotorPH Automated Payroll System is an important initiative aimed at moderni
   * [Use Case Diagram](#use-case-diagram)
   * [Class Diagram](#class-diagram)
 - [Testing](#testing)
-- [Authors (MO-IT103 - Group Carpo)](authors-mo-it103---group-carpo)
+- [Authors (MO-IT103 - Group Carpo)](#authors-mo-it103---group-carpo)
 
 ## Introduction
 
