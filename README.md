@@ -386,21 +386,21 @@ password: **dG7s3eQ2**
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/301a8622-cf8a-4d87-8152-73bf254fb914)
 
-HR permissions.
+*HR permissions.*
 
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/80d08042-b7f9-4055-be22-570f1a6a66ec)
 
-Payroll permissions.
+*Payroll permissions.*
 
 ![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/9e46175c-1b45-449a-acfb-1436249cdb71)
 
-IT permissions.
+*IT permissions.*
 
 ![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/225465fb-8cd4-4fee-b732-7fe1d54b91e6)
 
 
 ### Credentials Management - Change Password
-Here, the IT head can reset employee's passwords.
+*Here, the IT head can reset employee's passwords.*
 ![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/a7d63868-fa9b-4591-9892-37b85318befa)
 
 #### Step 1: Select the employee whose password you'd like to change.
@@ -409,11 +409,47 @@ Here, the IT head can reset employee's passwords.
 #### Step 2: Change the password for the selected user.
 ![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/1ef0d518-d156-42d5-b024-5145bd91c83e)
 
-The system confirms that the password for the user was changed.
+*The system confirms that the password for the user was changed.*
 ![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/58110223-ec1e-4996-a47d-8e52556c5aa6)
 
-When changing a password, the system securely updates the saved password in the database using SHA-256 encryption. SHA-256 is a cryptographic hash function that converts input data into a fixed-size string of characters, ensuring data integrity and security. This encryption method is widely used in computer security applications due to its strong cryptographic properties.
+*When changing a password, the system securely updates the saved password in the database using SHA-256 encryption. SHA-256 is a cryptographic hash function that converts input data into a fixed-size string of characters, ensuring data integrity and security. This encryption method is widely used in computer security applications due to its strong cryptographic properties.*
+
+### Credentials Management - Delete User
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/125028278/30ed3da6-edca-472e-bd47-b7ed7b345c77)
+
+#### Step 1: Select a user to delete
+*View before deletion.*
 ![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/124635709/c08de654-c4ff-4faf-b730-14e517d7ff34)
+
+*Selected user*
+
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/125028278/fe8c500a-fe76-4c74-a868-d9fbeea00584)
+
+*Selected user to be deleted from the database*
+
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/125028278/27788d26-a9cc-4be2-a2ec-5853b1fe0bb8)
+
+#### Step 2: Delete the selected user
+*A pop-up will show after successfully deleting the user.*
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/125028278/4a93c05e-a382-4d97-b121-0d7592fb2ad3)
+
+*User is now successfully deleted in the database.*
+
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/125028278/ce69a023-2f00-4b17-b8dc-7a64d4beeed3)
+
+### Authentication Logs
+
+#### Step 1: View authentication logs
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/125028278/32378986-297e-4e83-88b8-38d24eb0a5e8)
+
+#### Step 2: Sort authentication logs
+*The authentication logs can be sorted in ascending or descending timestamps order.*
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/125028278/713ea207-6ee7-4c0b-b796-23ea49b0973f)
+
+*The system records unsuccessful logins as '0' for employee ID.*
+
+![image](https://github.com/shaneabrasaldo/MotorPH-Payroll-System/assets/125028278/dc2735a5-eeb1-48af-a504-db89083db280)
+
 
 
 ## Technical Information
