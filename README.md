@@ -5,6 +5,40 @@
 
 The MotorPH Automated Payroll System is an important initiative aimed at modernizing and streamlining MotorPH's payroll processes, in line with the company's growth objectives. The system prioritizes efficiency, accuracy, and legal compliance, and seeks to automate manual payroll tasks, reduce errors, and save time. It is designed to be scalable, adaptable, and secure, making it an integral part of MotorPH's organizational structure.
 
+## Table of Contents
+
+- [Introduction](#introduction)
+  * [User Roles](#user-roles)
+- [Getting Started](#getting-started)
+  * [Hardware Prerequisites](#hardware-prerequisites)
+  * [Software Prerequisites](#software-prerequisites)
+  * [Accessing the System](#accessing-the-system)
+- [User's Guide](#users-guide)
+  * [Log-in (Employee's POV)](#log-in-employees-pov)
+  * [Time In/Time Out](#time-intime-out)
+  * [Payslip](#payslip)
+  * [Leave Requests](#leave-requests)
+  * [Log-in (HR head's POV)](#log-in-hr-heads-pov)
+  * [Employee Management - Add Employee](#employee-management---add-employee)
+  * [Employee Management - Delete Employee](#employee-management---delete-employee)
+  * [Employee Management - Edit Employee](#employee-management---edit-employee)
+  * [Attendance Management](#attendance-management)
+  * [Leave Management](#leave-management)
+  * [Log-in (Accounting head's POV)](#log-in-accounting-heads-pov)
+  * [Salary Calculation and Payslip Generation](#salary-calculation-and-payslip-generation)
+  * [Monthly Payroll Summary Report](#monthly-payroll-summary-report)
+  * [Log-in (IT head's POV)](#log-in-it-heads-pov)
+  * [Permissions Management](#permissions-management)
+  * [Credentials Management - Change Password](#credentials-management---change-password)
+  * [Credentials Management - Delete User](#credentials-management---delete-user)
+  * [Authentication Logs](#authentication-logs)
+- [Technical Information](#technical-information)
+  * [Key Features and Functionalities](#key-features-and-functionalities)
+  * [Use Case Diagram](#use-case-diagram)
+  * [Class Diagram](#class-diagram)
+- [Testing](#testing)
+- [Authors (MO-IT103 - Group Carpo)](authors-mo-it103---group-carpo)
+
 ## Introduction
 
 MotorPH was established in 2020 and its mission is to be the first choice for Filipinos searching for competitive and affordable motorcycles. From a purely online presence, MotorPH's objective is to expand its business by opening physical stores in different parts of the Philippines. Recognizing the pivotal role of a robust employee foundation in this growth journey, MotorPH is prioritizing the modernization of its payroll system.
@@ -494,10 +528,10 @@ The class diagram illustrates the structure of MotorPH's payroll system, with re
 
 ![ERD - Class Diagram (3)](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/4cb219e0-5a16-432f-a7ca-abfe907d56e7)
 
-### Testing
+## Testing
 [Test Cases](https://docs.google.com/spreadsheets/d/1IdAsLesw17KgByksMrziTsWmAmPS_WMahOdPHjtlP5M/edit?usp=sharing)
 
-### Authors (MO-IT103 - Group Carpo)
+## Authors (MO-IT103 - Group Carpo)
 <div>
   <div>
     <img src="https://user-images.githubusercontent.com/74038190/216655825-c639587f-6eb0-4841-b622-9f522f55d40e.gif" width="120" />
