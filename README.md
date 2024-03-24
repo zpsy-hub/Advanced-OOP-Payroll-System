@@ -59,28 +59,83 @@ To support its ambitious expansion plans, MotorPH is overhauling its current pay
 - Memory (RAM): At least 4GB of RAM is recommended for small to medium-sized projects.
 - Storage: Sufficient storage space for storing project files and dependencies.
 - Network Connectivity: Required for accessing remote resources or network communication.
-- Operating System: Compatible with various operating systems including Windows, macOS, and Linux.
+
 
 ### Software Prerequisites
-- Java SDK
+- Operating System: Compatible with various operating systems including Windows, macOS, and Linux.
+- Java JDK at least JDK 19
 - IDE Eclipse
 - MySQL Community and Laragon
 
 ### Accessing the System
-- Login Credentials
-  > Obtain valid login credentials from the system administrator or HR department.
-- Device Requirements
-  > Access to a computer or laptop.
-- Internet Connectivity
-  > A stable internet connection is necessary for accessing Laragon, which is needed for the system to run.
 
+#### To access the payroll system, users need to follow these steps:
+
+1. Install Required Software:
+> - Install Eclipse IDE for Java development.
+> - Install Laragon, a local development environment that includes Apache, MySQL, and PHP.
+> - Install MySQL database.
+> - Install Java Development Kit (JDK):
+> - *Ensure JDK 19 is installed on your system. If not, download and install JDK 19 from the official Oracle website.*
+
+2. Install Dependencies:
+> - Opencsv: Download Opencsv library from https://opencsv.sourceforge.net and add it to the project's classpath.
+> - MySQL Connector: Download MySQL Connector from https://dev.mysql.com/downloads/connector/j/ and add it to the project's classpath.
+> - JAXB Runtime: Add JAXB Runtime dependency to the project from https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime.
+
+3. Database Setup:
+> - Use the provided dump file in the repository to set up the MySQL database.
+> - Configure MySQL to use the username "root" and password "DF.w}=;$CLn+84?m]r(M%Q".
+
+4. Start Laragon:
+> - Open Laragon and start the local server. Laragon should automatically start Apache, MySQL, and other required services.
+
+5. Import Project in Eclipse:
+> - Open Eclipse IDE and import the project into your workspace.
+> - Navigate to the project directory and select it for import.
+
+6. Run Main Class:
+> - In the project's src folder, locate the main class.
+> - Right-click on the main class and select "Run As" > "Java Application".
+> - This should direct you to the login page of the payroll system.
+
+By following these steps, users should be able to set up and access the payroll system on their local environment using Eclipse, Laragon, and MySQL. Make sure to verify that all dependencies are correctly added and configurations are properly set up before running the application.
+
+
+#### To ensure that the required dependencies are correctly added to the project's classpath, follow these steps:
+
+1. Opencsv Dependency:
+> - Opencsv library is already included in the project's classpath.
+> - If any errors related to Opencsv arise, ensure that the Opencsv library JAR file is present in the project's build path.
+> - To add Opencsv to the project:
+> -  Download Opencsv library from https://opencsv.sourceforge.net.
+> - In Eclipse, right-click on the project in the Package Explorer.
+>> - Select "Build Path" > "Configure Build Path".
+>> - In the Libraries tab, click on "Add External JARs...".
+>> - Navigate to the downloaded Opencsv JAR file and select it.
+>>- Click "Apply and Close" to save the changes.
+
+2. MySQL Connector Dependency:
+> - MySQL Connector JAR file is already included in the project's classpath.
+> - If any errors related to MySQL Connector occur, ensure that the MySQL Connector JAR file is present in the project's build path.
+> - To add MySQL Connector to the project:
+> - Download MySQL Connector from https://dev.mysql.com/downloads/connector/j/.
+> - Follow the same steps as adding Opencsv to the project's build path, as mentioned above.
+
+3. JAXB Runtime Dependency:
+> - JAXB Runtime dependency is already included in the project.
+> - If any errors related to JAXB Runtime arise, ensure that the JAXB Runtime JAR file is present in the project's build path.
+> - To add JAXB Runtime to the project:
+> - Download JAXB Runtime dependency from https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-runtime.
+> - Follow the same steps as adding Opencsv to the project's build path, as mentioned above.
+
+By following these steps, you can ensure that the required dependencies are correctly added to the project's classpath, which helps resolve any potential errors related to missing dependencies.
 
 
 ## User's Guide
 This user guide serves as your comprehensive resource for the MotorPH Payroll System. Designed to empower users of all experience levels, this guide provides clear and concise instructions to navigate the system's functionalities effectively. Through this guide, you will find detailed explanations accompanied by informative screenshots. Our goal is to equip you with the necessary knowledge to fully utilize the MotorPH Payroll System's features.
 
 We encourage you to explore this guide at your own pace, referencing specific sections as needed. Let's begin!
-
 
 
 ### Log-in (Employee's POV)
@@ -492,44 +547,45 @@ password: **dG7s3eQ2**
 <p>The key features and functionalities of MotorPH's proposed payroll technology solution encompass a comprehensive set of tools and capabilities designed to streamline payroll processes, enhance accuracy, ensure compliance, and empower employees through self-service functionalities.</p>
 
 #### Account Login
-The payroll system incorporates a secure login process, ensuring personalized access for employees and safeguarding sensitive payroll data.
+> The payroll system incorporates a secure login process, ensuring personalized access for employees and safeguarding sensitive payroll data.
 
 #### Employee Information Management
-A centralized database maintains comprehensive employee information, including personal details, salary structure, tax information, and relevant documents, ensuring data accuracy and accessibility.
+> A centralized database maintains comprehensive employee information, including personal details, salary structure, tax information, and relevant documents, ensuring data accuracy and accessibility.
 
 #### Time and Attendance Tracking
-Integration with a time and attendance system accurately records employees' clock-in and clock-out times, securely storing this information for efficient tracking of work hours.
+> Integration with a time and attendance system accurately records employees' clock-in and clock-out times, securely storing this information for efficient tracking of work hours.
 
 #### Salary Calculation
-Automated salary calculations based on work hours, overtime, bonuses, deductions, and taxes ensure compliance with local laws and regulations, minimizing errors and optimizing payroll accuracy.
+> Automated salary calculations based on work hours, overtime, bonuses, deductions, and taxes ensure compliance with local laws and regulations, minimizing errors and optimizing payroll accuracy.
 
 #### Employee Self-Service Portal
-A secure portal lets employees conveniently access their personal and payroll details, empowering them to apply for leave, record time in and out, and view personal attendance information. This self-service functionality enhances employee satisfaction and reduces administrative burden.
+> A secure portal lets employees conveniently access their personal and payroll details, empowering them to apply for leave, record time in and out, and view personal attendance information. This self-service functionality enhances employee satisfaction and reduces administrative burden.
 
 #### User Role Specification
-<p>Implementation of various user roles and permissions ensures granular control over data access and maintains data security within the system.</p>
+> <p>Implementation of various user roles and permissions ensures granular control over data access and maintains data security within the system.</p>
 
 #### Employee Leave Management
-Employees can easily apply for leave and view their leave balance, while HR administrators can track and manage leave requests and balances efficiently, ensuring smooth leave management processes.
+> Employees can easily apply for leave and view their leave balance, while HR administrators can track and manage leave requests and balances efficiently, ensuring smooth leave management processes.
 
 #### Report Generation
-The payroll system generates individual payslips with employee-specific salary details and deductions. Additionally, monthly summary reports compile key metrics such as total wages paid and taxes withheld for the entire workforce, facilitating informed decision-making and regulatory compliance.
+> The payroll system generates individual payslips with employee-specific salary details and deductions. Additionally, monthly summary reports compile key metrics such as total wages paid and taxes withheld for the entire workforce, facilitating informed decision-making and regulatory compliance.
 
-### Use Case Diagram
+
+## Use Case Diagram
 ![image](https://github.com/shaneabrasaldo/Java-Calculator/assets/125028278/c9c1a96a-2a96-4847-964d-eef075c71b94)
 
 The MotorPH Payroll System operates on a modular architecture, featuring interconnected components that facilitate seamless data flow and task execution. This system accommodates four primary users: Employee, HR, Payroll, and IT, each with specific roles and functionalities. The use-case scenarios illustrate how the system facilitates interactions between users and the platform to achieve defined objectives. The login scenario allows users to access the system securely. For HR and Employee users, viewing and managing employee information are crucial functionalities, enabling them to access detailed records and make necessary updates. HR personnel can add, edit, or delete employee records, ensuring the database remains up-to-date. Employees can also access their information for reference, fostering transparency and accountability. Leave management functionalities, including requesting leave, checking balances, and approving or denying requests, streamline the process for both HR and employees, promoting efficient time-off management. Time and attendance tracking functionalities enable employees to record their work hours accurately, while HR can monitor attendance records for administrative purposes. The payroll administration functionalities encompass processing payroll, editing payroll data, generating payslips, and managing user roles and permissions. These features empower Payroll administrators to ensure timely and accurate salary payments while enabling IT administrators to maintain system security and user access control. Overall, the MotorPH Payroll System enhances operational efficiency, accuracy, and compliance, contributing to improve employee satisfaction and organizational productivity.
 
 
 ## Class Diagram
-#![ERD - Class Diagram (2)](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/deab9e61-2148-4556-9d15-aafebc909caf)
+![ERD - Class Diagram (2)](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/deab9e61-2148-4556-9d15-aafebc909caf)
 
 The class diagram illustrates the structure of MotorPH's payroll system, with related classes visually highlighted to indicate their connections within the module. Each colored area represents a specific module or functionality, such as account login, employee information management, time and attendance tracking, salary calculation, employee self-service portal, user role specification, employee leave management, and report generation. By visually distinguishing related classes, the diagram provides a clear overview of how different components of the system interact and contribute to its overall functionality.
 
 ![ERD - Class Diagram (3)](https://github.com/shaneabrasaldo/Java-Calculator/assets/124635709/4cb219e0-5a16-432f-a7ca-abfe907d56e7)
 
 ## Testing
-[Test Cases](https://docs.google.com/spreadsheets/d/1IdAsLesw17KgByksMrziTsWmAmPS_WMahOdPHjtlP5M/edit?usp=sharing)
+[Test Cases and Issues](https://docs.google.com/spreadsheets/d/1IdAsLesw17KgByksMrziTsWmAmPS_WMahOdPHjtlP5M/edit?usp=sharing)
 
 ## Authors (MO-IT103 - Group Carpo)
 <div>
