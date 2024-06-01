@@ -25,11 +25,10 @@ import model.LeaveBalance;
 import model.LeaveRequestLog;
 import model.Permission;
 import model.User;
-import service.LeaveBalanceDAO;
-import service.LeaveRequestLogDAO;
+import DAO.LeaveBalanceDAO;
+import DAO.LeaveRequestLogDAO;
 import service.PermissionService;
 import service.SQL_client;
-import util.LeaveLogData;
 import util.SessionManager;
 import java.awt.Cursor;
 

@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import DAO.LeaveBalanceDAO;
+import DAO.LeaveRequestLogDAO;
 import model.LeaveBalance;
 import model.LeaveRequestLog;
 import model.User;

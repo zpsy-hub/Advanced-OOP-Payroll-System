@@ -1,4 +1,4 @@
-package service;
+package DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Payslip;
+import service.SQL_client;
 
 public class PayslipDAO {
     private static PayslipDAO instance = null;

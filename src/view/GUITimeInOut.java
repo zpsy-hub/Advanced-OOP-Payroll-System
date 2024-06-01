@@ -29,11 +29,11 @@ import model.Employee;
 import model.Permission;
 import model.User;
 import service.EmployeeService;
-import service.LoginDAO;
+import DAO.LoginDAO;
 import service.PermissionService;
 import service.SQL_client;
 import service.TimeSheetService;
-import service.TimesheetDAO;
+import DAO.TimesheetDAO;
 
 import javax.swing.JComboBox;
 

@@ -15,7 +15,7 @@ import javax.swing.SwingConstants;
 
 import model.Employee;
 import model.User;
-import service.CredentialsManagementDAO;
+import DAO.CredentialsManagementDAO;
 import util.SessionManager;
 
 import javax.swing.JButton;
@@ -35,7 +35,7 @@ public class GUI_ITCredentialsManagement {
 	private JTextField textField_NewPassword;
 	private JComboBox<String> comboBoxSelectUser;
     private JComboBox<String> comboBoxSelectUser_1;
-    private CredentialsManagementDAO credentialsManagementDAO;
+    private DAO.CredentialsManagementDAO credentialsManagementDAO;
 
 	/**
 	 * Launch the application.
@@ -58,7 +58,7 @@ public class GUI_ITCredentialsManagement {
 	 * Create the application.
 	 */
 	public GUI_ITCredentialsManagement(User loggedInEmployee) {
-		credentialsManagementDAO = new CredentialsManagementDAO();
+		credentialsManagementDAO = new DAO.CredentialsManagementDAO();
        	initialize();
        	 populateUserComboBoxes();
 	}

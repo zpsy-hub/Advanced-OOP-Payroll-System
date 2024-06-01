@@ -29,11 +29,11 @@ import javax.swing.table.DefaultTableModel;
 import model.Employee;
 import model.Payslip;
 import model.User;
-import service.EmployeeDAO;
+import DAO.EmployeeDAO;
 import service.PayrollSalaryCalculationService;
 import service.PayslipService;
-import service.TimesheetDAO;
-import service.PayslipDAO;
+import DAO.TimesheetDAO;
+import DAO.PayslipDAO;
 import util.SessionManager;
 
 import javax.swing.JScrollPane;

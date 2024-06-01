@@ -22,7 +22,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
 import model.User;
-import service.TimesheetDAO;
+import DAO.TimesheetDAO;
 import util.SessionManager;
 
 import javax.swing.JComboBox;
@@ -159,9 +159,15 @@ public class GUI_HRAttendanceManagement {
 		sidebarPanel.add(leaverequestButton);
 		leaverequestButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	GUILeaveRequest window = new GUILeaveRequest(loggedInEmployee);
-		    	leaverequestScreen.openWindow();
-				hrattendancemngmnt.dispose();
+		    	GUILeaveRequest window = null;
+				try {
+					window = new GUILeaveRequest(loggedInEmployee);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+		         window.leaverequestScreen.setVisible(true);
+		         hrattendancemngmnt.dispose();
 		    }
 		});
 		

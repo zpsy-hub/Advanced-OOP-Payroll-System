@@ -1,15 +1,16 @@
-package service;
+package DAO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import model.Employee;
+import service.SQL_client;
 
 public class EmployeeDAO {
 	private static EmployeeDAO instance = null;
 
     // Singleton pattern: private constructor
-    EmployeeDAO() {}
+    public EmployeeDAO() {}
 
     // Singleton pattern: getInstance method
     public static EmployeeDAO getInstance() {

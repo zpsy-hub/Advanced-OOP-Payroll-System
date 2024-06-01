@@ -1,4 +1,4 @@
-package service;
+package DAO;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -9,12 +9,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import service.SQL_client;
+
 public class TimesheetDAO {
 	private LocalDate payPeriodStartDate;
     private LocalDate payPeriodEndDate;
     private static TimesheetDAO instance = null;
     private Connection conn = null;
-    TimesheetDAO() {
+    public TimesheetDAO() {
         conn = SQL_client.getInstance().getConnection();
     }
 

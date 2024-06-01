@@ -1,4 +1,4 @@
-package service;
+package DAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.LeaveBalance;
+import service.SQL_client;
 
 public class LeaveBalanceDAO {
     private Connection connection;

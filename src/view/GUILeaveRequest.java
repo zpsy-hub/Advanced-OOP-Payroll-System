@@ -35,8 +35,8 @@ import model.LeaveBalance;
 import model.LeaveRequestLog;
 import model.Permission;
 import model.User;
-import service.LeaveBalanceDAO;
-import service.LeaveRequestLogDAO;
+import DAO.LeaveBalanceDAO;
+import DAO.LeaveRequestLogDAO;
 import service.LeaveRequestService;
 import service.PermissionService;
 import service.SQL_client;
@@ -62,8 +62,8 @@ public class GUILeaveRequest {
     private JComboBox<String> endyearComboBox;
     JComboBox<String> leaveTypeComboBox;
     private JLabel textField;
-    private LeaveBalanceDAO leaveBalanceDAO;
-    private LeaveRequestLogDAO leaveLogDAO;
+    private DAO.LeaveBalanceDAO leaveBalanceDAO;
+    private DAO.LeaveRequestLogDAO leaveLogDAO;
 
 
 	/**
@@ -100,8 +100,8 @@ public class GUILeaveRequest {
 	private void initialize() {
 		
 		// Initialize DAO instances
-        leaveBalanceDAO = new LeaveBalanceDAO();
-        leaveLogDAO = new LeaveRequestLogDAO();
+        leaveBalanceDAO = new DAO.LeaveBalanceDAO();
+        leaveLogDAO = new DAO.LeaveRequestLogDAO();
         
 		leaverequestScreen = new JFrame();
 		leaverequestScreen.setTitle("MotorPH Payroll System");
@@ -774,7 +774,7 @@ public class GUILeaveRequest {
         }
 
         // Retrieve the leave balance for the employee and the selected leave type
-        LeaveBalanceDAO leaveBalanceDAO = LeaveBalanceDAO.getInstance();
+        DAO.LeaveBalanceDAO leaveBalanceDAO = DAO.LeaveBalanceDAO.getInstance();
         LeaveBalance leaveBalance = leaveBalanceDAO.getLeaveBalanceByEmployeeId(loggedInEmployee.getId());
         int leaveTallyBalance = 0;
 
@@ -815,7 +815,7 @@ public class GUILeaveRequest {
     private void populateLeaveHistoryTable(JTable table) {
         try {
             // Retrieve leave request logs for the logged-in employee
-            List<LeaveRequestLog> leaveLogs = LeaveRequestLogDAO.getInstance().getLeaveLogsByEmployeeId(loggedInEmployee.getId());
+            List<LeaveRequestLog> leaveLogs = DAO.LeaveRequestLogDAO.getInstance().getLeaveLogsByEmployeeId(loggedInEmployee.getId());
 
             // Create a DefaultTableModel
             DefaultTableModel model = new DefaultTableModel();

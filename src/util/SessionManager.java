@@ -1,7 +1,7 @@
 package util;
 
 import model.User;
-import service.LoginDAO;
+import DAO.LoginDAO;
 import service.SQL_client;
 
 import java.io.IOException;
@@ -12,9 +12,9 @@ import java.sql.Types;
 
 public class SessionManager {
 	private static User loggedInUser;
-    private LoginDAO userRepository;
+    private DAO.LoginDAO userRepository;
 
-    public SessionManager(LoginDAO userRepository) {
+    public SessionManager(DAO.LoginDAO userRepository) {
         this.userRepository = userRepository;
     }
 

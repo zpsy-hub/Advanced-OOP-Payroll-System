@@ -1,7 +1,8 @@
-package service;
+package DAO;
 
 import model.MonthlySummaryReport;
 import model.MonthlySummaryReportWithTotal;
+import service.SQL_client;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

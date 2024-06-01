@@ -1,4 +1,4 @@
-package service;
+package DAO;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import model.User;
+import service.SQL_client;
 
 public class LoginDAO {
     private static final String HASH_ALGORITHM = "SHA-256";

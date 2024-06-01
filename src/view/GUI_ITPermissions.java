@@ -6,8 +6,8 @@ import javax.swing.JFrame;
 
 import model.Employee;
 import model.User;
-import service.EmployeeDAO;
-import service.PermissionDAO;
+import DAO.EmployeeDAO;
+import DAO.PermissionDAO;
 import service.SQL_client;
 import service.PermissionWithStatus;
 import util.SessionManager;

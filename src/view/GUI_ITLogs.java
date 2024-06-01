@@ -21,7 +21,7 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.SwingConstants;
 import model.LoginAttempt;
 import model.User;
-import service.LogsDAO;
+import DAO.LogsDAO;
 import util.SessionManager;
 
 import javax.swing.JButton;
@@ -224,7 +224,7 @@ public class GUI_ITLogs {
 	
 	private void populateTable() {
 	    // Get the login attempts data from the database
-	    LogsDAO logsDAO = LogsDAO.getInstance();
+	    DAO.LogsDAO logsDAO = DAO.LogsDAO.getInstance();
 	    java.util.List<LoginAttempt> loginAttempts = logsDAO.getLoginAttempts();
 
 	    // Create a table model with the appropriate columns

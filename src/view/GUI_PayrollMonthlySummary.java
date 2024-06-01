@@ -21,7 +21,7 @@ import javax.swing.table.DefaultTableModel;
 import model.MonthlySummaryReport;
 import model.User;
 import util.SessionManager;
-import service.MonthlySummaryReportDAO;
+import DAO.MonthlySummaryReportDAO;
 import service.PayrollSalaryCalculationService;
 import com.opencsv.CSVWriter;
 import javax.swing.JButton;
@@ -36,7 +36,6 @@ public class GUI_PayrollMonthlySummary {
 	 private static User loggedInEmployee;
 	 private PayrollSalaryCalculationService service;
 	 private JTable MonhlySummarytable;
-	 private MonthlySummaryReportDAO summaryReportDAO;
 
 	/**
 	 * Launch the application.
@@ -62,7 +61,7 @@ public class GUI_PayrollMonthlySummary {
 	public GUI_PayrollMonthlySummary(User loggedInEmployee) {
 		GUI_PayrollMonthlySummary.loggedInEmployee = loggedInEmployee;
 		 this.service = new PayrollSalaryCalculationService();
-		 this.summaryReportDAO = new MonthlySummaryReportDAO();
+		 this.summaryReportDAO = new DAO.MonthlySummaryReportDAO();
 		initialize();
 	}
 

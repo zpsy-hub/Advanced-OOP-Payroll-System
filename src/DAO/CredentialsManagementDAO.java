@@ -1,4 +1,4 @@
-package service;
+package DAO;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Employee;
+import service.SQL_client;
 
 public class CredentialsManagementDAO {
     private static final String HASH_ALGORITHM = "SHA-256";

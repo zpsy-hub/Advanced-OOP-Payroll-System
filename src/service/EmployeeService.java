@@ -1,8 +1,9 @@
 package service;
 
+import DAO.LoginDAO;
 import model.Employee;
 import model.User;
-import service.EmployeeDAO;
+import DAO.EmployeeDAO;
 import util.SessionManager;
 
 public class EmployeeService {

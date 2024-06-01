@@ -19,7 +19,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import model.User;
-import service.LoginDAO;
+import DAO.LoginDAO;
 import service.LoginService;
 import util.EmployeeData;
 import util.SessionManager;

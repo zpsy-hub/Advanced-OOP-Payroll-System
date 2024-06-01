@@ -29,7 +29,7 @@ import javax.swing.table.DefaultTableModel;
 
 import model.Employee;
 import model.User;
-import service.EmployeeDAO;
+import DAO.EmployeeDAO;
 import util.SessionManager;
 
 public class GUI_HREmployeeManagement extends JFrame {

@@ -22,7 +22,7 @@ import model.Payslip;
 import model.Permission;
 import model.User;
 import service.PayrollSalaryCalculationService;
-import service.PayslipDAO;
+import DAO.PayslipDAO;
 import service.PermissionService;
 import service.SQL_client;
 import util.SessionManager;

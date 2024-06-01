@@ -3,6 +3,7 @@ package service;
 import java.sql.Connection;
 import java.util.List;
 
+import DAO.PermissionDAO;
 import model.Permission;
 
 public class PermissionService {

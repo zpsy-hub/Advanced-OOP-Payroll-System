@@ -13,6 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import DAO.PayslipDAO;
+import DAO.TimesheetDAO;
 import model.Employee;
 import model.Payslip;
 import service.PayslipService;
