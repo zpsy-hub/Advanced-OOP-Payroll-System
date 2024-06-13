@@ -12,13 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MonthlySummaryReportDAO {
-    private Connection connection;
+    private static Connection connection;
 
     public MonthlySummaryReportDAO() {
         connection = SQL_client.getInstance().getConnection();
     }
 
-    public List<MonthlySummaryReport> generateMonthlySummaryReport(String monthYear) {
+    public static List<MonthlySummaryReport> generateMonthlySummaryReport(String monthYear) {
         List<MonthlySummaryReport> monthlySummaryReports = new ArrayList<>();
         String sql = "SELECT e.emp_id, CONCAT(e.employee_firstname, ' ', e.employee_lastname) AS employee_name, e.position, " +
                 "p.gross_income, e.sss_number, p.sss_contrib, e.philhealth_number, p.philhealth_contrib, " +

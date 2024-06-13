@@ -9,7 +9,7 @@ public class User {
     private String position;
     private Employee employee;
 
-    // Constructor
+    // Full Constructor
     public User(String username, String password, int employeeNumber, String lastName, String firstName, String position) {
         this.username = username;
         this.password = password;
@@ -17,6 +17,13 @@ public class User {
         this.lastName = lastName;
         this.firstName = firstName;
         this.position = position;
+    }
+
+    // Constructor for testing with only id, last name, and first name
+    public User(int id, String lastName, String firstName) {
+        this.id = id;
+        this.lastName = lastName;
+        this.firstName = firstName;
     }
 
     // Getters and Setters

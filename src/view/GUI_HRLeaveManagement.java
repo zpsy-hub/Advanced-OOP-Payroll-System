@@ -34,7 +34,7 @@ import java.awt.Cursor;
 
 public class GUI_HRLeaveManagement {
 
-	JFrame hrleavemngmnt;
+	public JFrame hrleavemngmnt;
 	private JTable table_LeaveLog;
 	private JTable table_EmpLeaveBalance;
 	private static User loggedInEmployee;
@@ -207,7 +207,7 @@ public class GUI_HRLeaveManagement {
 		    }
 		});
 		
-		JButton HR_LeaveMngmntButton = new JButton("Leave management");
+		JButton HR_LeaveMngmntButton = new JButton("Leave Management");
 		HR_LeaveMngmntButton.setEnabled(false);
 		HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_LeaveMngmntButton.setBackground(Color.WHITE);
@@ -221,18 +221,7 @@ public class GUI_HRLeaveManagement {
 		// Map permissions to button visibility
 		HR_EmpMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 1)); // Employee Management
 		HR_AttendanceMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 2)); // Attendance Management
-		HR_LeaveMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3)); // Leave Management
-		
-		
-		JPanel separator = new JPanel();
-		separator.setBackground(new Color(30, 55, 101));
-		separator.setBounds(37, 350, 130, 3);
-		sidebarPanel.add(separator);
-		
-		JLabel HRaccessLabel = new JLabel("HR Access");
-		HRaccessLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 22));
-		HRaccessLabel.setBounds(177, 332, 100, 33);
-		sidebarPanel.add(HRaccessLabel);
+		HR_LeaveMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3));
 		
 		JLabel lblLeaveManagement = new JLabel("Leave Management");
 		lblLeaveManagement.setBounds(340, 36, 323, 33);
@@ -248,7 +237,7 @@ public class GUI_HRLeaveManagement {
 				hrleavemngmnt.dispose();
 			}
 		});
-		signoutButton.setBounds(1160, 36, 103, 31);
+		signoutButton.setBounds(1172, 41, 103, 31);
 		signoutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
 		signoutButton.setBackground(Color.WHITE);
 		mainPanel.add(signoutButton);

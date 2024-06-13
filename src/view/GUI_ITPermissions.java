@@ -37,7 +37,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
 
 public class GUI_ITPermissions {
-    JFrame permissionsFrame;
+    public JFrame permissionsFrame;
     private static User loggedInEmployee;
     private final EmployeeDAO employeeDAO;
     private JTable permissionsTable;

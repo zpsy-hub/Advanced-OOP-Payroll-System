@@ -32,7 +32,7 @@ import java.awt.Cursor;
 
 public class GUI_ITLogs {
 
-	JFrame authenticationlogs;
+	public JFrame authenticationlogs;
 	private JTable tableLogs;
 	private static User loggedInEmployee;
 

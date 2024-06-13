@@ -1,4 +1,9 @@
 package view;
+
+import customUI.RoundedButtonUI;
+import customUI.RoundedTextFieldUI;
+import customUI.ImagePanel;
+import customUI.RoundedBorder;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
@@ -6,9 +11,8 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.sql.Connection;
-
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,35 +21,39 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import model.User;
 import DAO.LoginDAO;
-import service.LoginService;
-import util.EmployeeData;
 import util.SessionManager;
 import service.SQL_client;
+import javax.swing.JPanel;
 
 public class GUIlogin {
 
     public JFrame loginScreen1;
     private JTextField usernameTextField1;
-    private LoginService loginService;
     private SessionManager sessionManager;
-    private LoginDAO userRepository;
-    private JPasswordField passwordField;
+    private customUI.PasswordTextField PasswordTextField;
 
     /**
      * Launch the application.
      */
     public static void main(String[] args) {
-    	SQL_client sql = SQL_client.getInstance();
-    	sql.getConnection();  			
+        SQL_client sql = SQL_client.getInstance();
+        sql.getConnection();              
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
+                    // Set FlatLaf IntelliJ theme look and feel
+                    UIManager.setLookAndFeel(new FlatIntelliJLaf());
+
                     GUIlogin window = new GUIlogin();
                     window.loginScreen1.setVisible(true);
-                    window.loginScreen1.setLocationRelativeTo(null); // this method displays the login screen at the center of the screen. slay!
+                    window.loginScreen1.setLocationRelativeTo(null); // this method displays the login screen at the center of the screen.
+                } catch (UnsupportedLookAndFeelException e) {
+                    e.printStackTrace();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -62,83 +70,71 @@ public class GUIlogin {
         sessionManager = new SessionManager(userRepository);
     }
 
-    //Initialize the contents of the frame. GUI starts here.
-
-    private <usernameTextField1> void initialize() {
+    // Initialize the contents of the frame. GUI starts here.
+    private void initialize() {
         loginScreen1 = new JFrame();
         loginScreen1.setBackground(new Color(255, 255, 255));
         loginScreen1.setTitle("MotorPH Payroll System");
         loginScreen1.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
         loginScreen1.getContentPane().setBackground(new Color(255, 255, 255));
-        loginScreen1.setBounds(100, 100, 1315, 770);
+        loginScreen1.setBounds(100, 100, 1280, 800);
         loginScreen1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginScreen1.getContentPane().setLayout(null);
-        
-        JLabel motorphLabel = new JLabel("MotorPH");
-        motorphLabel.setForeground(new Color(30, 55, 101));
-        motorphLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        motorphLabel.setFont(new Font("Franklin Gothic Demi", Font.BOLD, 60));
-        motorphLabel.setBounds(524, 138, 250, 54);
-        loginScreen1.getContentPane().add(motorphLabel);
+         
+        // Create ImagePanel with the path to your background image
+        ImagePanel loginbgpanel = new ImagePanel("/img/login.png");  
+        loginbgpanel.setBounds(0, 0, 1280, 800);
+        loginScreen1.getContentPane().add(loginbgpanel);
+        loginbgpanel.setLayout(null);
         
         JLabel welcomeLabel = new JLabel("Welcome!");
+        welcomeLabel.setBounds(796, 185, 240, 33);
+        loginbgpanel.add(welcomeLabel);
         welcomeLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        welcomeLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 28));
-        welcomeLabel.setBounds(534, 202, 240, 33);
-        loginScreen1.getContentPane().add(welcomeLabel);
-        
-        JLabel usernameLabel = new JLabel("Username");
-        usernameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 21));
-        usernameLabel.setBounds(452, 281, 107, 33);
-        loginScreen1.getContentPane().add(usernameLabel);
-        
-        usernameTextField1 = new JTextField();
-        usernameTextField1.setForeground(new Color(30, 55, 101));
-        usernameTextField1.setFont(new Font("Tw Cen MT", Font.BOLD, 25));
-        usernameTextField1.setBounds(452, 313, 397, 42);
-        loginScreen1.getContentPane().add(usernameTextField1);
-        usernameTextField1.setColumns(10);
-        
-        JLabel passwordLabel = new JLabel("Password");
-        passwordLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 21));
-        passwordLabel.setBounds(452, 385, 107, 33);
-        loginScreen1.getContentPane().add(passwordLabel);
+        welcomeLabel.setFont(new Font("Montserrat Medium", Font.PLAIN, 28));
         
         JButton loginButton = new JButton("Log In");
+        loginButton.setBounds(768, 516, 301, 51);
+        loginbgpanel.add(loginButton);
         loginButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        loginButton.setForeground(new Color(30, 55, 101));
-        loginButton.setBackground(new Color(255, 255, 255));
-        loginButton.setFont(new Font("Tw Cen MT", Font.BOLD, 30));
-        loginButton.setBounds(452, 562, 397, 51);
-        loginScreen1.getContentPane().add(loginButton);
+        loginButton.setForeground(new Color(255, 255, 255));
+        loginButton.setBackground(new Color(30, 55, 101));
+        loginButton.setFont(new Font("Montserrat SemiBold", Font.BOLD, 25));
+        loginButton.setUI(new RoundedButtonUI());
         
-        JLabel blobLeft = new JLabel("");
-        blobLeft.setIcon(new ImageIcon("E:\\Downloads\\Documents\\shaneabrasaldo-IT110-OOP-MotorPH-Payroll\\Icons\\Login_blobLeft.png"));
-        blobLeft.setBounds(-231, -17, 602, 446);
-        loginScreen1.getContentPane().add(blobLeft);
+        usernameTextField1 = new JTextField();
+        usernameTextField1.setBounds(734, 300, 360, 54);
+        loginbgpanel.add(usernameTextField1);
+        usernameTextField1.setForeground(new Color(30, 55, 101));
+        usernameTextField1.setFont(new Font("Montserrat Medium", Font.BOLD, 20));
+        usernameTextField1.setUI(new RoundedTextFieldUI());
+        usernameTextField1.setBorder(new RoundedBorder(15));
+        usernameTextField1.setColumns(10);
         
-        JLabel blobRight = new JLabel("");
-        blobRight.setIcon(new ImageIcon("E:\\Downloads\\Documents\\shaneabrasaldo-IT110-OOP-MotorPH-Payroll\\Icons\\Login_blobRight.png"));
-        blobRight.setBounds(1018, 289, 397, 516);
-        loginScreen1.getContentPane().add(blobRight);
+        JLabel usernameLabel = new JLabel("Username");
+        usernameLabel.setBounds(734, 268, 151, 33);
+        loginbgpanel.add(usernameLabel);
+        usernameLabel.setFont(new Font("Montserrat", Font.PLAIN, 18));
         
-        JLabel motorphIcon = new JLabel("");
-        motorphIcon.setHorizontalAlignment(SwingConstants.CENTER);
-        motorphIcon.setIcon(new ImageIcon("E:\\Downloads\\Documents\\shaneabrasaldo-IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Logo.png"));
-        motorphIcon.setBounds(526, 42, 232, 95);
-        loginScreen1.getContentPane().add(motorphIcon);
-        
+        PasswordTextField = new customUI.PasswordTextField();
+        PasswordTextField.setBounds(734, 407, 360, 54);
+        PasswordTextField.setFont(new Font("Montserrat Medium", Font.BOLD, 20));
+        PasswordTextField.setForeground(new Color(30, 55, 101));
+        PasswordTextField.setBorder(new RoundedBorder(15));
+        loginbgpanel.add(PasswordTextField);
 
-        passwordField = new JPasswordField();
-        passwordField.setFont(new Font("Tw Cen MT", Font.BOLD, 25));
-        passwordField.setBounds(452, 416, 397, 42);
-        loginScreen1.getContentPane().add(passwordField);
 
-     // ActionListener for Log In button
+        
+        JLabel passwordLabel = new JLabel("Password");
+        passwordLabel.setBounds(734, 376, 151, 33);
+        loginbgpanel.add(passwordLabel);
+        passwordLabel.setFont(new Font("Montserrat", Font.PLAIN, 18));
+
+        // ActionListener for Log In button
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String username = usernameTextField1.getText();
-                String password = new String(passwordField.getPassword());
+                String password = new String(PasswordTextField.getPassword());
 
                 // Check if username or password is empty
                 if (username.isEmpty() || password.isEmpty()) {
@@ -148,33 +144,30 @@ public class GUIlogin {
                 }
 
                 // Get the SQL connection
-				Connection conn = SQL_client.getInstance().getConnection();
+                Connection conn = SQL_client.getInstance().getConnection();
 
-				// Call the login method with the Connection parameter
-				boolean loginSuccess = sessionManager.login(username, password, conn);
-				
-				if (loginSuccess) {
-				    // Retrieve the logged-in user
-				    User loggedInUser = SessionManager.getLoggedInUser();
+                // Call the login method with the Connection parameter
+                boolean loginSuccess = sessionManager.login(username, password, conn);
+                
+                if (loginSuccess) {
+                    // Retrieve the logged-in user
+                    User loggedInUser = SessionManager.getLoggedInUser();
 
-				    // Open the Dashboard with the logged-in user
-				    openDashboard(loggedInUser);
-				} else {
-				    // Show error message for incorrect username or password
-				    JOptionPane.showMessageDialog(loginScreen1,
-				            "Incorrect username or password. Please try again.");
-				}
+                    // Open the Dashboard with the logged-in user
+                    openDashboard(loggedInUser);
+                } else {
+                    // Show error message for incorrect username or password
+                    JOptionPane.showMessageDialog(loginScreen1,
+                            "Incorrect username or password. Please try again.");
+                }
             }
         });
     }
 
-   
+
     private void openDashboard(User loggedInEmployee) {
         GUIDashboard dashboard = new GUIDashboard(loggedInEmployee);
         dashboard.getDashboardScreen().setVisible(true);
         loginScreen1.dispose();
     }
-
-    
-
 }

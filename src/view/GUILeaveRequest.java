@@ -21,7 +21,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -29,8 +28,6 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableModel;
-
 import model.LeaveBalance;
 import model.LeaveRequestLog;
 import model.Permission;
@@ -41,12 +38,11 @@ import service.LeaveRequestService;
 import service.PermissionService;
 import service.SQL_client;
 import util.LeaveRequestComboPopulator;
-import util.LeaveRequestData;
 import util.SessionManager;
 
 public class GUILeaveRequest {
 
-	JFrame leaverequestScreen;
+	public JFrame leaverequestScreen;
 	private JTable leavehistoryTable_1;
     private User loggedInEmployee;
     private JLabel leaveTotal;
@@ -414,7 +410,7 @@ public class GUILeaveRequest {
         emergencyTotal.setBounds(10, 56, 196, 43);
         emergencyPanel.add(emergencyTotal);         
     		
-		JLabel leaveapplicationLabel = new JLabel("LeaveBalance Application");
+		JLabel leaveapplicationLabel = new JLabel("Leave Application");
 		leaveapplicationLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
 		leaveapplicationLabel.setBounds(340, 273, 280, 33);
 		mainPanel.add(leaveapplicationLabel);
@@ -425,7 +421,7 @@ public class GUILeaveRequest {
 		LineSeparator.setBounds(340, 316, 370, 1);
 		mainPanel.add(LineSeparator);
 		
-		JLabel lblSelectLeaveType = new JLabel("Select LeaveBalance Type:");
+		JLabel lblSelectLeaveType = new JLabel("Select Leave Type:");
 		lblSelectLeaveType.setFont(new Font("Tw Cen MT", Font.BOLD, 20));
 		lblSelectLeaveType.setBounds(340, 337, 160, 21);
 		mainPanel.add(lblSelectLeaveType);

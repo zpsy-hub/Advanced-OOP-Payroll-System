@@ -8,11 +8,19 @@ public class LeaveBalance {
     private int emergencyLeave;
     private int vacationLeave;
 
-    // Constructor with parameters
+    // Full constructor with parameters
     public LeaveBalance(int empId, String employeeLastName, String employeeFirstName, int sickLeave, int emergencyLeave, int vacationLeave) {
         this.empId = empId;
         this.employeeLastName = employeeLastName;
         this.employeeFirstName = employeeFirstName;
+        this.sickLeave = sickLeave;
+        this.emergencyLeave = emergencyLeave;
+        this.vacationLeave = vacationLeave;
+    }
+
+    // Constructor with only empId and leave balances
+    public LeaveBalance(int empId, int sickLeave, int emergencyLeave, int vacationLeave) {
+        this.empId = empId;
         this.sickLeave = sickLeave;
         this.emergencyLeave = emergencyLeave;
         this.vacationLeave = vacationLeave;

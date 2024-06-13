@@ -41,7 +41,7 @@ import javax.swing.JScrollPane;
 
 public class GUI_PayrollSalaryCalculation {
 
-	JFrame payrollsalarycalc;
+	public JFrame payrollsalarycalc;
 	private JTable employeeattendanceTable;
 	private JTable salarycalculationTable;
 	private JTextField textfieldPayslipNo;
@@ -221,12 +221,7 @@ public class GUI_PayrollSalaryCalculation {
 				window.payrollmontlysummary.setVisible(true);
 				payrollsalarycalc.dispose();
 		    }
-		});	
-		
-		JLabel payrollaccessLabel = new JLabel("Payroll Access");
-		payrollaccessLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 22));
-		payrollaccessLabel.setBounds(139, 354, 138, 33);
-		sidePanel.add(payrollaccessLabel);
+		});
 		
 		JPanel separator = new JPanel();
 		separator.setBackground(new Color(30, 55, 101));

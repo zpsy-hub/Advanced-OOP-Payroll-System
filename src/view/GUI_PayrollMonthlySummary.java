@@ -32,10 +32,11 @@ import javax.swing.JScrollPane;
 
 public class GUI_PayrollMonthlySummary {
 
-	JFrame payrollmontlysummary;
+	public JFrame payrollmontlysummary;
 	 private static User loggedInEmployee;
 	 private PayrollSalaryCalculationService service;
 	 private JTable MonhlySummarytable;
+	private MonthlySummaryReportDAO summaryReportDAO;
 
 	/**
 	 * Launch the application.
@@ -238,7 +239,7 @@ public class GUI_PayrollMonthlySummary {
 
 	
 	private void displayMonthlySummary(String selectedMonth) {
-	    List<MonthlySummaryReport> monthlySummaryReports = summaryReportDAO.generateMonthlySummaryReport(selectedMonth);
+	    List<MonthlySummaryReport> monthlySummaryReports = MonthlySummaryReportDAO.generateMonthlySummaryReport(selectedMonth);
 
 	    if (monthlySummaryReports.isEmpty()) {
 	        JOptionPane.showMessageDialog( MonhlySummarytable, "No records available for the selected month-year.", "No Records", JOptionPane.INFORMATION_MESSAGE);

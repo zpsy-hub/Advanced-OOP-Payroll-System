@@ -31,7 +31,7 @@ import java.awt.Cursor;
 public class GUI_ITCredentialsManagement {
 
 	private static User loggedInEmployee;
-	JFrame usermngmntFrame;
+	public JFrame usermngmntFrame;
 	private JTextField textField_NewPassword;
 	private JComboBox<String> comboBoxSelectUser;
     private JComboBox<String> comboBoxSelectUser_1;

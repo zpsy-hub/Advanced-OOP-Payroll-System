@@ -30,10 +30,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 public class GUI_HRAttendanceManagement {
-	JFrame hrattendancemngmnt;
+	private static User loggedInEmployee;
+	public JFrame hrattendancemngmnt;
 	private JTable attendancemanagementTable;
 	private JTextField textFieldSearch;
-    private static User loggedInEmployee;
+     
 
 	/**
 	 * Launch the application.
@@ -171,7 +172,7 @@ public class GUI_HRAttendanceManagement {
 		    }
 		});
 		
-		JButton HR_EmpMngmntButton = new JButton("Employee management");
+		JButton HR_EmpMngmntButton = new JButton("Employee Management");
 		HR_EmpMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_EmpMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_EmpMngmntButton.setBackground(Color.WHITE);
@@ -197,14 +198,14 @@ public class GUI_HRAttendanceManagement {
 		    }
 		});
 		
-		JButton HR_AttendanceMngmntButton = new JButton("Attendance management");
+		JButton HR_AttendanceMngmntButton = new JButton("Attendance Management");
 		HR_AttendanceMngmntButton.setEnabled(false);
 		HR_AttendanceMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_AttendanceMngmntButton.setBackground(Color.WHITE);
 		HR_AttendanceMngmntButton.setBounds(37, 438, 227, 31);
 		sidebarPanel.add(HR_AttendanceMngmntButton);
 		
-		JButton HR_LeaveMngmntButton = new JButton("LeaveBalance management");
+		JButton HR_LeaveMngmntButton = new JButton("Leave Management");
 		HR_LeaveMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
 		HR_LeaveMngmntButton.setBackground(Color.WHITE);
@@ -217,16 +218,6 @@ public class GUI_HRAttendanceManagement {
 		    	hrattendancemngmnt.dispose();
 		    }
 		});
-		
-		JPanel separator = new JPanel();
-		separator.setBackground(new Color(30, 55, 101));
-		separator.setBounds(37, 350, 130, 3);
-		sidebarPanel.add(separator);
-		
-		JLabel HRaccessLabel = new JLabel("HR Access");
-		HRaccessLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 22));
-		HRaccessLabel.setBounds(177, 332, 100, 33);
-		sidebarPanel.add(HRaccessLabel);
 		
 		JPanel tablePanel = new JPanel();
 		tablePanel.setFont(new Font("Tw Cen MT", Font.PLAIN, 16));
