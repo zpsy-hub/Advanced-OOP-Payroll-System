@@ -96,8 +96,7 @@ public class GUITimeInOut {
         timeinoutScreen.setBounds(100, 100, 1280, 800);
         timeinoutScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         timeinoutScreen.getContentPane().setLayout(null);
-        
-        
+              
 
         // Main panel with background image
         ImagePanel mainPanel = new ImagePanel("/img/time in.png");

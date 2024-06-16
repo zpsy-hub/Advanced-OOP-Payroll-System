@@ -175,7 +175,7 @@ public class GUIDashboard {
                 dashboardScreen.dispose(); // Close the dashboard frame
             }
         });
-        signOutButton.setBounds(1107, 35, signOutButton.getPreferredSize().width, signOutButton.getPreferredSize().height);
+        signOutButton.setBounds(1095, 35, 113, 40);
         mainPanel.add(signOutButton);
         
         JPanel sidebarPanel_1 = new JPanel();

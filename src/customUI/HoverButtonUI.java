@@ -8,13 +8,13 @@ import java.awt.event.MouseEvent;
 
 public class HoverButtonUI extends BasicButtonUI {
     private Color normalBackgroundColor;
-    private Color hoverBackgroundColor;
+    private Color hoverBorderColor;
     private Color pressedBackgroundColor;
     private int borderRadius;
 
-    public HoverButtonUI(Color normalBackgroundColor, Color hoverBackgroundColor, Color pressedBackgroundColor, int borderRadius) {
+    public HoverButtonUI(Color normalBackgroundColor, Color hoverBorderColor, Color pressedBackgroundColor, int borderRadius) {
         this.normalBackgroundColor = normalBackgroundColor;
-        this.hoverBackgroundColor = hoverBackgroundColor;
+        this.hoverBorderColor = hoverBorderColor;
         this.pressedBackgroundColor = pressedBackgroundColor;
         this.borderRadius = borderRadius;
     }
@@ -31,13 +31,11 @@ public class HoverButtonUI extends BasicButtonUI {
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(hoverBackgroundColor);
                 button.repaint();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBackground(normalBackgroundColor);
                 button.repaint();
             }
 
@@ -49,7 +47,7 @@ public class HoverButtonUI extends BasicButtonUI {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                button.setBackground(button.getModel().isRollover() ? hoverBackgroundColor : normalBackgroundColor);
+                button.setBackground(normalBackgroundColor);
                 button.repaint();
             }
         });
@@ -68,12 +66,16 @@ public class HoverButtonUI extends BasicButtonUI {
         // Fill background
         if (model.isPressed()) {
             g2d.setColor(pressedBackgroundColor);
-        } else if (model.isRollover()) {
-            g2d.setColor(hoverBackgroundColor);
+            g2d.fillRoundRect(0, 0, width, height, borderRadius, borderRadius);
         } else {
             g2d.setColor(normalBackgroundColor);
+            g2d.fillRoundRect(0, 0, width, height, borderRadius, borderRadius);
+            if (model.isRollover()) {
+                g2d.setColor(hoverBorderColor);
+                g2d.setStroke(new BasicStroke(2)); // Set border thickness
+                g2d.drawRoundRect(1, 1, width - 2, height - 2, borderRadius, borderRadius);
+            }
         }
-        g2d.fillRoundRect(0, 0, width, height, borderRadius, borderRadius);
 
         // Paint the button's children (text and icon)
         super.paint(g2d, c);

@@ -4,10 +4,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.sql.Connection;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -27,6 +25,9 @@ import model.Permission;
 import model.User;
 import DAO.LeaveBalanceDAO;
 import DAO.LeaveRequestLogDAO;
+import customUI.ImagePanel;
+import customUI.Sidebar;
+import customUI.SidebarButton;
 import service.PermissionService;
 import service.SQL_client;
 import util.SessionManager;
@@ -70,186 +71,87 @@ public class GUI_HRLeaveManagement {
 	 */
 	private void initialize() {
 		hrleavemngmnt = new JFrame();
-		hrleavemngmnt.setBounds(100, 100, 1315, 770);
+		hrleavemngmnt.setBounds(100, 100, 1280, 800);
 		hrleavemngmnt.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		hrleavemngmnt.getContentPane().setLayout(null);
+				
+		// Main panel with background image
+        ImagePanel mainPanel = new ImagePanel("/img/leave  mngmnt.png");
+        mainPanel.setBackground(new Color(255, 255, 255));
+        mainPanel.setBounds(0, 0, 1280, 800);
+        hrleavemngmnt.getContentPane().add(mainPanel);
+        mainPanel.setLayout(null);
 		
-		JPanel contentPane = new JPanel();
-		contentPane.setLayout(null);
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setBounds(0, 0, 1301, 733);
-		hrleavemngmnt.getContentPane().add(contentPane);
-		
-		JPanel mainPanel = new JPanel();
-		mainPanel.setBackground(Color.WHITE);
-		mainPanel.setBounds(0, 0, 1301, 743);
-		contentPane.add(mainPanel);
-		mainPanel.setLayout(null);
-		
-		JPanel sidebarPanel = new JPanel();
-		sidebarPanel.setBounds(0, 0, 299, 733);
-		sidebarPanel.setLayout(null);
-		sidebarPanel.setBackground(Color.WHITE);
-		mainPanel.add(sidebarPanel);
-		
-		JLabel motorphLabel = new JLabel("MotorPH");
-		motorphLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		motorphLabel.setForeground(new Color(30, 55, 101));
-		motorphLabel.setFont(new Font("Franklin Gothic Demi", Font.BOLD, 28));
-		motorphLabel.setBounds(10, 30, 279, 45);
-		sidebarPanel.add(motorphLabel);
-		
-		JButton dashboardButton = new JButton("Dashboard");
-		dashboardButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		dashboardButton.setBackground(Color.WHITE);
-		dashboardButton.setBounds(37, 95, 227, 31);
-		sidebarPanel.add(dashboardButton);
-		dashboardButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUIDashboard window = new GUIDashboard(loggedInEmployee);
-                window.dashboardScreen.setVisible(true);
-                hrleavemngmnt.dispose();
-		        }
-		});
-		
-		JButton timeInOutButton = new JButton("Time In/Out");
-		timeInOutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		timeInOutButton.setBackground(Color.WHITE);
-		timeInOutButton.setBounds(37, 154, 227, 31);
-		sidebarPanel.add(timeInOutButton);
-		timeInOutButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
-		        timeInOut.openWindow();
-		        hrleavemngmnt.dispose();
-		        }
-		});
-		
-		JButton payslipButton = new JButton("Payslip");
-		payslipButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		payslipButton.setBackground(Color.WHITE);
-		payslipButton.setBounds(37, 216, 227, 31);
-		sidebarPanel.add(payslipButton);
-		payslipButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
-		    	payslip.openWindow();
-		    	hrleavemngmnt.dispose();	    		        	    
-		    }
-		});
-		
-		JButton leaverequestButton = new JButton("Leave Request");
-		leaverequestButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		leaverequestButton.setBackground(Color.WHITE);
-		leaverequestButton.setBounds(37, 277, 227, 31);
-		sidebarPanel.add(leaverequestButton);
-		leaverequestButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUILeaveRequest window = null;
-				try {
-					window = new GUILeaveRequest(loggedInEmployee);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-		         window.leaverequestScreen.setVisible(true);
-		         hrleavemngmnt.dispose(); 
-		    }
-		});
-		
-		JButton helpButton = new JButton("Help & Support");
-		helpButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		helpButton.setBackground(Color.WHITE);
-		helpButton.setBounds(37, 669, 227, 31);
-		sidebarPanel.add(helpButton);
-		
-		JButton HR_EmpMngmntButton = new JButton("Employee Management");
-		HR_EmpMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		HR_EmpMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-		HR_EmpMngmntButton.setBackground(Color.WHITE);
-		HR_EmpMngmntButton.setBounds(37, 383, 227, 31);
-		sidebarPanel.add(HR_EmpMngmntButton);
-		HR_EmpMngmntButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        try {
-					openEmployeeManagement();
-					hrleavemngmnt.dispose();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-		    }
+        // Use the Sidebar class
+        Sidebar sidebar = new Sidebar(loggedInEmployee);
+        sidebar.setBounds(0, 92, 321, 680);
+        mainPanel.add(sidebar);
 
-		    // Define the openEmployeeManagement method
-		    private void openEmployeeManagement() throws IOException {
-		        // Create an instance of GUI_HREmployeeManagement
-		        GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(loggedInEmployee);
+        // Set button visibility based on permissions
+        List<String> visibleButtons = new ArrayList<>();
+        visibleButtons.add("Dashboard");
+        visibleButtons.add("Time In/Out");
+        visibleButtons.add("Payslip");
+        visibleButtons.add("Leave Request");
+        visibleButtons.add("Overtime Request");
 
-		        // Make the employee management window visible
-		        employeeManagement.setVisible(true);
-		    }
-		});
-		
-		JButton HR_AttendanceMngmntButton = new JButton("Attendance Management");
-		HR_AttendanceMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		HR_AttendanceMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-		HR_AttendanceMngmntButton.setBackground(Color.WHITE);
-		HR_AttendanceMngmntButton.setBounds(37, 438, 227, 31);
-		sidebarPanel.add(HR_AttendanceMngmntButton);
-		HR_AttendanceMngmntButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUI_HRAttendanceManagement window = new GUI_HRAttendanceManagement(loggedInEmployee);
-				window.hrattendancemngmnt.setVisible(true);
-				hrleavemngmnt.dispose();
-		    }
-		});
-		
-		JButton HR_LeaveMngmntButton = new JButton("Leave Management");
-		HR_LeaveMngmntButton.setEnabled(false);
-		HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-		HR_LeaveMngmntButton.setBackground(Color.WHITE);
-		HR_LeaveMngmntButton.setBounds(37, 491, 227, 31);
-		sidebarPanel.add(HR_LeaveMngmntButton);
-		
-		Connection connection = SQL_client.getInstance().getConnection();
-		PermissionService permissionsService = PermissionService.getInstance();
-		List<Permission> userPermissions = permissionsService.getPermissionsForEmployee(loggedInEmployee.getId(), connection);
+        Connection connection = SQL_client.getInstance().getConnection();
+        PermissionService permissionsService = PermissionService.getInstance();
+        List<Permission> userPermissions = permissionsService.getPermissionsForEmployee(loggedInEmployee.getId(), connection);
 
-		// Map permissions to button visibility
-		HR_EmpMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 1)); // Employee Management
-		HR_AttendanceMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 2)); // Attendance Management
-		HR_LeaveMngmntButton.setVisible(userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3));
-		
-		JLabel lblLeaveManagement = new JLabel("Leave Management");
-		lblLeaveManagement.setBounds(340, 36, 323, 33);
-		lblLeaveManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
-		mainPanel.add(lblLeaveManagement);
-		
-		JButton signoutButton = new JButton("Sign Out");
-		signoutButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		signoutButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				GUIlogin login = new GUIlogin();
-				login.loginScreen1.setVisible(true);
-				hrleavemngmnt.dispose();
-			}
-		});
-		signoutButton.setBounds(1172, 41, 103, 31);
-		signoutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
-		signoutButton.setBackground(Color.WHITE);
-		mainPanel.add(signoutButton);
-		
-		JLabel employeeNameLabel = new JLabel();
-		employeeNameLabel.setBounds(750, 36, 400, 33);
-		employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		employeeNameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
-		mainPanel.add(employeeNameLabel);
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 1)) {
+            visibleButtons.add("Employee Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 2)) {
+            visibleButtons.add("Attendance Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3)) {
+            visibleButtons.add("Leave Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 4)) {
+            visibleButtons.add("Salary Calculation");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 5)) {
+            visibleButtons.add("Monthly Summary Reports");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 7)) {
+            visibleButtons.add("Permissions Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 8)) {
+            visibleButtons.add("Credentials Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6)) {
+            visibleButtons.add("Authentication Logs");
+        }
+
+        sidebar.setButtonVisibility(visibleButtons);
+        
+     // Add the sign-out button
+        SidebarButton signOutButton = new SidebarButton("Sign Out", null, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GUIlogin login = new GUIlogin();
+                login.loginScreen1.setVisible(true);
+                hrleavemngmnt.dispose(); // Close the dashboard frame
+            }
+        });
+        signOutButton.setBounds(1125, 24, 111, 40);
+        mainPanel.add(signOutButton);
+
+        JLabel employeeNameLabel = new JLabel();
+        employeeNameLabel.setBounds(706, 28, 400, 33);
+        employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        employeeNameLabel.setFont(new Font("Poppins Thin", Font.PLAIN, 22));
+        mainPanel.add(employeeNameLabel);
+
+        // Set employee name dynamically
+        if (loggedInEmployee != null) {
+            employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
+        }
+
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(340, 79, 935, 250);
+		scrollPane.setBounds(387, 143, 834, 218);
 		mainPanel.add(scrollPane);
 		
 		table_LeaveLog = new JTable();
@@ -304,9 +206,9 @@ public class GUI_HRLeaveManagement {
 		});
 
 
-		approveButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		approveButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
 		approveButton.setBackground(Color.WHITE);
-		approveButton.setBounds(340, 350, 154, 35);
+		approveButton.setBounds(387, 371, 154, 35);
 		mainPanel.add(approveButton);
 		
 		JButton rejectButton = new JButton("Reject");
@@ -344,21 +246,21 @@ public class GUI_HRLeaveManagement {
 		    }
 		});
 
-		rejectButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+		rejectButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
 		rejectButton.setBackground(Color.WHITE);
-		rejectButton.setBounds(544, 350, 154, 35);
+		rejectButton.setBounds(581, 371, 154, 35);
 		mainPanel.add(rejectButton);
 		
 		// Populate the leave history table
 		populateAllLeaveHistoryTable(table_LeaveLog);
 		
 		JLabel lblEmployeeLeaveBalance = new JLabel("Employee Leave Balance");
-		lblEmployeeLeaveBalance.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
-		lblEmployeeLeaveBalance.setBounds(340, 417, 323, 33);
+		lblEmployeeLeaveBalance.setFont(new Font("Poppins", Font.PLAIN, 22));
+		lblEmployeeLeaveBalance.setBounds(387, 462, 323, 33);
 		mainPanel.add(lblEmployeeLeaveBalance);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(340, 460, 935, 250);
+		scrollPane_1.setBounds(387, 505, 834, 238);
 		mainPanel.add(scrollPane_1);
 		
 		table_EmpLeaveBalance = new JTable();

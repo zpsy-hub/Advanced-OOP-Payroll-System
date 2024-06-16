@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,8 +29,14 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import model.Employee;
+import model.Permission;
 import model.User;
+import service.PermissionService;
+import service.SQL_client;
 import DAO.EmployeeDAO;
+import customUI.ImagePanel;
+import customUI.Sidebar;
+import customUI.SidebarButton;
 import util.SessionManager;
 
 public class GUI_HREmployeeManagement extends JFrame {
@@ -41,7 +48,7 @@ public class GUI_HREmployeeManagement extends JFrame {
     private JTable table;
     private JButton btnSaveChanges;
     private boolean isAddingEmployee = false;
-   
+
     /**
      * Launch the application.
      */
@@ -49,7 +56,7 @@ public class GUI_HREmployeeManagement extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                	User loggedInEmployee = SessionManager.getLoggedInUser();
+                    User loggedInEmployee = SessionManager.getLoggedInUser();
                     GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(loggedInEmployee);
                     employeeManagement.setVisible(true);
                 } catch (Exception e) {
@@ -58,7 +65,6 @@ public class GUI_HREmployeeManagement extends JFrame {
             }
         });
     }
-
 
     /**
      * Create the frame.
@@ -77,157 +83,85 @@ public class GUI_HREmployeeManagement extends JFrame {
      */
     private void initialize() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 1315, 770);
+        setBounds(100, 100, 1280, 800);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(null);
 
-        JPanel mainPanel = new JPanel();
+        // Main panel with background image
+        ImagePanel mainPanel = new ImagePanel("/img/emp mngmnt.png");
+        mainPanel.setBackground(new Color(255, 255, 255));
+        mainPanel.setBounds(0, 0, 1280, 800);
+        contentPane.add(mainPanel);  // Add mainPanel to the content pane
         mainPanel.setLayout(null);
-        mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBounds(0, 10, 1301, 733);
-        contentPane.add(mainPanel);
+		
+        // Use the Sidebar class
+        Sidebar sidebar = new Sidebar(loggedInEmployee);
+        sidebar.setBounds(0, 92, 321, 680);
+        mainPanel.add(sidebar);
 
-        JPanel sidebarPanel = new JPanel();
-        sidebarPanel.setLayout(null);
-        sidebarPanel.setBackground(Color.WHITE);
-        sidebarPanel.setBounds(0, 0, 299, 733);
-        mainPanel.add(sidebarPanel);
+        // Set button visibility based on permissions
+        List<String> visibleButtons = new ArrayList<>();
+        visibleButtons.add("Dashboard");
+        visibleButtons.add("Time In/Out");
+        visibleButtons.add("Payslip");
+        visibleButtons.add("Leave Request");
+        visibleButtons.add("Overtime Request");
 
-        JLabel motorphLabel = new JLabel("MotorPH");
-        motorphLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        motorphLabel.setForeground(new Color(30, 55, 101));
-        motorphLabel.setFont(new Font("Franklin Gothic Demi", Font.BOLD, 28));
-        motorphLabel.setBounds(10, 30, 279, 45);
-        sidebarPanel.add(motorphLabel);
+        Connection connection = SQL_client.getInstance().getConnection();
+        PermissionService permissionsService = PermissionService.getInstance();
+        List<Permission> userPermissions = permissionsService.getPermissionsForEmployee(loggedInEmployee.getId(), connection);
 
-        // SIDEBAR BUTTONS
-        JButton dashboardButton = new JButton("Dashboard");
-        dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        dashboardButton.setBackground(Color.WHITE);
-        dashboardButton.setBounds(37, 95, 227, 31);
-        sidebarPanel.add(dashboardButton);
-        dashboardButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUIDashboard window = new GUIDashboard(loggedInEmployee);
-                window.dashboardScreen.setVisible(true);
-		        dispose();
-		        }
-		});
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 1)) {
+            visibleButtons.add("Employee Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 2)) {
+            visibleButtons.add("Attendance Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3)) {
+            visibleButtons.add("Leave Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 4)) {
+            visibleButtons.add("Salary Calculation");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 5)) {
+            visibleButtons.add("Monthly Summary Reports");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 7)) {
+            visibleButtons.add("Permissions Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 8)) {
+            visibleButtons.add("Credentials Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6)) {
+            visibleButtons.add("Authentication Logs");
+        }
 
-        JButton timeInOutButton = new JButton("Time In/Out");
-        timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        timeInOutButton.setBackground(Color.WHITE);
-        timeInOutButton.setBounds(37, 154, 227, 31);
-        sidebarPanel.add(timeInOutButton);
-        timeInOutButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
-		        timeInOut.openWindow();
-		        dispose();
-		        }
-		});
-
-        JButton payslipButton = new JButton("Payslip");
-        payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        payslipButton.setBackground(Color.WHITE);
-        payslipButton.setBounds(37, 216, 227, 31);
-        sidebarPanel.add(payslipButton);
-        payslipButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
-		    	payslip.openWindow();
-		    	dispose();		    		        	    
-		    }
-		});
-
-        JButton leaverequestButton = new JButton("Leave Request");
-        leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        leaverequestButton.setBackground(Color.WHITE);
-        leaverequestButton.setBounds(37, 277, 227, 31);
-        sidebarPanel.add(leaverequestButton);
-        leaverequestButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUIPayslip window = new GUIPayslip(loggedInEmployee);
-				window.payslipScreen.setVisible(true);
-				dispose();
-		    }
-		});
-
-        JButton helpButton = new JButton("Help & Support");
-        helpButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        helpButton.setBackground(Color.WHITE);
-        helpButton.setBounds(37, 669, 227, 31);
-        sidebarPanel.add(helpButton);
-
-        JButton HR_EmpMngmntButton = new JButton("Employee management");
-        HR_EmpMngmntButton.setEnabled(false);
-        HR_EmpMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-        HR_EmpMngmntButton.setBackground(Color.WHITE);
-        HR_EmpMngmntButton.setBounds(37, 383, 227, 31);
-        sidebarPanel.add(HR_EmpMngmntButton);
-
-        JButton HR_AttendanceMngmntButton = new JButton("Attendance management");
-        HR_AttendanceMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        HR_AttendanceMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-        HR_AttendanceMngmntButton.setBackground(Color.WHITE);
-        HR_AttendanceMngmntButton.setBounds(37, 438, 227, 31);
-        sidebarPanel.add(HR_AttendanceMngmntButton);
-        HR_AttendanceMngmntButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUI_HRAttendanceManagement window = new GUI_HRAttendanceManagement(loggedInEmployee);
-				window.hrattendancemngmnt.setVisible(true);
-				dispose(); 
-		    }
-		});
-
-        JButton HR_LeaveMngmntButton = new JButton("Leave management");
-        HR_LeaveMngmntButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        HR_LeaveMngmntButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-        HR_LeaveMngmntButton.setBackground(Color.WHITE);
-        HR_LeaveMngmntButton.setBounds(37, 491, 227, 31);
-        sidebarPanel.add(HR_LeaveMngmntButton);
-        HR_LeaveMngmntButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUI_HRLeaveManagement window = new GUI_HRLeaveManagement(loggedInEmployee);
-		    	window.hrleavemngmnt.setVisible(true);
-		    	dispose();
-		    }
-		});
+        sidebar.setButtonVisibility(visibleButtons);
+        
+        // Add the sign-out button
+        SidebarButton signOutButton = new SidebarButton("Sign Out", null, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GUIlogin login = new GUIlogin();
+                login.loginScreen1.setVisible(true);
+                dispose(); // Close the dashboard frame
+            }
+        });
+        signOutButton.setBounds(1114, 26, 117, 40);
+        mainPanel.add(signOutButton);
        
-
-        JPanel separator = new JPanel();
-        separator.setBackground(new Color(30, 55, 101));
-        separator.setBounds(37, 350, 130, 3);
-        sidebarPanel.add(separator);
-
-        JLabel HRaccessLabel = new JLabel("HR Access");
-        HRaccessLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 22));
-        HRaccessLabel.setBounds(177, 332, 100, 33);
-        sidebarPanel.add(HRaccessLabel);
-
-        JLabel lblEmployeeManagement = new JLabel("Employee Management");
-        lblEmployeeManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
-        lblEmployeeManagement.setBounds(340, 36, 323, 33);
-        mainPanel.add(lblEmployeeManagement);
-
-        JButton signoutButton = new JButton("Sign Out");
-        signoutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
-        signoutButton.setBackground(Color.WHITE);
-        signoutButton.setBounds(1160, 36, 103, 31);
-        mainPanel.add(signoutButton);
-
-        employeeNameLabel = new JLabel(); // Initialize employeeNameLabel
+        employeeNameLabel = new JLabel(); 
+        employeeNameLabel.setBounds(707, 30, 400, 33);
         employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         employeeNameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
-        employeeNameLabel.setBounds(750, 36, 400, 33);
         mainPanel.add(employeeNameLabel);
 
         JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBounds(390, 148, 818, 488);
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        scrollPane.setBounds(340, 95, 935, 541);
         mainPanel.add(scrollPane);
 
         table = new JTable();
@@ -243,9 +177,9 @@ public class GUI_HREmployeeManagement extends JFrame {
 
         // Add
         JButton addemployeeButton = new JButton("Add Employee");
-        addemployeeButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        addemployeeButton.setBounds(390, 663, 154, 51);
+        addemployeeButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
         addemployeeButton.setBackground(Color.WHITE);
-        addemployeeButton.setBounds(340, 654, 154, 51);
         mainPanel.add(addemployeeButton);
         // Add action listener for the "Add Employee" button
         addemployeeButton.addActionListener(new ActionListener() {
@@ -263,13 +197,11 @@ public class GUI_HREmployeeManagement extends JFrame {
             }
         });
 
-
-
         // Update
         JButton updatedataButton = new JButton("Update Data");
-        updatedataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        updatedataButton.setBounds(578, 663, 154, 51);
+        updatedataButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
         updatedataButton.setBackground(Color.WHITE);
-        updatedataButton.setBounds(528, 654, 154, 51);
         updatedataButton.setEnabled(false); // Initially disabled
         mainPanel.add(updatedataButton);
 
@@ -292,9 +224,9 @@ public class GUI_HREmployeeManagement extends JFrame {
 
         // Delete
         JButton deletedataButton = new JButton("Delete Data");
-        deletedataButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        deletedataButton.setBounds(953, 663, 154, 51);
+        deletedataButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
         deletedataButton.setBackground(Color.WHITE);
-        deletedataButton.setBounds(903, 654, 154, 51);
         deletedataButton.setEnabled(false); // Initially disabled
         mainPanel.add(deletedataButton);
 
@@ -338,12 +270,11 @@ public class GUI_HREmployeeManagement extends JFrame {
             }
         });
 
-
         // Save
         btnSaveChanges = new JButton("Save Changes");
-        btnSaveChanges.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
+        btnSaveChanges.setBounds(768, 663, 154, 51);
+        btnSaveChanges.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
         btnSaveChanges.setBackground(Color.WHITE);
-        btnSaveChanges.setBounds(718, 654, 154, 51);
         btnSaveChanges.setEnabled(false); // Initially disabled
         mainPanel.add(btnSaveChanges);
         
@@ -367,9 +298,6 @@ public class GUI_HREmployeeManagement extends JFrame {
                 }
             }
         });
-
-        
-
 
         // Set employee name dynamically
         if (loggedInEmployee != null) {

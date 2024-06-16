@@ -20,7 +20,7 @@ public class Sidebar extends JPanel {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(new Color(255, 255, 255, 0));
         setOpaque(false);
-        setBounds(30, 93, 321, 680);  // Set the bounds as specified
+        setBounds(30, 98, 321, 680);  // Set the bounds as specified
         buttons = new ArrayList<>();
         initializeButtons();
         layoutButtons();

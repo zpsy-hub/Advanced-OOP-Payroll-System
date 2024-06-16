@@ -5,10 +5,15 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 
 import model.Employee;
+import model.Permission;
 import model.User;
 import DAO.EmployeeDAO;
 import DAO.PermissionDAO;
+import customUI.ImagePanel;
+import customUI.Sidebar;
+import customUI.SidebarButton;
 import service.SQL_client;
+import service.PermissionService;
 import service.PermissionWithStatus;
 import util.SessionManager;
 import javax.swing.JPanel;
@@ -19,9 +24,9 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.Permission;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingConstants;
@@ -75,113 +80,85 @@ public class GUI_ITPermissions {
      */
     private void initialize() {
         permissionsFrame = new JFrame();
-        permissionsFrame.setBounds(100, 100, 1315, 770);
+        permissionsFrame.setBounds(100, 100, 1280, 800);
         permissionsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         permissionsFrame.getContentPane().setLayout(null);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(null);
-        mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBounds(0, 0, 1301, 733);
+        // Main panel with background image
+        ImagePanel mainPanel = new ImagePanel("/img/credentials  mngmnt.png");
+        mainPanel.setBackground(new Color(255, 255, 255));
+        mainPanel.setBounds(0, 0, 1280, 800);
         permissionsFrame.getContentPane().add(mainPanel);
+        mainPanel.setLayout(null);
+		
+        // Use the Sidebar class
+        Sidebar sidebar = new Sidebar(loggedInEmployee);
+        sidebar.setBounds(0, 92, 321, 680);
+        mainPanel.add(sidebar);
 
-        JPanel sidebarPanel = new JPanel();
-        sidebarPanel.setLayout(null);
-        sidebarPanel.setBackground(Color.WHITE);
-        sidebarPanel.setBounds(0, 0, 299, 733);
-        mainPanel.add(sidebarPanel);
+        // Set button visibility based on permissions
+        List<String> visibleButtons = new ArrayList<>();
+        visibleButtons.add("Dashboard");
+        visibleButtons.add("Time In/Out");
+        visibleButtons.add("Payslip");
+        visibleButtons.add("Leave Request");
+        visibleButtons.add("Overtime Request");
 
-        JLabel motorphLabel = new JLabel("MotorPH");
-        motorphLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        motorphLabel.setForeground(new Color(30, 55, 101));
-        motorphLabel.setFont(new Font("Franklin Gothic Demi", Font.BOLD, 28));
-        motorphLabel.setBounds(10, 30, 279, 45);
-        sidebarPanel.add(motorphLabel);
+        Connection connection = SQL_client.getInstance().getConnection();
+        PermissionService permissionsService = PermissionService.getInstance();
+        List<Permission> userPermissions = permissionsService.getPermissionsForEmployee(loggedInEmployee.getId(), connection);
 
-        JButton dashboardButton = new JButton("Dashboard");
-        dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        dashboardButton.setBackground(Color.WHITE);
-        dashboardButton.setBounds(37, 95, 227, 31);
-        sidebarPanel.add(dashboardButton);
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 1)) {
+            visibleButtons.add("Employee Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 2)) {
+            visibleButtons.add("Attendance Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3)) {
+            visibleButtons.add("Leave Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 4)) {
+            visibleButtons.add("Salary Calculation");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 5)) {
+            visibleButtons.add("Monthly Summary Reports");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 7)) {
+            visibleButtons.add("Permissions Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 8)) {
+            visibleButtons.add("Credentials Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6)) {
+            visibleButtons.add("Authentication Logs");
+        }
 
-        JButton timeInOutButton = new JButton("Time In/Out");
-        timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        timeInOutButton.setBackground(Color.WHITE);
-        timeInOutButton.setBounds(37, 154, 227, 31);
-        sidebarPanel.add(timeInOutButton);
-
-        JButton payslipButton = new JButton("Payslip");
-        payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        payslipButton.setBackground(Color.WHITE);
-        payslipButton.setBounds(37, 216, 227, 31);
-        sidebarPanel.add(payslipButton);
-
-        JButton leaverequestButton = new JButton("Leave Request");
-        leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        leaverequestButton.setBackground(Color.WHITE);
-        leaverequestButton.setBounds(37, 277, 227, 31);
-        sidebarPanel.add(leaverequestButton);
-
-        JButton helpButton = new JButton("Help & Support");
-        helpButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-        helpButton.setBackground(Color.WHITE);
-        helpButton.setBounds(37, 669, 227, 31);
-        sidebarPanel.add(helpButton);
-
-        JButton IT_PermissionsManagement = new JButton("Permissions Management");
-        IT_PermissionsManagement.setEnabled(false);
-        IT_PermissionsManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-        IT_PermissionsManagement.setBackground(Color.WHITE);
-        IT_PermissionsManagement.setBounds(37, 383, 227, 31);
-        sidebarPanel.add(IT_PermissionsManagement);
-
-        JButton IT_UserManagement = new JButton("Credentials Management");
-        IT_UserManagement.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-        IT_UserManagement.setBackground(Color.WHITE);
-        IT_UserManagement.setBounds(37, 438, 227, 31);
-        sidebarPanel.add(IT_UserManagement);
+        sidebar.setButtonVisibility(visibleButtons);
         
-        JButton IT_UserManagement_1 = new JButton("Authentication Logs");
-        IT_UserManagement_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 19));
-        IT_UserManagement_1.setBackground(Color.WHITE);
-        IT_UserManagement_1.setBounds(37, 491, 227, 31);
-        sidebarPanel.add(IT_UserManagement_1);
-
-        JLabel dashboardLabel = new JLabel("Permissions Management");
-        dashboardLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
-        dashboardLabel.setBounds(340, 36, 379, 33);
-        mainPanel.add(dashboardLabel);
-
-        JButton signoutButton = new JButton("Sign Out");
-        signoutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
-        signoutButton.setBackground(Color.WHITE);
-        signoutButton.setBounds(1160, 36, 103, 31);
-        mainPanel.add(signoutButton);
-
-        JPanel panel = new JPanel();
-        panel.setBounds(826, 121, 450, 370);
-        mainPanel.add(panel);
-        panel.setLayout(null);
-
-        JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(0, 0, 450, 370);
-        panel.add(scrollPane);
-
-        permissionsTable = new JTable();
-        scrollPane.setViewportView(permissionsTable);
+        // Add the sign-out button
+        SidebarButton signOutButton = new SidebarButton("Sign Out", null, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GUIlogin login = new GUIlogin();
+                login.loginScreen1.setVisible(true);
+                permissionsFrame.dispose(); 
+            }
+        });
+        signOutButton.setBounds(1094, 35, 114, 40);
+        mainPanel.add(signOutButton);
         
         JLabel lblPermissions = new JLabel("Users");
-        lblPermissions.setFont(new Font("Tw Cen MT", Font.PLAIN, 24));
-        lblPermissions.setBounds(340, 84, 379, 33);
+        lblPermissions.setFont(new Font("Poppins", Font.PLAIN, 22));
+        lblPermissions.setBounds(374, 146, 379, 33);
         mainPanel.add(lblPermissions);     
         
         JLabel lblPermissions_1 = new JLabel("Permissions");
-        lblPermissions_1.setFont(new Font("Tw Cen MT", Font.PLAIN, 24));
-        lblPermissions_1.setBounds(826, 84, 379, 33);
+        lblPermissions_1.setFont(new Font("Poppins", Font.PLAIN, 20));
+        lblPermissions_1.setBounds(800, 146, 379, 33);
         mainPanel.add(lblPermissions_1);
 
         JScrollPane scrollPane_1 = new JScrollPane();
-        scrollPane_1.setBounds(340, 121, 450, 370);
+        scrollPane_1.setBounds(374, 189, 420, 370);
         mainPanel.add(scrollPane_1);
 
         userstable = new JTable();
@@ -205,8 +182,8 @@ public class GUI_ITPermissions {
         scrollPane_1.setViewportView(userstable);
         
         JButton btnNewButton = new JButton("Grant Access");
-        btnNewButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-        btnNewButton.setBounds(882, 516, 150, 35);
+        btnNewButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
+        btnNewButton.setBounds(826, 595, 179, 40);
         mainPanel.add(btnNewButton);
         
         btnNewButton.addActionListener(new ActionListener() {
@@ -239,9 +216,20 @@ public class GUI_ITPermissions {
         });
         
         JButton btnRevokeAccess = new JButton("Revoke Access");
-        btnRevokeAccess.setFont(new Font("Tw Cen MT", Font.PLAIN, 20));
-        btnRevokeAccess.setBounds(1059, 516, 150, 35);
+        btnRevokeAccess.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
+        btnRevokeAccess.setBounds(1025, 595, 179, 40);
         mainPanel.add(btnRevokeAccess);
+        
+                JScrollPane scrollPane = new JScrollPane();
+                scrollPane.setBounds(800, 189, 420, 370);
+                mainPanel.add(scrollPane);
+                
+                        permissionsTable = new JTable();
+                        scrollPane.setViewportView(permissionsTable);
+                        
+                                JPanel panel = new JPanel();
+                                scrollPane.setRowHeaderView(panel);
+                                panel.setLayout(null);
         
         btnRevokeAccess.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
