@@ -56,7 +56,9 @@ public class Sidebar extends JPanel {
         });
 
         addSidebarButton("Overtime Request", "/img/014-overtime-1.png", e -> {
-            // Overtime request logic
+        	 GUIOvertimeRequest frame = new GUIOvertimeRequest(loggedInEmployee);
+        	 frame.setVisible(true);
+        	 closeCurrentFrame();
         });
 
         addSidebarButton("Employee Management", "/img/016-attendance.png", e -> {

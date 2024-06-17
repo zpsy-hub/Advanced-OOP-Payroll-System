@@ -227,7 +227,7 @@ public class GUIDashboard {
 	    empSSSLabel.setFont(new Font("Poppins SemiBold", Font.PLAIN, 15));
 			    												
 	    empAddressLabel = new JLabel("");
-	    empAddressLabel.setBounds(515, 525, 677, 50);
+	    empAddressLabel.setBounds(494, 537, 677, 50);
 	    mainPanel.add(empAddressLabel);
 	    empAddressLabel.setFont(new Font("Poppins SemiBold", Font.PLAIN, 15));			    														
 			    					

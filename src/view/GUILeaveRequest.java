@@ -193,13 +193,13 @@ public class GUILeaveRequest {
         leaveTotal.setForeground(new Color(255, 255, 255));
         leaveTotal.setHorizontalAlignment(SwingConstants.CENTER);
         leaveTotal.setFont(new Font("Poppins SemiBold", Font.PLAIN, 36));
-        leaveTotal.setBounds(0, 54, 243, 43);
+        leaveTotal.setBounds(0, 56, 243, 43);
         leavesPanel.add(leaveTotal);
 		
 		JPanel vacationPanel = new JPanel();
 		vacationPanel.setBounds(639, 116, 175, 135);
 		vacationPanel.setBorder(null);
-		vacationPanel.setBackground(Color.WHITE);
+		vacationPanel.setOpaque(false);
 		mainPanel.add(vacationPanel);
 		vacationPanel.setLayout(null);
 		
@@ -212,48 +212,48 @@ public class GUILeaveRequest {
         vacationTotal = new JLabel();
         vacationTotal.setHorizontalAlignment(SwingConstants.CENTER);
         vacationTotal.setForeground(new Color(0, 0, 0));
-        vacationTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
-        vacationTotal.setBounds(0, 54, 172, 43);
+        vacationTotal.setFont(new Font("Poppins SemiBold", Font.PLAIN, 36));
+        vacationTotal.setBounds(0, 56, 172, 43);
         vacationPanel.add(vacationTotal);
 		
 		JPanel sickPanel = new JPanel();
 		sickPanel.setBounds(846, 116, 175, 135);
 		sickPanel.setBorder(null);
-		sickPanel.setBackground(Color.WHITE);
+		sickPanel.setOpaque(false);
 		mainPanel.add(sickPanel);
 		sickPanel.setLayout(null);
 		
 		JLabel sickleavesLabel = new JLabel("Sick Leaves Left:");
 		sickleavesLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		sickleavesLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
-		sickleavesLabel.setBounds(0, 20, 175, 13);
+		sickleavesLabel.setBounds(0, 21, 175, 13);
 		sickPanel.add(sickleavesLabel);
 		
         sickTotal = new JLabel();
         sickTotal.setHorizontalAlignment(SwingConstants.CENTER);
         sickTotal.setForeground(Color.BLACK);
-        sickTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
-        sickTotal.setBounds(0, 58, 175, 43);
+        sickTotal.setFont(new Font("Poppins SemiBold", Font.BOLD, 36));
+        sickTotal.setBounds(0, 56, 175, 43);
         sickPanel.add(sickTotal);
 		
 		JPanel emergencyPanel = new JPanel();
-		emergencyPanel.setBounds(1049, 96, 175, 135);
-		emergencyPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		emergencyPanel.setBackground(Color.WHITE);
+		emergencyPanel.setBounds(1054, 116, 175, 135);
+		emergencyPanel.setBorder(null);
+		emergencyPanel.setOpaque(false);
 		mainPanel.add(emergencyPanel);
 		emergencyPanel.setLayout(null);
 		
 		JLabel emergencyleavesLabel = new JLabel("Emergency Leaves Left:");
 		emergencyleavesLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		emergencyleavesLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
-		emergencyleavesLabel.setBounds(10, 22, 196, 13);
+		emergencyleavesLabel.setFont(new Font("Poppins", Font.PLAIN, 14));
+		emergencyleavesLabel.setBounds(0, 21, 175, 13);
 		emergencyPanel.add(emergencyleavesLabel);
 		
         emergencyTotal = new JLabel();
         emergencyTotal.setHorizontalAlignment(SwingConstants.CENTER);
         emergencyTotal.setForeground(Color.BLACK);
-        emergencyTotal.setFont(new Font("Tw Cen MT", Font.BOLD, 60));
-        emergencyTotal.setBounds(10, 56, 196, 43);
+        emergencyTotal.setFont(new Font("Poppins SemiBold", Font.BOLD, 36));
+        emergencyTotal.setBounds(0, 56, 175, 43);
         emergencyPanel.add(emergencyTotal);         
     		
 		JLabel leaveapplicationLabel = new JLabel("Leave Application");
@@ -322,7 +322,7 @@ public class GUILeaveRequest {
 		mainPanel.add(startmonthComboBox);
 
 		startdayComboBox = new JComboBox<String>();
-		startdayComboBox.setBounds(541, 441, 53, 32);
+		startdayComboBox.setBounds(541, 441, 69, 32);
 		startdayComboBox.setBackground(new Color(255, 255, 255));
 		startdayComboBox.setMaximumRowCount(32);
 		startdayComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
@@ -342,7 +342,7 @@ public class GUILeaveRequest {
 		mainPanel.add(endmonthComboBox);
 		
 		enddayComboBox = new JComboBox<String>();
-		enddayComboBox.setBounds(541, 547, 53, 32);
+		enddayComboBox.setBounds(541, 547, 69, 32);
 		enddayComboBox.setMaximumRowCount(32);
 		enddayComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
 		enddayComboBox.setBackground(Color.WHITE);
@@ -362,6 +362,7 @@ public class GUILeaveRequest {
 		leavehistoryPanel.setLayout(new GridLayout(1, 0, 0, 0));
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		leavehistoryPanel.add(scrollPane);
 		
 		leavehistoryTable_1 = new JTable();

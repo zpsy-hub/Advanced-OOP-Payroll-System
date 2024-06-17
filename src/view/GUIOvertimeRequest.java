@@ -1,21 +1,55 @@
 package view;
 
-import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
-import java.util.Arrays;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import org.knowm.xchart.CategoryChart;
-import org.knowm.xchart.CategoryChartBuilder;
-import org.knowm.xchart.XChartPanel;
-import org.knowm.xchart.style.Styler.LegendPosition;
-import com.toedter.calendar.JCalendar;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import DAO.OvertimeDAO;
+import customUI.ImagePanel;
+import customUI.Sidebar;
+import customUI.SidebarButton;
+import model.Overtime;
+import model.Permission;
 import model.User;
+import service.PermissionService;
+import service.SQL_client;
+import util.LeaveRequestComboPopulator;
 import util.SessionManager;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.JTable;
 
-public class GUIOvertimeRequest {
+public class GUIOvertimeRequest extends JFrame {
 
-    private JFrame overtimerequest;
-    private static User loggedInEmployee;
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+    private User loggedInEmployee;
+    private JTextField startTimetextField;
+    private JTextField endTimetextField;
+    private JTextField reasontextField;
+    private JTable overtimehistorytable;
 
     /**
      * Launch the application.
@@ -25,8 +59,8 @@ public class GUIOvertimeRequest {
             public void run() {
                 try {
                     User loggedInEmployee = SessionManager.getLoggedInUser();
-                    GUIOvertimeRequest window = new GUIOvertimeRequest(loggedInEmployee);
-                    window.overtimerequest.setVisible(true);
+                    GUIOvertimeRequest frame = new GUIOvertimeRequest(loggedInEmployee);
+                    frame.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -35,55 +69,278 @@ public class GUIOvertimeRequest {
     }
 
     /**
-     * Create the application.
-     * @param loggedInEmployee2 
+     * Create the frame.
      */
     public GUIOvertimeRequest(User loggedInEmployee) {
-        GUIOvertimeRequest.setLoggedInEmployee(loggedInEmployee);
-        initialize();
+        this.loggedInEmployee = loggedInEmployee;
+
+        setTitle("MotorPH Payroll System");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(0, 0, 1280, 800);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(null);
+
+        // Main panel with background image
+        ImagePanel mainPanel = new ImagePanel("/img/ot request.png");
+        mainPanel.setBackground(new Color(255, 255, 255));
+        mainPanel.setBounds(0, 0, 1280, 800);
+        contentPane.add(mainPanel);
+        mainPanel.setLayout(null);
+
+        // Use the Sidebar class
+        Sidebar sidebar = new Sidebar(loggedInEmployee);
+        sidebar.setBounds(0, 92, 321, 680);
+        mainPanel.add(sidebar);
+
+        // Set button visibility based on permissions
+        List<String> visibleButtons = new ArrayList<>();
+        visibleButtons.add("Dashboard");
+        visibleButtons.add("Time In/Out");
+        visibleButtons.add("Payslip");
+        visibleButtons.add("Leave Request");
+        visibleButtons.add("Overtime Request");
+
+        Connection connection = SQL_client.getInstance().getConnection();
+        PermissionService permissionsService = PermissionService.getInstance();
+        List<Permission> userPermissions = permissionsService.getPermissionsForEmployee(loggedInEmployee.getId(), connection);
+
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 1)) {
+            visibleButtons.add("Employee Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 2)) {
+            visibleButtons.add("Attendance Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3)) {
+            visibleButtons.add("Leave Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 4)) {
+            visibleButtons.add("Salary Calculation");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 5)) {
+            visibleButtons.add("Monthly Summary Reports");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 7)) {
+            visibleButtons.add("Permissions Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 8)) {
+            visibleButtons.add("Credentials Management");
+        }
+        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6)) {
+            visibleButtons.add("Authentication Logs");
+        }
+
+        sidebar.setButtonVisibility(visibleButtons);
+
+        // Add the sign-out button
+        SidebarButton signOutButton = new SidebarButton("Sign Out", null, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GUIlogin login = new GUIlogin();
+                login.loginScreen1.setVisible(true);
+                dispose();
+            }
+        });
+        signOutButton.setBounds(1089, 35, 119, 40);
+        signOutButton.setHorizontalAlignment(SwingConstants.CENTER);
+        mainPanel.add(signOutButton);
+
+        JLabel lblOvertimeApplication = new JLabel("Overtime Application");
+        lblOvertimeApplication.setFont(new Font("Poppins", Font.PLAIN, 20));
+        lblOvertimeApplication.setBounds(385, 131, 280, 33);
+        mainPanel.add(lblOvertimeApplication);
+
+        JLabel lblSelectLeaveType = new JLabel("Start Time: ");
+        lblSelectLeaveType.setFont(new Font("Poppins", Font.PLAIN, 16));
+        lblSelectLeaveType.setBounds(428, 239, 88, 21);
+        mainPanel.add(lblSelectLeaveType);
+
+        JLabel lblSelectLeaveType_1 = new JLabel("Date:");
+        lblSelectLeaveType_1.setFont(new Font("Poppins", Font.PLAIN, 16));
+        lblSelectLeaveType_1.setBounds(428, 189, 82, 21);
+        mainPanel.add(lblSelectLeaveType_1);
+
+        JLabel lblMonth = new JLabel("Month:");
+        lblMonth.setFont(new Font("Poppins", Font.PLAIN, 14));
+        lblMonth.setBounds(516, 189, 53, 21);
+        mainPanel.add(lblMonth);
+
+        JComboBox<String> monthComboBox = new JComboBox<>();
+        monthComboBox.setMaximumRowCount(13);
+        monthComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
+        monthComboBox.setBackground(Color.WHITE);
+        monthComboBox.setBounds(579, 183, 200, 32);
+        mainPanel.add(monthComboBox);
+
+        JLabel lblDay = new JLabel("Day:");
+        lblDay.setFont(new Font("Poppins", Font.PLAIN, 14));
+        lblDay.setBounds(803, 189, 53, 21);
+        mainPanel.add(lblDay);
+
+        JComboBox<String> dayComboBox = new JComboBox<>();
+        dayComboBox.setMaximumRowCount(32);
+        dayComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
+        dayComboBox.setBackground(Color.WHITE);
+        dayComboBox.setBounds(846, 183, 88, 32);
+        mainPanel.add(dayComboBox);
+
+        JLabel lblYear = new JLabel("Year:");
+        lblYear.setFont(new Font("Poppins", Font.PLAIN, 14));
+        lblYear.setBounds(993, 189, 44, 21);
+        mainPanel.add(lblYear);
+
+        JComboBox<String> yearComboBox = new JComboBox<>();
+        yearComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
+        yearComboBox.setBackground(Color.WHITE);
+        yearComboBox.setBounds(1035, 183, 119, 32);
+        mainPanel.add(yearComboBox);
+
+        startTimetextField = new JTextField();
+        startTimetextField.setFont(new Font("Poppins", Font.PLAIN, 14));
+        startTimetextField.setBounds(526, 233, 253, 32);
+        mainPanel.add(startTimetextField);
+        startTimetextField.setColumns(10);
+
+        endTimetextField = new JTextField();
+        endTimetextField.setFont(new Font("Poppins", Font.PLAIN, 14));
+        endTimetextField.setColumns(10);
+        endTimetextField.setBounds(901, 233, 253, 32);
+        mainPanel.add(endTimetextField);
+
+        JLabel lblEndTime = new JLabel("End Time: ");
+        lblEndTime.setFont(new Font("Poppins", Font.PLAIN, 16));
+        lblEndTime.setBounds(803, 239, 88, 21);
+        mainPanel.add(lblEndTime);
+
+        JLabel Reason = new JLabel("Reason:");
+        Reason.setFont(new Font("Poppins", Font.PLAIN, 16));
+        Reason.setBounds(428, 291, 88, 21);
+        mainPanel.add(Reason);
+
+        reasontextField = new JTextField();
+        reasontextField.setFont(new Font("Poppins", Font.PLAIN, 14));
+        reasontextField.setColumns(10);
+        reasontextField.setBounds(526, 285, 628, 32);
+        mainPanel.add(reasontextField);
+
+        JButton btnSendRequest = new JButton("Send Request");
+        btnSendRequest.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
+        btnSendRequest.setBackground(Color.WHITE);
+        btnSendRequest.setBounds(954, 330, 200, 40);
+        mainPanel.add(btnSendRequest);
+
+        JLabel overtimehistoryLabel = new JLabel("Overtime Request History");
+        overtimehistoryLabel.setFont(new Font("Poppins", Font.PLAIN, 20));
+        overtimehistoryLabel.setBounds(385, 397, 335, 33);
+        mainPanel.add(overtimehistoryLabel);
+
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setBounds(428, 444, 726, 287);
+        mainPanel.add(scrollPane);
+
+        overtimehistorytable = new JTable();
+        scrollPane.setViewportView(overtimehistorytable);
+
+        // Populate ComboBoxes
+        populateComboBoxes(monthComboBox, dayComboBox, yearComboBox);
+
+        // Populate overtime history table
+        populateOvertimeHistoryTable();
+
+        // Action Listener for Send Request button
+        btnSendRequest.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                sendOvertimeRequest(monthComboBox, dayComboBox, yearComboBox);
+            }
+        });
     }
 
-    /**
-     * Initialize the contents of the frame.
-     */
-    private void initialize() {
-        overtimerequest = new JFrame();
-        overtimerequest.setBounds(100, 100, 1315, 770);
-        overtimerequest.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Fetch data for the chart (replace with your actual data retrieval logic)
-        Integer[] categories = { 0, 1, 2, 3, 4 };
-        Integer[] values = { 4, 5, 9, 6, 5 };
-
-        // Create the bar chart
-        CategoryChart chart = new CategoryChartBuilder()
-            .width(800)
-            .height(600)
-            .title("Overtime Histogram")
-            .xAxisTitle("Employee")
-            .yAxisTitle("Overtime Hours")
-            .build();
-
-        // Customize Chart
-        chart.getStyler().setLegendPosition(LegendPosition.InsideNW);
-
-        // Series (replace "test 1" with the appropriate label)
-        chart.addSeries("Overtime Data", Arrays.asList(categories), Arrays.asList(values)); 
-
-        // Embed the chart in a Swing panel
-        XChartPanel<CategoryChart> chartPanel = new XChartPanel<>(chart);
-        overtimerequest.add(chartPanel, BorderLayout.CENTER); // Add to your main frame
-
-        // Add the calendar
-        JCalendar calendar = new JCalendar();
-        overtimerequest.add(calendar, BorderLayout.EAST); // Add to the frame
+    private void populateComboBoxes(JComboBox<String> monthComboBox, JComboBox<String> dayComboBox, JComboBox<String> yearComboBox) {
+        LeaveRequestComboPopulator.populateMonths(monthComboBox);
+        LeaveRequestComboPopulator.populateDays(dayComboBox, 1, 12);
+        LeaveRequestComboPopulator.populateCurrentYear(yearComboBox);
     }
 
-    public static User getLoggedInEmployee() {
-        return loggedInEmployee;
+    private void sendOvertimeRequest(JComboBox<String> monthComboBox, JComboBox<String> dayComboBox, JComboBox<String> yearComboBox) {
+        String selectedMonth = (String) monthComboBox.getSelectedItem();
+        String selectedDay = (String) dayComboBox.getSelectedItem();
+        String selectedYear = (String) yearComboBox.getSelectedItem();
+
+        if (selectedMonth == null || selectedDay == null || selectedYear == null) {
+            JOptionPane.showMessageDialog(this, "Please select a valid date.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String dateStr = selectedYear + "-" + selectedMonth + "-" + selectedDay;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MMMM-d");
+
+        LocalDate date;
+        try {
+            date = LocalDate.parse(dateStr, formatter);
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(this, "Invalid date format.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String startTimeStr = startTimetextField.getText();
+        String endTimeStr = endTimetextField.getText();
+
+        if (!isValidTimeFormat(startTimeStr) || !isValidTimeFormat(endTimeStr)) {
+            JOptionPane.showMessageDialog(this, "Invalid time format. Please use HH:mm format.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        LocalTime startTime = LocalTime.parse(startTimeStr);
+        LocalTime endTime = LocalTime.parse(endTimeStr);
+
+        String reason = reasontextField.getText();
+
+        Overtime overtime = new Overtime();
+        overtime.setEmpId(loggedInEmployee.getId());
+        overtime.setDate(date);
+        overtime.setStart(startTime);
+        overtime.setEnd(endTime);
+        overtime.setReason(reason);
+        overtime.setStatus("Pending");
+
+        double totalHours = calculateTotalHours(startTime, endTime);
+        overtime.setTotalHours(totalHours);
+
+        OvertimeDAO.getInstance().addOvertime(overtime);
+        JOptionPane.showMessageDialog(this, "Overtime request sent successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        populateOvertimeHistoryTable();
     }
 
-    public static void setLoggedInEmployee(User loggedInEmployee) {
-        GUIOvertimeRequest.loggedInEmployee = loggedInEmployee;
+    private boolean isValidTimeFormat(String time) {
+        return Pattern.matches("^([01]\\d|2[0-3]):([0-5]\\d)$", time);
+    }
+
+    private double calculateTotalHours(LocalTime startTime, LocalTime endTime) {
+        return (double) (endTime.toSecondOfDay() - startTime.toSecondOfDay()) / 3600;
+    }
+
+    private void populateOvertimeHistoryTable() {
+        List<Overtime> overtimes = OvertimeDAO.getInstance().getOvertimeByEmployeeId(loggedInEmployee.getId());
+
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Date");
+        model.addColumn("Start Time");
+        model.addColumn("End Time");
+        model.addColumn("Reason");
+        model.addColumn("Status");
+
+        for (Overtime overtime : overtimes) {
+            model.addRow(new Object[]{
+                    overtime.getDate().toString(),
+                    overtime.getStart().toString(),
+                    overtime.getEnd().toString(),
+                    overtime.getReason(),
+                    overtime.getStatus()
+            });
+        }
+
+        overtimehistorytable.setModel(model);
     }
 }

@@ -1,11 +1,13 @@
 package DAO;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import model.Overtime;
@@ -16,7 +18,6 @@ public class OvertimeDAO {
     private static OvertimeDAO instance;
 
     public OvertimeDAO() {
-        // Initialize the connection
         this.connection = SQL_client.getInstance().getConnection();
     }
 
@@ -27,13 +28,12 @@ public class OvertimeDAO {
         return instance;
     }
 
-    // Method to retrieve overtime records by employee ID
-    public List<Overtime> getOvertimeByEmployeeId(int empId) {
+    public List<Overtime> getOvertimeByEmployeeId(int empid) {
         List<Overtime> overtimes = new ArrayList<>();
         try {
             String sql = "SELECT * FROM payroll_system.overtime WHERE empid = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, empId);
+            statement.setInt(1, empid);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Overtime overtime = new Overtime(
@@ -41,11 +41,11 @@ public class OvertimeDAO {
                     resultSet.getInt("empid"),
                     resultSet.getDate("date").toLocalDate(),
                     resultSet.getString("status"),
-                    resultSet.getTime("start").toLocalTime(),
-                    resultSet.getTime("end").toLocalTime(),
-                    resultSet.getDouble("total_hours"),
+                    resultSet.getTime("starttime").toLocalTime(),
+                    resultSet.getTime("endtime").toLocalTime(),
+                    resultSet.getDouble("totalhours"),
                     resultSet.getString("reason"),
-                    resultSet.getDate("date_approved") != null ? resultSet.getDate("date_approved").toLocalDate() : null
+                    resultSet.getDate("dateapproved") != null ? resultSet.getDate("dateapproved").toLocalDate() : null
                 );
                 overtimes.add(overtime);
             }
@@ -57,10 +57,9 @@ public class OvertimeDAO {
         return overtimes;
     }
 
-    // Method to add a new overtime record
     public void addOvertime(Overtime overtime) {
         try {
-            String sql = "INSERT INTO payroll_system.overtime (empid, date, status, start, end, total_hours, reason, date_approved) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO payroll_system.overtime (empid, date, status, starttime, endtime, totalhours, reason, dateapproved) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, overtime.getEmpId());
             statement.setDate(2, Date.valueOf(overtime.getDate()));
@@ -77,10 +76,9 @@ public class OvertimeDAO {
         }
     }
 
-    // Method to update an existing overtime record
     public void updateOvertime(Overtime overtime) {
         try {
-            String sql = "UPDATE payroll_system.overtime SET empid = ?, date = ?, status = ?, start = ?, end = ?, total_hours = ?, reason = ?, date_approved = ? WHERE overtimeid = ?";
+            String sql = "UPDATE payroll_system.overtime SET empid = ?, date = ?, status = ?, starttime = ?, endtime = ?, totalhours = ?, reason = ?, dateapproved = ? WHERE overtimeid = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setInt(1, overtime.getEmpId());
             statement.setDate(2, Date.valueOf(overtime.getDate()));
@@ -98,12 +96,11 @@ public class OvertimeDAO {
         }
     }
 
-    // Method to delete an overtime record by its ID
-    public void deleteOvertime(int overtimeId) {
+    public void deleteOvertime(int overtimeid) {
         try {
             String sql = "DELETE FROM payroll_system.overtime WHERE overtimeid = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setInt(1, overtimeId);
+            statement.setInt(1, overtimeid);
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
@@ -111,7 +108,6 @@ public class OvertimeDAO {
         }
     }
 
-    // Method to retrieve all overtime records
     public List<Overtime> getAllOvertimes() {
         List<Overtime> overtimes = new ArrayList<>();
         try {
@@ -124,11 +120,11 @@ public class OvertimeDAO {
                     resultSet.getInt("empid"),
                     resultSet.getDate("date").toLocalDate(),
                     resultSet.getString("status"),
-                    resultSet.getTime("start").toLocalTime(),
-                    resultSet.getTime("end").toLocalTime(),
-                    resultSet.getDouble("total_hours"),
+                    resultSet.getTime("starttime").toLocalTime(),
+                    resultSet.getTime("endtime").toLocalTime(),
+                    resultSet.getDouble("totalhours"),
                     resultSet.getString("reason"),
-                    resultSet.getDate("date_approved") != null ? resultSet.getDate("date_approved").toLocalDate() : null
+                    resultSet.getDate("dateapproved") != null ? resultSet.getDate("dateapproved").toLocalDate() : null
                 );
                 overtimes.add(overtime);
             }
@@ -140,17 +136,40 @@ public class OvertimeDAO {
         return overtimes;
     }
 
-    // Method to approve an overtime record
-    public void approveOvertime(int overtimeId, LocalDate dateApproved) {
+    public void approveOvertime(int overtimeid, LocalDate dateApproved) {
         try {
-            String sql = "UPDATE payroll_system.overtime SET status = 'Approved', date_approved = ? WHERE overtimeid = ?";
+            String sql = "UPDATE payroll_system.overtime SET status = 'Approved', dateapproved = ? WHERE overtimeid = ?";
             PreparedStatement statement = connection.prepareStatement(sql);
             statement.setDate(1, Date.valueOf(dateApproved));
-            statement.setInt(2, overtimeId);
+            statement.setInt(2, overtimeid);
             statement.executeUpdate();
             statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    /* Main method for testing
+    public static void main(String[] args) {
+        OvertimeDAO dao = OvertimeDAO.getInstance();
+
+        // Create a new overtime entry
+        Overtime overtime = new Overtime();
+        overtime.setEmpId(1); // Example employee ID
+        overtime.setDate(LocalDate.now());
+        overtime.setStart(LocalTime.of(18, 0)); // 6:00 PM
+        overtime.setEnd(LocalTime.of(20, 0)); // 8:00 PM
+        overtime.setTotalHours(2.0);
+        overtime.setReason("Project deadline");
+        overtime.setStatus("Pending");
+
+        // Add the overtime entry
+        dao.addOvertime(overtime);
+
+        // Retrieve and print all overtime entries
+        List<Overtime> overtimes = dao.getAllOvertimes();
+        for (Overtime ot : overtimes) {
+            System.out.println(ot);
+        }
+    }*/
 }

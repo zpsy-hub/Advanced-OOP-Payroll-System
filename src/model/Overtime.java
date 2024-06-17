@@ -14,8 +14,9 @@ public class Overtime {
     private String reason;
     private LocalDate dateApproved;
 
-    // Constructors
-    public Overtime() {}
+    // Constructors, getters, and setters
+    public Overtime() {
+    }
 
     public Overtime(int overtimeId, int empId, LocalDate date, String status, LocalTime start, LocalTime end, double totalHours, String reason, LocalDate dateApproved) {
         this.overtimeId = overtimeId;
@@ -29,7 +30,6 @@ public class Overtime {
         this.dateApproved = dateApproved;
     }
 
-    // Getters and Setters
     public int getOvertimeId() {
         return overtimeId;
     }
@@ -100,20 +100,5 @@ public class Overtime {
 
     public void setDateApproved(LocalDate dateApproved) {
         this.dateApproved = dateApproved;
-    }
-
-    @Override
-    public String toString() {
-        return "Overtime{" +
-                "overtimeId=" + overtimeId +
-                ", empId=" + empId +
-                ", date=" + date +
-                ", status='" + status + '\'' +
-                ", start=" + start +
-                ", end=" + end +
-                ", totalHours=" + totalHours +
-                ", reason='" + reason + '\'' +
-                ", dateApproved=" + dateApproved +
-                '}';
     }
 }
