@@ -169,23 +169,24 @@ public class GUI_HREmployeeManagement extends JFrame {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
                     DefaultTableModel model = (DefaultTableModel) table.getModel();
-                    Integer id = (Integer) model.getValueAt(selectedRow, 0);
-                    String lastName = (String) model.getValueAt(selectedRow, 1);
-                    String firstName = (String) model.getValueAt(selectedRow, 2);
-                    String birthday = (String) model.getValueAt(selectedRow, 3);
-                    String address = (String) model.getValueAt(selectedRow, 4);
-                    String phoneNumber = (String) model.getValueAt(selectedRow, 5);
-                    String sssNumber = (String) model.getValueAt(selectedRow, 6);
-                    String philhealthNumber = (String) model.getValueAt(selectedRow, 7);
-                    String tinNumber = (String) model.getValueAt(selectedRow, 8);
-                    String pagibigNumber = (String) model.getValueAt(selectedRow, 9);
-                    String department = (String) model.getValueAt(selectedRow, 10);
-                    String status = (String) model.getValueAt(selectedRow, 11);
-                    String position = (String) model.getValueAt(selectedRow, 12);
-                    String immediateSupervisor = (String) model.getValueAt(selectedRow, 13);
-                    double basicSalary = Double.parseDouble(model.getValueAt(selectedRow, 14).toString());
-                    double grossSemiMonthlyRate = Double.parseDouble(model.getValueAt(selectedRow, 15).toString());
-                    double hourlyRate = Double.parseDouble(model.getValueAt(selectedRow, 16).toString());
+                    int modelRow = table.convertRowIndexToModel(selectedRow); // Convert view row to model row
+                    Integer id = (Integer) model.getValueAt(modelRow, 0);
+                    String lastName = (String) model.getValueAt(modelRow, 1);
+                    String firstName = (String) model.getValueAt(modelRow, 2);
+                    String birthday = (String) model.getValueAt(modelRow, 3);
+                    String address = (String) model.getValueAt(modelRow, 4);
+                    String phoneNumber = (String) model.getValueAt(modelRow, 5);
+                    String sssNumber = (String) model.getValueAt(modelRow, 6);
+                    String philhealthNumber = (String) model.getValueAt(modelRow, 7);
+                    String tinNumber = (String) model.getValueAt(modelRow, 8);
+                    String pagibigNumber = (String) model.getValueAt(modelRow, 9);
+                    String department = (String) model.getValueAt(modelRow, 10);
+                    String status = (String) model.getValueAt(modelRow, 11);
+                    String position = (String) model.getValueAt(modelRow, 12);
+                    String immediateSupervisor = (String) model.getValueAt(modelRow, 13);
+                    double basicSalary = Double.parseDouble(model.getValueAt(modelRow, 14).toString());
+                    double grossSemiMonthlyRate = Double.parseDouble(model.getValueAt(modelRow, 15).toString());
+                    double hourlyRate = Double.parseDouble(model.getValueAt(modelRow, 16).toString());
 
                     Employee employee = new Employee(id, lastName, firstName, birthday, address, phoneNumber,
                             sssNumber, philhealthNumber, tinNumber, pagibigNumber, status, department, position, 
@@ -200,8 +201,6 @@ public class GUI_HREmployeeManagement extends JFrame {
             }
         });
 
-
-
         deletedataButton = new JButton("Delete Data");
         deletedataButton.setBounds(953, 663, 154, 51);
         deletedataButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
@@ -215,10 +214,11 @@ public class GUI_HREmployeeManagement extends JFrame {
                     int option = JOptionPane.showConfirmDialog(GUI_HREmployeeManagement.this, "Are you sure you want to delete this employee? Deletion is permanent.", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
                     if (option == JOptionPane.YES_OPTION) {
                         DefaultTableModel model = (DefaultTableModel) table.getModel();
-                        int idToDelete = (int) model.getValueAt(selectedRow, 0);
+                        int modelRow = table.convertRowIndexToModel(selectedRow); // Convert view row to model row
+                        int idToDelete = (int) model.getValueAt(modelRow, 0);
                         boolean success = EmployeeDAO.deleteEmployee(idToDelete);
                         if (success) {
-                            model.removeRow(selectedRow);
+                            model.removeRow(modelRow);
                             JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Employee deleted successfully.");
                         } else {
                             JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Error deleting employee.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -235,12 +235,13 @@ public class GUI_HREmployeeManagement extends JFrame {
             employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
         }
 
-        // Default sorting by Employee ID in descending order
+        // Default sorting by Employee ID in ascending order
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
-        sorter.setComparator(0, (id1, id2) -> ((Integer) id2).compareTo((Integer) id1));
-        sorter.setSortKeys(List.of(new RowSorter.SortKey(0, SortOrder.DESCENDING)));
+        sorter.setComparator(0, (id1, id2) -> ((Integer) id1).compareTo((Integer) id2));
+        sorter.setSortKeys(List.of(new RowSorter.SortKey(0, SortOrder.ASCENDING)));
+        sorter.sort(); // Ensure sorting is applied immediately
     }
 
     private void populateEmployeeTable() {
@@ -285,6 +286,4 @@ public class GUI_HREmployeeManagement extends JFrame {
         // Set the table model
         table.setModel(model);
     }
-
-
 }

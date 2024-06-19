@@ -306,19 +306,18 @@ public class EmployeeDAO {
         return supervisors;
     }
     
- // Method to retrieve the auto-generated Employee ID after insertion
-    public static int getGeneratedEmployeeId() {
-        String sql = "SELECT LAST_INSERT_ID()"; // MySQL function to get last inserted ID
+    public int getNextAutoIncrementValue() {
+        String sql = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'payrollsystem_db' AND TABLE_NAME = 'employee'";
         try (Connection conn = SQL_client.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt(1); // Retrieve the first column of the result set
+                return rs.getInt("AUTO_INCREMENT");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1; // Return -1 if no ID is found or an error occurs
+        return -1; // Return -1 if unable to get the value
     }
 
 
