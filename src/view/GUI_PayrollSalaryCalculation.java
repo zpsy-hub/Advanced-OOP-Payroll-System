@@ -33,8 +33,10 @@ import DAO.EmployeeDAO;
 import service.PayrollSalaryCalculationService;
 import service.PayslipService;
 import DAO.TimesheetDAO;
+import customUI.Sidebar;
 import DAO.PayslipDAO;
 import util.SessionManager;
+import util.SignOutButton;
 
 import javax.swing.JScrollPane;
 
@@ -144,115 +146,21 @@ public class GUI_PayrollSalaryCalculation {
 		payrollsalarycalc.getContentPane().add(mainPanel);
 		mainPanel.setLayout(null);
 		
-		JPanel sidePanel = new JPanel();
-		sidePanel.setBackground(new Color(255, 255, 255));
-		sidePanel.setBounds(0, 0, 299, 733);
-		mainPanel.add(sidePanel);
-		sidePanel.setLayout(null);
-		
-		JLabel motorphLabel = new JLabel("MotorPH");
-		motorphLabel.setFont(new Font("Tw Cen MT", Font.BOLD, 28));
-		motorphLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		motorphLabel.setForeground(new Color(30, 55, 101));
-		motorphLabel.setBounds(10, 30, 279, 45);
-		sidePanel.add(motorphLabel);
-		
-		//sidebar
-		JButton dashboardButton = new JButton("Dashboard");
-		dashboardButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		dashboardButton.setBackground(Color.WHITE);
-		dashboardButton.setBounds(37, 95, 227, 31);
-		sidePanel.add(dashboardButton);
-		dashboardButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUIDashboard window = new GUIDashboard(loggedInEmployee);
-                window.dashboardScreen.setVisible(true);
-                payrollsalarycalc.dispose();
-		        }
-		});
-		
-		JButton timeInOutButton = new JButton("Time In/Out");
-		timeInOutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		timeInOutButton.setBackground(Color.WHITE);
-		timeInOutButton.setBounds(37, 155, 227, 31);
-		sidePanel.add(timeInOutButton);
-		timeInOutButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		        GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
-		        timeInOut.openWindow();
-		        payrollsalarycalc.dispose();
-		        }
-		});
-		
-		JButton payslipButton = new JButton("Payslip");
-		payslipButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		payslipButton.setBackground(Color.WHITE);
-		payslipButton.setBounds(37, 216, 227, 31);
-		sidePanel.add(payslipButton);
-		payslipButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
-		    	payslip.openWindow();
-		    	payrollsalarycalc.dispose();		    		        	    
-		    }
-		});
-		
-		JButton leaverequestButton = new JButton("Leave Request");
-		leaverequestButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		leaverequestButton.setBackground(Color.WHITE);
-		leaverequestButton.setBounds(37, 277, 227, 31);
-		sidePanel.add(leaverequestButton);
-		leaverequestButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUIPayslip window = new GUIPayslip(loggedInEmployee);
-				window.payslipScreen.setVisible(true);
-				payrollsalarycalc.dispose();
-		    }
-		});		
-		
-		JButton monthlyreportButton = new JButton("Monthly Summary Report");
-		monthlyreportButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
-		monthlyreportButton.setBackground(Color.WHITE);
-		monthlyreportButton.setBounds(37, 473, 227, 31);
-		sidePanel.add(monthlyreportButton);
-		monthlyreportButton.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	GUI_PayrollMonthlySummary window = new GUI_PayrollMonthlySummary(loggedInEmployee);
-				window.payrollmontlysummary.setVisible(true);
-				payrollsalarycalc.dispose();
-		    }
-		});
-		
-		JPanel separator = new JPanel();
-		separator.setBackground(new Color(30, 55, 101));
-		separator.setBounds(37, 372, 88, 3);
-		sidePanel.add(separator);
-		
-		JButton salarycalculationButton = new JButton("Salary Calculation");
-		salarycalculationButton.setEnabled(false);
-		salarycalculationButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 23));
-		salarycalculationButton.setBackground(Color.WHITE);
-		salarycalculationButton.setBounds(37, 411, 227, 31);
-		sidePanel.add(salarycalculationButton);
+		// Use the Sidebar class
+        Sidebar sidebar = new Sidebar(loggedInEmployee);
+        sidebar.setBounds(0, 92, 321, 680);
+        mainPanel.add(sidebar);
+
+        // Sign Out button initialization
+        SignOutButton signOutButton = new SignOutButton(SignOutButton.getSignOutActionListener(payrollsalarycalc));
+        signOutButton.setBounds(1125, 24, 111, 40);
+        mainPanel.add(signOutButton);
 		
 		
 		JLabel salarycalculationLabel = new JLabel("Salary Calculation");
 		salarycalculationLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
 		salarycalculationLabel.setBounds(324, 36, 267, 33);
 		mainPanel.add(salarycalculationLabel);
-		
-		JButton signoutButton = new JButton("Sign Out");
-		signoutButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				GUIlogin login = new GUIlogin();
-				login.loginScreen1.setVisible(true);
-				payrollsalarycalc.dispose();
-			}
-		});
-		signoutButton.setFont(new Font("Tw Cen MT", Font.PLAIN, 18));
-		signoutButton.setBackground(Color.WHITE);
-		signoutButton.setBounds(1160, 10, 131, 31);
-		mainPanel.add(signoutButton);		
 		
 		//main panel
 		JLabel lblPayPeriodMonth = new JLabel("Timesheet Records");

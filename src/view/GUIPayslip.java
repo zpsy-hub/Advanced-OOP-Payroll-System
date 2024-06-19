@@ -30,6 +30,8 @@ import customUI.SidebarButton;
 import service.PermissionService;
 import service.SQL_client;
 import util.SessionManager;
+import util.SignOutButton;
+
 import javax.swing.JTextField;
 
 public class GUIPayslip {
@@ -112,55 +114,9 @@ public class GUIPayslip {
         sidebar.setBounds(0, 92, 321, 680);
         mainPanel.add(sidebar);
 
-        // Set button visibility based on permissions
-        List<String> visibleButtons = new ArrayList<>();
-        visibleButtons.add("Dashboard");
-        visibleButtons.add("Time In/Out");
-        visibleButtons.add("Payslip");
-        visibleButtons.add("Leave Request");
-        visibleButtons.add("Overtime Request");
-
-        Connection connection = SQL_client.getInstance().getConnection();
-        PermissionService permissionsService = PermissionService.getInstance();
-        List<Permission> userPermissions = permissionsService.getPermissionsForEmployee(loggedInEmployee.getId(), connection);
-
-        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 1)) {
-            visibleButtons.add("Employee Management");
-        }
-        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 2)) {
-            visibleButtons.add("Attendance Management");
-        }
-        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 3)) {
-            visibleButtons.add("Leave Management");
-        }
-        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 4)) {
-            visibleButtons.add("Salary Calculation");
-        }
-        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 5)) {
-            visibleButtons.add("Monthly Summary Reports");
-        }
-        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 7)) {
-            visibleButtons.add("Permissions Management");
-        }
-        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 8)) {
-            visibleButtons.add("Credentials Management");
-        }
-        if (userPermissions.stream().anyMatch(permission -> permission.getPermissionId() == 6)) {
-            visibleButtons.add("Authentication Logs");
-        }
-
-        sidebar.setButtonVisibility(visibleButtons);
-        
-        // Add the sign-out button
-        SidebarButton signOutButton = new SidebarButton("Sign Out", null, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GUIlogin login = new GUIlogin();
-                login.loginScreen1.setVisible(true);
-                payslipScreen.dispose(); 
-            }
-        });
-        signOutButton.setBounds(1094, 35, 114, 40);
+        // Sign Out button initialization
+        SignOutButton signOutButton = new SignOutButton(SignOutButton.getSignOutActionListener(payslipScreen));
+        signOutButton.setBounds(1125, 24, 111, 40);
         mainPanel.add(signOutButton);
 				
 		JLabel payperiodLabel = new JLabel("Pay Period");
@@ -222,14 +178,14 @@ public class GUIPayslip {
 		textfieldStartDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		textfieldStartDate.setEditable(false);
 		textfieldStartDate.setColumns(10);
-		textfieldStartDate.setBounds(942, 305, 67, 19);
+		textfieldStartDate.setBounds(942, 305, 103, 19);
 		mainPanel.add(textfieldStartDate);
 		
 		textfieldEndDate = new JTextField();
 		textfieldEndDate.setFont(new Font("Tw Cen MT", Font.PLAIN, 12));
 		textfieldEndDate.setEditable(false);
 		textfieldEndDate.setColumns(10);
-		textfieldEndDate.setBounds(942, 332, 67, 19);
+		textfieldEndDate.setBounds(942, 332, 103, 19);
 		mainPanel.add(textfieldEndDate);
 		
 		txtfieldMonthlyRate = new JTextField();

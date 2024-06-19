@@ -1,13 +1,16 @@
 package DAO;
+
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import model.Employee;
 import service.SQL_client;
 
 public class EmployeeDAO {
-	private static EmployeeDAO instance = null;
+    private static EmployeeDAO instance = null;
 
     // Singleton pattern: private constructor
     public EmployeeDAO() {}
@@ -21,9 +24,10 @@ public class EmployeeDAO {
     }
 
     public static boolean createEmployee(Employee employee) {
-        String sql = "INSERT INTO payroll_system.employees (employee_lastname, employee_firstname, birthday, address, phone_number, sss_number, philhealth_number, tin_number, pagibig_number, status, position, immediate_supervisor, basic_salary, rice_subsidy, phone_allowance, clothing_allowance, gross_semimonthly_rate, hourly_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO payrollsystem_db.employee (last_name, first_name, birthdate, address, phone_no, sss_no, philhealth_no, bir_no, pagibig_no, status_id, dept_id, position_id, emp_supervisor_id, basic_salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = SQL_client.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            
             pstmt.setString(1, employee.getLastName());
             pstmt.setString(2, employee.getFirstName());
             pstmt.setDate(3, java.sql.Date.valueOf(employee.getBirthday()));
@@ -33,15 +37,11 @@ public class EmployeeDAO {
             pstmt.setString(7, employee.getPhilhealthNumber());
             pstmt.setString(8, employee.getTinNumber());
             pstmt.setString(9, employee.getPagibigNumber());
-            pstmt.setString(10, employee.getStatus());
-            pstmt.setString(11, employee.getPosition());
-            pstmt.setString(12, employee.getImmediateSupervisor());
-            pstmt.setFloat(13, employee.getBasicSalary());
-            pstmt.setFloat(14, employee.getRiceSubsidy());
-            pstmt.setFloat(15, employee.getPhoneAllowance());
-            pstmt.setFloat(16, employee.getClothingAllowance());
-            pstmt.setFloat(17, employee.getGrossSemimonthlyRate());
-            pstmt.setDouble(18, employee.getHourlyRate());
+            pstmt.setInt(10, getStatusIdByName(employee.getStatus()));
+            pstmt.setInt(11, getDepartmentIdByName(employee.getDepartment()));
+            pstmt.setInt(12, getPositionIdByName(employee.getPosition()));
+            pstmt.setInt(13, getEmployeeIdByName(employee.getImmediateSupervisor()));
+            pstmt.setDouble(14, employee.getBasicSalary());
 
             // Execute the INSERT statement
             int rowsInserted = pstmt.executeUpdate();
@@ -50,7 +50,7 @@ public class EmployeeDAO {
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int generatedId = generatedKeys.getInt(1);
-                    employee.setid(generatedId);
+                    employee.setEmpId(generatedId);
                 }
             }
 
@@ -61,121 +61,38 @@ public class EmployeeDAO {
         }
     }
 
-
     public static Employee getEmployeeById(int empId) {
-        String sql = "SELECT * FROM payroll_system.employees WHERE emp_id=?";
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        
-        try {
-            conn = SQL_client.getInstance().getConnection();
-            pstmt = conn.prepareStatement(sql);
+        String sql = "SELECT e.*, s.status_name, d.dept_name, p.position_name, CONCAT(sup.first_name, ' ', sup.last_name) as supervisor_name, ed.gross_semi_monthly_rate, ed.hourly_rate " +
+                     "FROM payrollsystem_db.employee e " +
+                     "JOIN payrollsystem_db.status s ON e.status_id = s.status_id " +
+                     "JOIN payrollsystem_db.department d ON e.dept_id = d.dept_id " +
+                     "JOIN payrollsystem_db.position p ON e.position_id = p.position_id " +
+                     "LEFT JOIN payrollsystem_db.employee sup ON e.emp_supervisor_id = sup.emp_id " +
+                     "JOIN payrollsystem_db.employee_details ed ON e.emp_id = ed.emp_id " +
+                     "WHERE e.emp_id = ?";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, empId);
-            rs = pstmt.executeQuery();
-            
+            ResultSet rs = pstmt.executeQuery();
+
             if (rs.next()) {
                 return extractEmployeeFromResultSet(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            // Close ResultSet, PreparedStatement, and Connection in finally block
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (pstmt != null) {
-                    pstmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
         return null;
     }
 
-
-    private static Employee extractEmployeeFromResultSet(ResultSet rs) throws SQLException {
-        int id = rs.getInt("emp_id");
-        String lastName = rs.getString("employee_lastname");
-        String firstName = rs.getString("employee_firstname");
-        String birthday = rs.getDate("birthday").toLocalDate().toString();
-        String address = rs.getString("address");
-        String phoneNumber = rs.getString("phone_number");
-        String sssNumber = rs.getString("sss_number");
-        String philhealthNumber = rs.getString("philhealth_number");
-        String tinNumber = rs.getString("tin_number");
-        String pagibigNumber = rs.getString("pagibig_number");
-        String status = rs.getString("status");
-        String position = rs.getString("position");
-        String immediateSupervisor = rs.getString("immediate_supervisor");
-        float basicSalary = rs.getFloat("basic_salary");
-        float riceSubsidy = rs.getFloat("rice_subsidy");
-        float phoneAllowance = rs.getFloat("phone_allowance");
-        float clothingAllowance = rs.getFloat("clothing_allowance");
-        float grossSemimonthlyRate = rs.getFloat("gross_semimonthly_rate");
-        double hourlyRate = rs.getDouble("hourly_rate");
-
-        // Use the parameterized constructor to create an Employee object
-        return new Employee(id, lastName, firstName, birthday, address, phoneNumber, sssNumber, philhealthNumber,
-                tinNumber, pagibigNumber, status, position, immediateSupervisor, basicSalary, riceSubsidy,
-                phoneAllowance, clothingAllowance, grossSemimonthlyRate, hourlyRate);
-    }
-
-
-
-    public static boolean updateEmployee(Employee employee) {
-        String sql = "UPDATE payroll_system.employees SET employee_lastname=?, employee_firstname=?, birthday=?, address=?, phone_number=?, sss_number=?, philhealth_number=?, tin_number=?, pagibig_number=?, status=?, position=?, immediate_supervisor=?, basic_salary=?, rice_subsidy=?, phone_allowance=?, clothing_allowance=?, gross_semimonthly_rate=?, hourly_rate=? WHERE emp_id=?";
-        try (Connection conn = SQL_client.getInstance().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, employee.getLastName());
-            pstmt.setString(2, employee.getFirstName());
-            pstmt.setDate(3, java.sql.Date.valueOf(employee.getBirthday()));
-            pstmt.setString(4, employee.getAddress());
-            pstmt.setString(5, employee.getPhoneNumber());
-            pstmt.setString(6, employee.getSssNumber());
-            pstmt.setString(7, employee.getPhilhealthNumber());
-            pstmt.setString(8, employee.getTinNumber());
-            pstmt.setString(9, employee.getPagibigNumber());
-            pstmt.setString(10, employee.getStatus());
-            pstmt.setString(11, employee.getPosition());
-            pstmt.setString(12, employee.getImmediateSupervisor());
-            pstmt.setFloat(13, employee.getBasicSalary());
-            pstmt.setFloat(14, employee.getRiceSubsidy());
-            pstmt.setFloat(15, employee.getPhoneAllowance());
-            pstmt.setFloat(16, employee.getClothingAllowance());
-            pstmt.setFloat(17, employee.getGrossSemimonthlyRate());
-            pstmt.setDouble(18, employee.getHourlyRate());
-            pstmt.setInt(19, employee.getEmpId());
-            int rowsUpdated = pstmt.executeUpdate();
-            return rowsUpdated > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public static boolean deleteEmployee(int empId) {
-        String sql = "DELETE FROM payroll_system.employees WHERE emp_id=?";
-        try (Connection conn = SQL_client.getInstance().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, empId);
-            int rowsDeleted = pstmt.executeUpdate();
-            return rowsDeleted > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    //gets all employees records
     public static List<Employee> getAllEmployees() {
         List<Employee> employees = new ArrayList<>();
-        String sql = "SELECT * FROM payroll_system.employees";
+        String sql = "SELECT e.*, s.status_name, d.dept_name, p.position_name, CONCAT(sup.first_name, ' ', sup.last_name) as supervisor_name, ed.gross_semi_monthly_rate, ed.hourly_rate " +
+                     "FROM payrollsystem_db.employee e " +
+                     "JOIN payrollsystem_db.status s ON e.status_id = s.status_id " +
+                     "JOIN payrollsystem_db.department d ON e.dept_id = d.dept_id " +
+                     "JOIN payrollsystem_db.position p ON e.position_id = p.position_id " +
+                     "LEFT JOIN payrollsystem_db.employee sup ON e.emp_supervisor_id = sup.emp_id " +
+                     "JOIN payrollsystem_db.employee_details ed ON e.emp_id = ed.emp_id";
         try (Connection conn = SQL_client.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
@@ -188,22 +105,221 @@ public class EmployeeDAO {
         }
         return employees;
     }
-          
-    // Method to get the hourly rate by employee ID
-    public static double getHourlyRateById(int empId) {
-        String sql = "SELECT hourly_rate FROM payroll_system.employees WHERE emp_id=?";
+
+    public static boolean updateEmployee(Employee employee) {
+        String sql = "UPDATE payrollsystem_db.employee SET last_name = ?, first_name = ?, birthdate = ?, address = ?, phone_no = ?, sss_no = ?, philhealth_no = ?, bir_no = ?, pagibig_no = ?, status_id = ?, dept_id = ?, position_id = ?, emp_supervisor_id = ?, basic_salary = ? WHERE emp_id = ?";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, employee.getLastName());
+            pstmt.setString(2, employee.getFirstName());
+            pstmt.setDate(3, java.sql.Date.valueOf(employee.getBirthday()));
+            pstmt.setString(4, employee.getAddress());
+            pstmt.setString(5, employee.getPhoneNumber());
+            pstmt.setString(6, employee.getSssNumber());
+            pstmt.setString(7, employee.getPhilhealthNumber());
+            pstmt.setString(8, employee.getTinNumber());
+            pstmt.setString(9, employee.getPagibigNumber());
+            pstmt.setInt(10, getStatusIdByName(employee.getStatus()));
+            pstmt.setInt(11, getDepartmentIdByName(employee.getDepartment()));
+            pstmt.setInt(12, getPositionIdByName(employee.getPosition()));
+            pstmt.setInt(13, getEmployeeIdByName(employee.getImmediateSupervisor()));
+            pstmt.setDouble(14, employee.getBasicSalary());
+            pstmt.setInt(15, employee.getEmpId());
+
+            int rowsUpdated = pstmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean deleteEmployee(int empId) {
+        String sql = "DELETE FROM payrollsystem_db.employee WHERE emp_id = ?";
         try (Connection conn = SQL_client.getInstance().getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, empId);
+            int rowsDeleted = pstmt.executeUpdate();
+            return rowsDeleted > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private static Employee extractEmployeeFromResultSet(ResultSet rs) throws SQLException {
+        int id = rs.getInt("emp_id");
+        String lastName = rs.getString("last_name");
+        String firstName = rs.getString("first_name");
+        String birthday = rs.getDate("birthdate").toLocalDate().toString();
+        String address = rs.getString("address");
+        String phoneNumber = rs.getString("phone_no");
+        String sssNumber = rs.getString("sss_no");
+        String philhealthNumber = rs.getString("philhealth_no");
+        String tinNumber = rs.getString("bir_no");
+        String pagibigNumber = rs.getString("pagibig_no");
+        String status = rs.getString("status_name");
+        String department = rs.getString("dept_name");
+        String position = rs.getString("position_name");
+        String immediateSupervisor = rs.getString("supervisor_name");
+        double basicSalary = rs.getDouble("basic_salary");
+        double grossSemiMonthlyRate = rs.getDouble("gross_semi_monthly_rate");
+        double hourlyRate = rs.getDouble("hourly_rate");
+
+        return new Employee(id, lastName, firstName, birthday, address, phoneNumber, sssNumber, philhealthNumber, tinNumber, pagibigNumber, status, department, position, immediateSupervisor, basicSalary, grossSemiMonthlyRate, hourlyRate);
+    }
+
+    private static int getStatusIdByName(String statusName) {
+        String sql = "SELECT status_id FROM payrollsystem_db.status WHERE status_name = ?";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, statusName);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                return rs.getDouble("hourly_rate");
+                return rs.getInt("status_id");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        // Return a default value if no hourly rate is found
-        return 0.0;
+        return -1; // Return a default value if no ID is found
+    }
+
+    private static int getDepartmentIdByName(String departmentName) {
+        String sql = "SELECT dept_id FROM payrollsystem_db.department WHERE dept_name = ?";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, departmentName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("dept_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return a default value if no ID is found
+    }
+
+    private static int getPositionIdByName(String positionName) {
+        String sql = "SELECT position_id FROM payrollsystem_db.position WHERE position_name = ?";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, positionName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("position_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return a default value if no ID is found
+    }
+
+    private static int getEmployeeIdByName(String supervisorName) {
+        String sql = "SELECT emp_id FROM payrollsystem_db.employee WHERE CONCAT(first_name, ' ', last_name) = ?";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, supervisorName);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("emp_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return a default value if no ID is found
     }
     
+ // Method to retrieve all statuses from the database
+    public Map<Integer, String> getAllStatuses() {
+        Map<Integer, String> statuses = new HashMap<>();
+        String sql = "SELECT status_id, status_name FROM payrollsystem_db.status";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                int id = rs.getInt("status_id");
+                String name = rs.getString("status_name");
+                statuses.put(id, name);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return statuses;
+    }
+
+    // Method to retrieve all positions from the database
+    public Map<Integer, String> getAllPositions() {
+        Map<Integer, String> positions = new HashMap<>();
+        String sql = "SELECT position_id, position_name FROM payrollsystem_db.position";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                int id = rs.getInt("position_id");
+                String name = rs.getString("position_name");
+                positions.put(id, name);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return positions;
+    }
+
+    // Method to retrieve all departments from the database
+    public Map<Integer, String> getAllDepartments() {
+        Map<Integer, String> departments = new HashMap<>();
+        String sql = "SELECT dept_id, dept_name FROM payrollsystem_db.department";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                int id = rs.getInt("dept_id");
+                String name = rs.getString("dept_name");
+                departments.put(id, name);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return departments;
+    }
+
+    // Method to retrieve all supervisors from the database
+    public Map<Integer, String> getAllSupervisors() {
+        Map<Integer, String> supervisors = new HashMap<>();
+        String sql = "SELECT emp_id, CONCAT(first_name, ' ', last_name) AS supervisor_name FROM payrollsystem_db.employee";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                int id = rs.getInt("emp_id");
+                String name = rs.getString("supervisor_name");
+                supervisors.put(id, name);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return supervisors;
+    }
+    
+ // Method to retrieve the auto-generated Employee ID after insertion
+    public static int getGeneratedEmployeeId() {
+        String sql = "SELECT LAST_INSERT_ID()"; // MySQL function to get last inserted ID
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1); // Retrieve the first column of the result set
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if no ID is found or an error occurs
+    }
+
+
 }

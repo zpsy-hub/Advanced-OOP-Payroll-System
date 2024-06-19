@@ -107,6 +107,36 @@ public class OvertimeDAO {
             e.printStackTrace();
         }
     }
+    
+ // Method to retrieve overtime entries by status
+    public List<Overtime> getOvertimeByStatus(String status) {
+        List<Overtime> overtimes = new ArrayList<>();
+        try {
+            String sql = "SELECT * FROM payroll_system.overtime WHERE status = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, status);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Overtime overtime = new Overtime(
+                    resultSet.getInt("overtimeid"),
+                    resultSet.getInt("empid"),
+                    resultSet.getDate("date").toLocalDate(),
+                    resultSet.getString("status"),
+                    resultSet.getTime("starttime").toLocalTime(),
+                    resultSet.getTime("endtime").toLocalTime(),
+                    resultSet.getDouble("totalhours"),
+                    resultSet.getString("reason"),
+                    resultSet.getDate("dateapproved") != null ? resultSet.getDate("dateapproved").toLocalDate() : null
+                );
+                overtimes.add(overtime);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return overtimes;
+    }
 
     public List<Overtime> getAllOvertimes() {
         List<Overtime> overtimes = new ArrayList<>();
@@ -147,6 +177,8 @@ public class OvertimeDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
+        
     }
 
     /* Main method for testing

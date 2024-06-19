@@ -15,7 +15,6 @@ public class LeaveBalanceDAO {
     private static LeaveBalanceDAO instance;
 
     public LeaveBalanceDAO() {
-        // Initialize the connection (you'll need to implement this)
         this.connection = SQL_client.getInstance().getConnection();
     }
 
