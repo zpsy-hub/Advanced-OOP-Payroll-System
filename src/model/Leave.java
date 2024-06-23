@@ -10,11 +10,12 @@ public class Leave {
     private Date startDate;
     private Date endDate;
     private int daysTaken;
+    private String status;  // Add this line
     private Date dateApproved;
     private int leaveDaysRemaining;
 
-    // Constructor
-    public Leave(int empId, int leaveTypeId, int year, Date dateSubmitted, Date startDate, Date endDate, int daysTaken, Date dateApproved, int leaveDaysRemaining) {
+    // Constructor updated with status
+    public Leave(int empId, int leaveTypeId, int year, Date dateSubmitted, Date startDate, Date endDate, int daysTaken, String status, Date dateApproved, int leaveDaysRemaining) {
         this.empId = empId;
         this.leaveTypeId = leaveTypeId;
         this.year = year;
@@ -22,11 +23,12 @@ public class Leave {
         this.startDate = startDate;
         this.endDate = endDate;
         this.daysTaken = daysTaken;
+        this.status = status; // Initialize status
         this.dateApproved = dateApproved;
         this.leaveDaysRemaining = leaveDaysRemaining;
     }
 
-    // Getters and Setters
+    // Getters and Setters including for status
     public int getEmpId() {
         return empId;
     }
@@ -81,6 +83,14 @@ public class Leave {
 
     public void setDaysTaken(int daysTaken) {
         this.daysTaken = daysTaken;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Date getDateApproved() {

@@ -8,28 +8,44 @@ public class Overtime {
     private int empId;
     private LocalDate date;
     private String status;
-    private LocalTime start;
-    private LocalTime end;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private double totalHours;
     private String reason;
     private LocalDate dateApproved;
+    private int overtimeTypeId;
+    private String overtimeTypeName;
+    private String employeeName; 
 
-    // Constructors, getters, and setters
     public Overtime() {
+        // Default constructor
     }
 
-    public Overtime(int overtimeId, int empId, LocalDate date, String status, LocalTime start, LocalTime end, double totalHours, String reason, LocalDate dateApproved) {
+    // Constructor with all fields except employeeName
+    public Overtime(int overtimeId, int empId, LocalDate date, String status, LocalTime startTime, LocalTime endTime,
+                    double totalHours, String reason, LocalDate dateApproved, int overtimeTypeId, String overtimeTypeName) {
         this.overtimeId = overtimeId;
         this.empId = empId;
         this.date = date;
         this.status = status;
-        this.start = start;
-        this.end = end;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.totalHours = totalHours;
         this.reason = reason;
         this.dateApproved = dateApproved;
+        this.overtimeTypeId = overtimeTypeId;
+        this.overtimeTypeName = overtimeTypeName;
     }
 
+    // Constructor with employeeName included
+    public Overtime(int overtimeId, int empId, LocalDate date, String status, LocalTime startTime, LocalTime endTime,
+                    double totalHours, String reason, LocalDate dateApproved, int overtimeTypeId, String overtimeTypeName,
+                    String employeeName) {
+        this(overtimeId, empId, date, status, startTime, endTime, totalHours, reason, dateApproved, overtimeTypeId, overtimeTypeName);
+        this.employeeName = employeeName;
+    }
+
+    // Getters and Setters
     public int getOvertimeId() {
         return overtimeId;
     }
@@ -62,20 +78,20 @@ public class Overtime {
         this.status = status;
     }
 
-    public LocalTime getStart() {
-        return start;
+    public LocalTime getStartTime() {
+        return startTime;
     }
 
-    public void setStart(LocalTime start) {
-        this.start = start;
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
     }
 
-    public LocalTime getEnd() {
-        return end;
+    public LocalTime getEndTime() {
+        return endTime;
     }
 
-    public void setEnd(LocalTime end) {
-        this.end = end;
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public double getTotalHours() {
@@ -100,5 +116,47 @@ public class Overtime {
 
     public void setDateApproved(LocalDate dateApproved) {
         this.dateApproved = dateApproved;
+    }
+
+    public int getOvertimeTypeId() {
+        return overtimeTypeId;
+    }
+
+    public void setOvertimeTypeId(int overtimeTypeId) {
+        this.overtimeTypeId = overtimeTypeId;
+    }
+
+    public String getOvertimeTypeName() {
+        return overtimeTypeName;
+    }
+
+    public void setOvertimeTypeName(String overtimeTypeName) {
+        this.overtimeTypeName = overtimeTypeName;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    @Override
+    public String toString() {
+        return "Overtime{" +
+                "overtimeId=" + overtimeId +
+                ", empId=" + empId +
+                ", date=" + date +
+                ", status='" + status + '\'' +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", totalHours=" + totalHours +
+                ", reason='" + reason + '\'' +
+                ", dateApproved=" + dateApproved +
+                ", overtimeTypeId=" + overtimeTypeId +
+                ", overtimeTypeName='" + overtimeTypeName + '\'' +
+                ", employeeName='" + employeeName + '\'' +
+                '}';
     }
 }

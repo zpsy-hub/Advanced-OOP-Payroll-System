@@ -2,38 +2,33 @@ package view;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
 import customUI.ImagePanel;
 import customUI.Sidebar;
-import customUI.SidebarButton;
 import model.Overtime;
-import model.Permission;
 import model.User;
-import service.PermissionService;
 import service.SQL_client;
 import util.SessionManager;
 import util.SignOutButton;
 import DAO.OvertimeDAO;
-
-import javax.swing.JScrollPane;
-import javax.swing.JButton;
-import java.awt.Font;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.JTable;
-import javax.swing.RowFilter;
 
 public class GUI_HROvertimemanagement extends JFrame {
 
@@ -115,7 +110,7 @@ public class GUI_HROvertimemanagement extends JFrame {
         mainPanel.add(approveButton);
         approveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                updateOvertimeStatus("Approved");
+            	approveOvertimeRequest();
             }
         });
 
@@ -126,7 +121,7 @@ public class GUI_HROvertimemanagement extends JFrame {
         mainPanel.add(rejectButton);
         rejectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                updateOvertimeStatus("Rejected");
+            	rejectOvertimeRequest();
             }
         });
 
@@ -177,7 +172,7 @@ public class GUI_HROvertimemanagement extends JFrame {
     }
 
     private void loadOvertimeLogs() {
-        List<Overtime> overtimes = overtimeDAO.getOvertimeByStatus("Pending");
+        List<Overtime> overtimes = overtimeDAO.getPendingOvertimeRequests();
         for (Overtime overtime : overtimes) {
             overtimelogstableModel.addRow(new Object[]{
                 overtime.getEmpId(),
@@ -193,40 +188,49 @@ public class GUI_HROvertimemanagement extends JFrame {
     }
 
     private void loadOvertimeHistory() {
-        List<Overtime> overtimes = overtimeDAO.getAllOvertimes();
+        List<Overtime> overtimes = overtimeDAO.getProcessedOvertimeRequests();
         for (Overtime overtime : overtimes) {
-            if (!"Pending".equals(overtime.getStatus())) {
-                overtimehistorytableModel.addRow(new Object[]{
-                    overtime.getEmpId(),
-                    overtime.getEmployeeName(),
-                    overtime.getDate(),
-                    overtime.getStartTime(),
-                    overtime.getEndTime(),
-                    overtime.getTotalHours(),
-                    overtime.getReason(),
-                    overtime.getStatus(),
-                    overtime.getDateApproved()
-                });
-            }
+            overtimehistorytableModel.addRow(new Object[]{
+                overtime.getEmpId(),
+                overtime.getEmployeeName(),
+                overtime.getDate(),
+                overtime.getStartTime(),
+                overtime.getEndTime(),
+                overtime.getTotalHours(),
+                overtime.getReason(),
+                overtime.getStatus(),
+                overtime.getDateApproved()
+            });
         }
     }
 
-    private void updateOvertimeStatus(String status) {
+    private void approveOvertimeRequest() {
         int selectedRow = overtimelogstable.getSelectedRow();
         if (selectedRow >= 0) {
             int empId = (int) overtimelogstableModel.getValueAt(selectedRow, 0);
-            Date date = (Date) overtimelogstableModel.getValueAt(selectedRow, 2);
+            LocalDate date = (LocalDate) overtimelogstableModel.getValueAt(selectedRow, 2);
             LocalDate dateApproved = LocalDate.now();
+            int approverId = loggedInEmployee.getId(); 
 
-            Overtime overtime = overtimeDAO.getOvertimeByEmpIdAndDate(empId, date.toLocalDate());
-            if (overtime != null) {
-                overtime.setStatus(status);
-                overtime.setDateApproved(dateApproved);
-                overtimeDAO.updateOvertime(overtime);
+            overtimeDAO.approveOvertime(empId, date, dateApproved, approverId);
+            
+            overtimelogstableModel.removeRow(selectedRow);
+            loadOvertimeHistory();
+        }
+    }
 
-                overtimelogstableModel.removeRow(selectedRow);
-                loadOvertimeHistory();
-            }
+    private void rejectOvertimeRequest() {
+        int selectedRow = overtimelogstable.getSelectedRow();
+        if (selectedRow >= 0) {
+            int empId = (int) overtimelogstableModel.getValueAt(selectedRow, 0);
+            LocalDate date = (LocalDate) overtimelogstableModel.getValueAt(selectedRow, 2);
+            LocalDate dateApproved = LocalDate.now();
+            int approverId = loggedInEmployee.getId(); 
+
+            overtimeDAO.rejectOvertime(empId, date, dateApproved, approverId);
+            
+            overtimelogstableModel.removeRow(selectedRow);
+            loadOvertimeHistory();
         }
     }
 

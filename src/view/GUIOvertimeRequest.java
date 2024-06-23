@@ -31,6 +31,7 @@ import customUI.ImagePanel;
 import customUI.Sidebar;
 import customUI.SidebarButton;
 import model.Overtime;
+import model.OvertimeType;
 import model.Permission;
 import model.User;
 import service.PermissionService;
@@ -42,16 +43,20 @@ import util.SignOutButton;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JTable;
+import javax.swing.text.MaskFormatter;
+import javax.swing.JFormattedTextField;
+import java.text.ParseException;
 
 public class GUIOvertimeRequest extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private User loggedInEmployee;
-    private JTextField startTimetextField;
-    private JTextField endTimetextField;
+    private JFormattedTextField startTimetextField;
+    private JFormattedTextField endTimetextField;
     private JTextField reasontextField;
     private JTable overtimehistorytable;
+    private JComboBox<String> LeaveTypecomboBox;
 
     /**
      * Launch the application.
@@ -108,7 +113,7 @@ public class GUIOvertimeRequest extends JFrame {
 
         JLabel lblSelectLeaveType = new JLabel("Start Time: ");
         lblSelectLeaveType.setFont(new Font("Poppins", Font.PLAIN, 16));
-        lblSelectLeaveType.setBounds(428, 239, 88, 21);
+        lblSelectLeaveType.setBounds(717, 240, 88, 21);
         mainPanel.add(lblSelectLeaveType);
 
         JLabel lblSelectLeaveType_1 = new JLabel("Date:");
@@ -151,21 +156,27 @@ public class GUIOvertimeRequest extends JFrame {
         yearComboBox.setBounds(1035, 183, 119, 32);
         mainPanel.add(yearComboBox);
 
-        startTimetextField = new JTextField();
-        startTimetextField.setFont(new Font("Poppins", Font.PLAIN, 14));
-        startTimetextField.setBounds(526, 233, 253, 32);
-        mainPanel.add(startTimetextField);
-        startTimetextField.setColumns(10);
+        try {
+            MaskFormatter timeFormatter = new MaskFormatter("##:##");
+            timeFormatter.setPlaceholderCharacter('_');
 
-        endTimetextField = new JTextField();
-        endTimetextField.setFont(new Font("Poppins", Font.PLAIN, 14));
-        endTimetextField.setColumns(10);
-        endTimetextField.setBounds(901, 233, 253, 32);
-        mainPanel.add(endTimetextField);
+            startTimetextField = new JFormattedTextField(timeFormatter);
+            startTimetextField.setFont(new Font("Poppins", Font.PLAIN, 14));
+            startTimetextField.setBounds(815, 235, 119, 32);
+            mainPanel.add(startTimetextField);
+
+            endTimetextField = new JFormattedTextField(timeFormatter);
+            endTimetextField.setFont(new Font("Poppins", Font.PLAIN, 14));
+            endTimetextField.setBounds(1035, 234, 119, 32);
+            mainPanel.add(endTimetextField);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         JLabel lblEndTime = new JLabel("End Time: ");
         lblEndTime.setFont(new Font("Poppins", Font.PLAIN, 16));
-        lblEndTime.setBounds(803, 239, 88, 21);
+        lblEndTime.setBounds(949, 240, 88, 21);
         mainPanel.add(lblEndTime);
 
         JLabel Reason = new JLabel("Reason:");
@@ -200,6 +211,22 @@ public class GUIOvertimeRequest extends JFrame {
 
         // Populate ComboBoxes
         populateComboBoxes(monthComboBox, dayComboBox, yearComboBox);
+
+        JLabel lblSelectLeaveType_1_1 = new JLabel("Leave Type:");
+        lblSelectLeaveType_1_1.setFont(new Font("Poppins", Font.PLAIN, 16));
+        lblSelectLeaveType_1_1.setBounds(428, 240, 110, 21);
+        mainPanel.add(lblSelectLeaveType_1_1);
+
+        LeaveTypecomboBox = new JComboBox<>();
+        LeaveTypecomboBox.setBounds(526, 235, 169, 32);
+        mainPanel.add(LeaveTypecomboBox);
+
+        // Populate Leave Type ComboBox
+        LeaveTypecomboBox.addItem(""); // Add blank entry at the start
+        List<OvertimeType> overtimeTypes = OvertimeDAO.getInstance().getOvertimeTypes();
+        for (OvertimeType type : overtimeTypes) {
+            LeaveTypecomboBox.addItem(type.getOvertimeTypeName());
+        }
 
         // Populate overtime history table
         populateOvertimeHistoryTable();
@@ -239,8 +266,22 @@ public class GUIOvertimeRequest extends JFrame {
             return;
         }
 
+        LocalDate currentDate = LocalDate.now();
+        LocalDate weekBefore = currentDate.minusWeeks(1);
+        LocalDate weekAfter = currentDate.plusWeeks(1);
+
+        if (date.isBefore(weekBefore) || date.isAfter(weekAfter) || !date.getMonth().equals(currentDate.getMonth())) {
+            JOptionPane.showMessageDialog(this, "Date must be within the current month or 1 week before/after the current date.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         String startTimeStr = startTimetextField.getText();
         String endTimeStr = endTimetextField.getText();
+
+        if (startTimeStr.trim().isEmpty() || endTimeStr.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Start time and end time cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         if (!isValidTimeFormat(startTimeStr) || !isValidTimeFormat(endTimeStr)) {
             JOptionPane.showMessageDialog(this, "Invalid time format. Please use HH:mm format.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -250,7 +291,37 @@ public class GUIOvertimeRequest extends JFrame {
         LocalTime startTime = LocalTime.parse(startTimeStr);
         LocalTime endTime = LocalTime.parse(endTimeStr);
 
-        String reason = reasontextField.getText();
+        if (startTime.isAfter(endTime)) {
+            JOptionPane.showMessageDialog(this, "Start time should be earlier than end time.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String reason = reasontextField.getText().trim();
+        if (reason.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Reason cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String leaveTypeName = (String) LeaveTypecomboBox.getSelectedItem();
+        if (leaveTypeName == null || leaveTypeName.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please select a leave type.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int overtimeTypeId = -1;
+        // Find overtime type ID based on selected name
+        List<OvertimeType> overtimeTypes = OvertimeDAO.getInstance().getOvertimeTypes();
+        for (OvertimeType type : overtimeTypes) {
+            if (type.getOvertimeTypeName().equals(leaveTypeName)) {
+                overtimeTypeId = type.getOvertimeTypeId();
+                break;
+            }
+        }
+
+        if (overtimeTypeId == -1) {
+            JOptionPane.showMessageDialog(this, "Invalid overtime type selected.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         Overtime overtime = new Overtime();
         overtime.setEmpId(loggedInEmployee.getId());
@@ -259,6 +330,7 @@ public class GUIOvertimeRequest extends JFrame {
         overtime.setEnd(endTime);
         overtime.setReason(reason);
         overtime.setStatus("Pending");
+        overtime.setOvertimeTypeId(overtimeTypeId);
 
         double totalHours = calculateTotalHours(startTime, endTime);
         overtime.setTotalHours(totalHours);
@@ -283,16 +355,18 @@ public class GUIOvertimeRequest extends JFrame {
         model.addColumn("Date");
         model.addColumn("Start Time");
         model.addColumn("End Time");
+        model.addColumn("Leave Type");
         model.addColumn("Reason");
         model.addColumn("Status");
 
         for (Overtime overtime : overtimes) {
             model.addRow(new Object[]{
-                    overtime.getDate().toString(),
-                    overtime.getStart().toString(),
-                    overtime.getEnd().toString(),
-                    overtime.getReason(),
-                    overtime.getStatus()
+                overtime.getDate().toString(),
+                overtime.getStart().toString(),
+                overtime.getEnd().toString(),
+                overtime.getOvertimeTypeName(),
+                overtime.getReason(),
+                overtime.getStatus()
             });
         }
 

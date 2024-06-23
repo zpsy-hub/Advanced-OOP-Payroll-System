@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -323,37 +325,64 @@ public class GUILeaveRequest {
 
         sendleaveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String leaveType = (String) leaveTypeComboBox.getSelectedItem();
-                String startDate = (String) startmonthComboBox.getSelectedItem() + "-" +
-                                    (String) startdayComboBox.getSelectedItem() + "-" +
-                                    (String) startyearComboBox.getSelectedItem();
-                String endDate = (String) endmonthComboBox.getSelectedItem() + "-" +
-                                 (String) enddayComboBox.getSelectedItem() + "-" +
-                                 (String) endyearComboBox.getSelectedItem();
+                try {
+                    // Parse dates from the combo boxes
+                    String start = startyearComboBox.getSelectedItem().toString() + "-" +
+                                   String.format("%02d", startmonthComboBox.getSelectedIndex() + 1) + "-" +
+                                   String.format("%02d", Integer.parseInt((String) startdayComboBox.getSelectedItem()));
+                    String end = endyearComboBox.getSelectedItem().toString() + "-" +
+                                 String.format("%02d", endmonthComboBox.getSelectedIndex() + 1) + "-" +
+                                 String.format("%02d", Integer.parseInt((String) enddayComboBox.getSelectedItem()));
 
-                LeaveRequestService leaveRequestService = new LeaveRequestService();
-                boolean leaveSubmitted = leaveRequestService.submitLeaveRequest(loggedInEmployee, leaveType, startDate, endDate);
-                if (leaveSubmitted) {
-                    // Calculate total days taken
-                    int totalDays = LeaveRequestService.calculateTotalDays(startyearComboBox.getSelectedItem().toString(),
-                            startmonthComboBox.getSelectedItem().toString(),
-                            startdayComboBox.getSelectedItem().toString(),
-                            endyearComboBox.getSelectedItem().toString(),
-                            endmonthComboBox.getSelectedItem().toString(),
-                            enddayComboBox.getSelectedItem().toString());
+                    Date startDate = Date.valueOf(start);
+                    Date endDate = Date.valueOf(end);
 
-                    // Update leave balance in the database
-                    int leaveTypeId = getLeaveTypeIdFromName(leaveType);
-                    leaveDAO.updateLeaveBalance(loggedInEmployee.getId(), leaveTypeId, Date.valueOf("2024-01-01").toLocalDate().getYear(), totalDays);
+                    // Ensure the start date is before the end date
+                    if (!startDate.before(endDate)) {
+                        JOptionPane.showMessageDialog(leaverequestScreen, "Start date must be before end date.", "Date Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
 
-                    // Refresh the leave history table
+                    // Calculate total days
+                    long daysBetween = ChronoUnit.DAYS.between(startDate.toLocalDate(), endDate.toLocalDate()) + 1;
+                    int totalDays = (int) daysBetween;
+
+                    int leaveTypeId = getLeaveTypeIdFromName((String) leaveTypeComboBox.getSelectedItem());
+                    int remainingDays = calculateRemainingDays(loggedInEmployee.getId(), leaveTypeId, totalDays);
+
+                    if (remainingDays < 0) {
+                        JOptionPane.showMessageDialog(leaverequestScreen, "Insufficient leave balance.", "Leave Balance Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Create and add the leave record
+                    Leave leave = new Leave(
+                        loggedInEmployee.getId(),
+                        leaveTypeId,
+                        LocalDate.now().getYear(),
+                        new Date(System.currentTimeMillis()),
+                        startDate,
+                        endDate,
+                        totalDays,
+                        "Pending",
+                        null, // Date approved is null initially
+                        remainingDays
+                    );
+
+                    leaveDAO.addLeave(leave);
+
+                    // Refresh GUI components
                     populateLeaveHistoryTable(leavehistoryTable_1);
-
-                    // Update leave balance data
                     updateLeaveData();
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(leaverequestScreen, "Please ensure all date fields are selected correctly.", "Date Parsing Error", JOptionPane.ERROR_MESSAGE);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(leaverequestScreen, "Error processing the leave request: " + ex.getMessage(), "Application Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+
+
 
         JLabel leavehistoryLabel = new JLabel("Leave Request History");
         leavehistoryLabel.setBounds(785, 290, 335, 33);
@@ -464,36 +493,13 @@ public class GUILeaveRequest {
         }
     }
 
- // Method to fetch and update leave data for the logged-in employee
+    // Method to fetch and update leave data for the logged-in employee
     private void updateLeaveData() {
         try {
-            // Fetch leave data for the logged-in employee using DAO
-            List<Leave> leaves = leaveDAO.getAllLeavesByEmployeeId(loggedInEmployee.getId());
+            int vacationLeaves = leaveDAO.getLeaveBalance(loggedInEmployee.getId(), 1);
+            int sickLeaves = leaveDAO.getLeaveBalance(loggedInEmployee.getId(), 3);
+            int emergencyLeaves = leaveDAO.getLeaveBalance(loggedInEmployee.getId(), 2);
 
-            // Fetch all leave types to get the default days allotted
-            List<LeaveType> leaveTypes = leaveDAO.getAllLeaveTypes();
-
-            // Initialize leave balances with default values from leaveTypes
-            int vacationLeaves = leaveTypes.stream().filter(lt -> lt.getLeaveTypeId() == 1).findFirst().map(LeaveType::getDaysAllotted).orElse(0);
-            int sickLeaves = leaveTypes.stream().filter(lt -> lt.getLeaveTypeId() == 3).findFirst().map(LeaveType::getDaysAllotted).orElse(0);
-            int emergencyLeaves = leaveTypes.stream().filter(lt -> lt.getLeaveTypeId() == 2).findFirst().map(LeaveType::getDaysAllotted).orElse(0);
-
-            // Update the leave balances with the actual remaining days if there are leave records
-            for (Leave leave : leaves) {
-                switch (leave.getLeaveTypeId()) {
-                    case 1:
-                        vacationLeaves = leave.getLeaveDaysRemaining();
-                        break;
-                    case 3:
-                        sickLeaves = leave.getLeaveDaysRemaining();
-                        break;
-                    case 2:
-                        emergencyLeaves = leave.getLeaveDaysRemaining();
-                        break;
-                }
-            }
-
-            // Update labels with leave data
             int totalLeaves = vacationLeaves + sickLeaves + emergencyLeaves;
             leaveTotal.setText(String.valueOf(totalLeaves));
             vacationTotal.setText(String.valueOf(vacationLeaves));
@@ -503,6 +509,8 @@ public class GUILeaveRequest {
             e.printStackTrace();
         }
     }
+
+
 
 
     public void openWindow() {
@@ -531,59 +539,27 @@ public class GUILeaveRequest {
     }
 
     private void calculateTotalDays() {
-        // Clear the total days text field
-        textField_ComputedDays.setText("");
-
-        // Check if any combo box is at default selection
         if (isAnyComboBoxAtDefaultSelection()) {
-            // If any combo box is at default selection, exit the method
+            textField_ComputedDays.setText("Please select all date fields.");
             return;
         }
 
-        // Get selected values from combo boxes
-        String startYear = (String) startyearComboBox.getSelectedItem();
-        String startMonth = (String) startmonthComboBox.getSelectedItem();
-        String startDay = (String) startdayComboBox.getSelectedItem();
-        String endYear = (String) endyearComboBox.getSelectedItem();
-        String endMonth = (String) endmonthComboBox.getSelectedItem();
-        String endDay = (String) enddayComboBox.getSelectedItem();
+        LocalDate startDate = LocalDate.of(Integer.parseInt(startyearComboBox.getSelectedItem().toString()),
+                                           startmonthComboBox.getSelectedIndex() + 1,
+                                           Integer.parseInt(startdayComboBox.getSelectedItem().toString()));
+        LocalDate endDate = LocalDate.of(Integer.parseInt(endyearComboBox.getSelectedItem().toString()),
+                                         endmonthComboBox.getSelectedIndex() + 1,
+                                         Integer.parseInt(enddayComboBox.getSelectedItem().toString()));
 
-        // Calculate total days using LeaveRequestService method
-        int totalDays = LeaveRequestService.calculateTotalDays(startYear, startMonth, startDay, endYear, endMonth, endDay);
-
-        // Check if total days is less than 0 or equal to 0
-        if (totalDays < 0) {
-            // Handle error condition
-            JOptionPane.showMessageDialog(leaverequestScreen, "Error calculating total days.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        } else if (totalDays == 0) {
-            // Handle case where end date is earlier than start date
-            JOptionPane.showMessageDialog(leaverequestScreen, "End date cannot be earlier than the start date.", "Error", JOptionPane.ERROR_MESSAGE);
-            textField_ComputedDays.setText("Error");
+        long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1; // Including start day
+        if (daysBetween <= 0) {
+            textField_ComputedDays.setText("End date must be after start date.");
             return;
         }
 
-        // Retrieve the leave balance for the employee and the selected leave type
-        int leaveTallyBalance = 0;
-
-        // Check if the leave balance is not null and get the balance based on the selected leave type
-        List<Leave> leaves = leaveDAO.getAllLeavesByEmployeeId(loggedInEmployee.getId());
-        for (Leave leave : leaves) {
-            if (leave.getLeaveTypeId() == getLeaveTypeIdFromName((String) leaveTypeComboBox.getSelectedItem())) {
-                leaveTallyBalance = leave.getLeaveDaysRemaining();
-                break;
-            }
-        }
-
-        // Check if the total days exceed the leave tally balance
-        if (totalDays > leaveTallyBalance) {
-            JOptionPane.showMessageDialog(leaverequestScreen, "Insufficient leave balance. Maximum allowed days: " + leaveTallyBalance, "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Set the calculated total days in the text field
-        textField_ComputedDays.setText(String.valueOf(totalDays));
+        textField_ComputedDays.setText(String.valueOf(daysBetween));
     }
+
 
     private int getLeaveTypeIdFromName(String leaveTypeName) {
         switch (leaveTypeName) {
@@ -644,4 +620,13 @@ public class GUILeaveRequest {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private int calculateRemainingDays(int empId, int leaveTypeId, int daysTaken) {
+        // Fetch the current balance from the database
+        int currentBalance = leaveDAO.getLeaveBalance(empId, leaveTypeId);
+
+        // Subtract the days taken from the current balance
+        return currentBalance - daysTaken;
+    }
+
 }

@@ -162,7 +162,12 @@ public class GUIlogin {
                 }
             }
         });
+        
+        // Set the default button for the JFrame's root pane
+        loginScreen1.getRootPane().setDefaultButton(loginButton);
     }
+    
+    
 
 
     private void openDashboard(User loggedInEmployee) {
