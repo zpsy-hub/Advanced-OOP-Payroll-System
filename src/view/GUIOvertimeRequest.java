@@ -326,8 +326,8 @@ public class GUIOvertimeRequest extends JFrame {
         Overtime overtime = new Overtime();
         overtime.setEmpId(loggedInEmployee.getId());
         overtime.setDate(date);
-        overtime.setStart(startTime);
-        overtime.setEnd(endTime);
+        overtime.setStartTime(startTime);
+        overtime.setEndTime(endTime);
         overtime.setReason(reason);
         overtime.setStatus("Pending");
         overtime.setOvertimeTypeId(overtimeTypeId);
@@ -362,8 +362,8 @@ public class GUIOvertimeRequest extends JFrame {
         for (Overtime overtime : overtimes) {
             model.addRow(new Object[]{
                 overtime.getDate().toString(),
-                overtime.getStart().toString(),
-                overtime.getEnd().toString(),
+                overtime.getStartTime().toString(),
+                overtime.getEndTime().toString(),
                 overtime.getOvertimeTypeName(),
                 overtime.getReason(),
                 overtime.getStatus()

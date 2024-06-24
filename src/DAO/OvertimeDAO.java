@@ -47,8 +47,7 @@ public class OvertimeDAO {
                     resultSet.getString("reason"),
                     resultSet.getTimestamp("approval_date") != null ? resultSet.getTimestamp("approval_date").toLocalDateTime().toLocalDate() : null,
                     resultSet.getInt("overtime_type_id"),
-                    resultSet.getString("overtime_type_name"),
-                    resultSet.getString("employeeName")
+                    resultSet.getString("overtime_type_name")
                 );
                 overtimes.add(overtime);
             }
