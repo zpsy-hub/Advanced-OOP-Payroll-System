@@ -80,7 +80,7 @@ public class GUI_HRAttendanceManagement {
         JLabel employeeNameLabel = new JLabel();
         employeeNameLabel.setBounds(721, 30, 400, 33);
         employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        employeeNameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
+        employeeNameLabel.setFont(new Font("Poppins", Font.PLAIN, 16));
         mainPanel.add(employeeNameLabel);
 
         // ComboBox for Payroll Periods
@@ -89,7 +89,7 @@ public class GUI_HRAttendanceManagement {
         comboBoxPayrollPeriod.setFont(new Font("Poppins", Font.PLAIN, 16));
         mainPanel.add(comboBoxPayrollPeriod);
 
-     // Populate comboBox with payroll periods
+        // Populate comboBox with payroll periods
         populatePayrollPeriodComboBox();
 
         comboBoxPayrollPeriod.addActionListener(e -> {
@@ -111,7 +111,7 @@ public class GUI_HRAttendanceManagement {
         attendancemanagementTable = new JTable();
         attendancemanagementTable.setRowMargin(12);
         attendancemanagementTable.setRowHeight(28);
-        attendancemanagementTable.setFont(new Font("Tahoma", Font.PLAIN, 10));
+        attendancemanagementTable.setFont(new Font("Tahoma", Font.PLAIN, 11));
         scrollPane.setViewportView(attendancemanagementTable);
 
         JLabel lblFilterRecordsBy = new JLabel("Filter records by:");
@@ -140,7 +140,6 @@ public class GUI_HRAttendanceManagement {
             }
         });
 
-
         JLabel lblSearchForAn = new JLabel("Search for an Employee:");
         lblSearchForAn.setBounds(749, 139, 339, 39);
         lblSearchForAn.setHorizontalAlignment(SwingConstants.LEFT);
@@ -163,9 +162,8 @@ public class GUI_HRAttendanceManagement {
         // Populate the table with all records initially
         populateTable();
     }
-        
 
- // Method to populate the payroll period combo box
+    // Method to populate the payroll period combo box
     private void populatePayrollPeriodComboBox() {
         TimesheetDAO timesheetDAO = TimesheetDAO.getInstance();
         comboBoxPayrollPeriod.removeAllItems(); // Clear existing items
@@ -176,7 +174,6 @@ public class GUI_HRAttendanceManagement {
         }
     }
 
-
     private void populateTable() {
         // Retrieve all timesheet records
         TimesheetDAO dao = TimesheetDAO.getInstance();
@@ -186,8 +183,7 @@ public class GUI_HRAttendanceManagement {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Record ID");
         model.addColumn("Employee ID");
-        model.addColumn("Last Name");
-        model.addColumn("First Name");
+        model.addColumn("Employee Name");
         model.addColumn("Date");
         model.addColumn("Time In");
         model.addColumn("Time Out");
@@ -222,8 +218,7 @@ public class GUI_HRAttendanceManagement {
         // Iterate through all employees and check if the query matches employee ID or name
         for (String[] employee : allEmployees) {
             // Check if the employee ID or name contains the query (case-insensitive)
-            if (employee[1].equalsIgnoreCase(query) || employee[2].toLowerCase().contains(query.toLowerCase())
-                    || employee[3].toLowerCase().contains(query.toLowerCase())) {
+            if (employee[1].equalsIgnoreCase(query) || employee[2].toLowerCase().contains(query.toLowerCase())) {
                 filteredEmployees.add(employee); // If match found, add to filtered list
             }
         }
@@ -237,8 +232,7 @@ public class GUI_HRAttendanceManagement {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Record ID");
         model.addColumn("Employee ID");
-        model.addColumn("Last Name");
-        model.addColumn("First Name");
+        model.addColumn("Employee Name");
         model.addColumn("Date");
         model.addColumn("Time In");
         model.addColumn("Time Out");

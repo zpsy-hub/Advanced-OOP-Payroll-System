@@ -312,7 +312,7 @@ public class GUILeaveRequest {
         leavehistoryTable_1.setBounds(736, 331, 523, 381);
         leavehistoryTable_1.setRowSelectionAllowed(false);
         leavehistoryTable_1.setEnabled(false);
-        leavehistoryTable_1.setFont(new Font("Poppins", Font.PLAIN, 12));
+        leavehistoryTable_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
 
         // Set the table model using populateLeaveHistoryTable method
         populateLeaveHistoryTable(leavehistoryTable_1);
@@ -389,11 +389,16 @@ public class GUILeaveRequest {
         leavehistoryLabel.setFont(new Font("Poppins", Font.PLAIN, 20));
         mainPanel.add(leavehistoryLabel);
 
-        JLabel employeeNameLabel = new JLabel("");
-        employeeNameLabel.setBounds(746, 36, 400, 33);
+        JLabel employeeNameLabel = new JLabel();
+        employeeNameLabel.setBounds(706, 28, 400, 33);
         employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        employeeNameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
+        employeeNameLabel.setFont(new Font("Poppins", Font.PLAIN, 16));
         mainPanel.add(employeeNameLabel);
+
+        // Set employee name dynamically
+        if (loggedInEmployee != null) {
+            employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
+        }
 
         JLabel lblTotalDays = new JLabel("Total Days: ");
         lblTotalDays.setBounds(380, 626, 120, 21);
@@ -486,11 +491,7 @@ public class GUILeaveRequest {
                 calculateTotalDays();
             }
         });
-
-        // Set employee name dynamically
-        if (loggedInEmployee != null) {
-            employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
-        }
+       
     }
 
     // Method to fetch and update leave data for the logged-in employee

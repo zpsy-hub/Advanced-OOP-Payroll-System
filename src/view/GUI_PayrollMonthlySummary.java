@@ -108,6 +108,17 @@ public class GUI_PayrollMonthlySummary {
         signOutButton.setBounds(1125, 24, 111, 40);
         mainPanel.add(signOutButton);
         
+        JLabel employeeNameLabel = new JLabel();
+        employeeNameLabel.setBounds(706, 28, 400, 33);
+        employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        employeeNameLabel.setFont(new Font("Poppins", Font.PLAIN, 16));
+        mainPanel.add(employeeNameLabel);
+
+        // Set employee name dynamically
+        if (loggedInEmployee != null) {
+            employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
+        }
+        
         JLabel lblPayPeriod = new JLabel("Pay Period:");
         lblPayPeriod.setFont(new Font("Poppins", Font.PLAIN, 16));
         lblPayPeriod.setBounds(388, 109, 215, 33);

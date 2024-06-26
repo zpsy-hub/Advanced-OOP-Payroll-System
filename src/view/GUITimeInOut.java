@@ -99,11 +99,17 @@ public class GUITimeInOut {
         currentstatusLabel.setBounds(260, 32, 339, 39);
         timeinoutPanel.add(currentstatusLabel);
 
-        JLabel employeeNameLabel = new JLabel(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
-        employeeNameLabel.setFont(new Font("Poppins", Font.PLAIN, 16));
+        JLabel employeeNameLabel = new JLabel();
+        employeeNameLabel.setBounds(706, 28, 400, 33);
         employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        employeeNameLabel.setBounds(693, 27, 400, 33);
+        employeeNameLabel.setFont(new Font("Poppins", Font.PLAIN, 16));
         mainPanel.add(employeeNameLabel);
+
+        // Set employee name dynamically
+        if (loggedInEmployee != null) {
+            employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
+        }
+
     }
 
     private void populateTable() {

@@ -69,17 +69,20 @@ public class TimesheetDAO {
     public List<String[]> getAllTimesheetRecords() {
         List<String[]> records = new ArrayList<>();
         try {
-            String sql = "SELECT timesheet_id, emp_id, date, time_in, time_out, total_hours FROM payrollsystem_db.timesheet";
+            String sql = "SELECT t.timesheet_id, t.emp_id, CONCAT(e.last_name, ', ', e.first_name) as employee_name, t.date, t.time_in, t.time_out, t.total_hours " +
+                         "FROM payrollsystem_db.timesheet t " +
+                         "JOIN payrollsystem_db.employee e ON t.emp_id = e.emp_id";
             PreparedStatement statement = conn.prepareStatement(sql);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 int timesheetId = resultSet.getInt("timesheet_id");
                 int empId = resultSet.getInt("emp_id");
+                String employeeName = resultSet.getString("employee_name");
                 Date date = resultSet.getDate("date");
                 Time timeIn = resultSet.getTime("time_in");
                 Time timeOut = resultSet.getTime("time_out");
                 double totalHours = resultSet.getDouble("total_hours");
-                String[] record = {String.valueOf(timesheetId), String.valueOf(empId), date.toString(), timeIn.toString(), timeOut.toString(), Double.toString(totalHours)};
+                String[] record = {String.valueOf(timesheetId), String.valueOf(empId), employeeName, date.toString(), timeIn.toString(), timeOut.toString(), Double.toString(totalHours)};
                 records.add(record);
             }
             resultSet.close();
@@ -89,79 +92,6 @@ public class TimesheetDAO {
         }
         return records;
     }
-    
-    // Method to retrieve timesheet records for the logged-in employee
-    public List<String[]> getLoggedInEmployeeTimesheetRecords(int empId) {
-        List<String[]> records = new ArrayList<>();
-        String sql = "SELECT date, time_in, time_out, total_hours, pay_period_id FROM payrollsystem_db.timesheet WHERE emp_id = ?";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setInt(1, empId);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                String date = resultSet.getDate("date").toString();
-                String timeIn = resultSet.getTime("time_in") != null ? resultSet.getTime("time_in").toString() : "";
-                String timeOut = resultSet.getTime("time_out") != null ? resultSet.getTime("time_out").toString() : "";
-                String totalHours = resultSet.getString("total_hours");
-                int payPeriodId = resultSet.getInt("pay_period_id");
-                records.add(new String[]{date, timeIn, timeOut, totalHours, String.valueOf(payPeriodId)});
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return records;
-    }
-
-    // Method to check if there is a time in record for the logged-in employee on the current date
-    public boolean hasTimeInRecordForToday(int empId) {
-        String sql = "SELECT COUNT(*) FROM payrollsystem_db.timesheet WHERE emp_id = ? AND DATE(date) = CURDATE() AND time_in IS NOT NULL";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setInt(1, empId);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // Method to check if there is a time out record for the logged-in employee on the current date
-    public boolean hasTimeOutRecordForToday(int empId) {
-        String sql = "SELECT COUNT(*) FROM payrollsystem_db.timesheet WHERE emp_id = ? AND DATE(date) = CURDATE() AND time_out IS NOT NULL";
-        try (PreparedStatement statement = conn.prepareStatement(sql)) {
-            statement.setInt(1, empId);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt(1) > 0;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // Method to retrieve distinct pay periods (pay_period_start - pay_period_end) for dropdown
-    public List<String> getDistinctPayPeriods() {
-        List<String> payPeriods = new ArrayList<>();
-        try {
-            String sql = "SELECT pay_period_start, pay_period_end FROM payrollsystem_db.payroll_periods";
-            PreparedStatement statement = conn.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                LocalDate payPeriodStart = resultSet.getDate("pay_period_start").toLocalDate();
-                LocalDate payPeriodEnd = resultSet.getDate("pay_period_end").toLocalDate();
-                String formattedPeriod = payPeriodStart.toString() + " to " + payPeriodEnd.toString();
-                payPeriods.add(formattedPeriod);
-            }
-            resultSet.close();
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return payPeriods;
-    }
-
 
     // Method to get timesheet records for a specific payroll period
     public List<String[]> getTimesheetRecordsByPayrollPeriod(String payrollPeriod) {
@@ -195,9 +125,10 @@ public class TimesheetDAO {
 
                 if (payrollPeriodId > 0) {
                     // Query timesheet records based on payroll_period_id
-                    String sql = "SELECT timesheet_id, emp_id, date, time_in, time_out, total_hours " +
-                                 "FROM payrollsystem_db.timesheet " +
-                                 "WHERE pay_period_id = ?";
+                    String sql = "SELECT t.timesheet_id, t.emp_id, CONCAT(e.last_name, ', ', e.first_name) as employee_name, t.date, t.time_in, t.time_out, t.total_hours " +
+                                 "FROM payrollsystem_db.timesheet t " +
+                                 "JOIN payrollsystem_db.employee e ON t.emp_id = e.emp_id " +
+                                 "WHERE t.pay_period_id = ?";
                     
                     try (PreparedStatement statement = conn.prepareStatement(sql)) {
                         statement.setInt(1, payrollPeriodId);
@@ -206,11 +137,12 @@ public class TimesheetDAO {
                         while (resultSet.next()) {
                             int timesheetId = resultSet.getInt("timesheet_id");
                             int empId = resultSet.getInt("emp_id");
+                            String employeeName = resultSet.getString("employee_name");
                             Date date = resultSet.getDate("date");
                             Time timeIn = resultSet.getTime("time_in");
                             Time timeOut = resultSet.getTime("time_out");
                             double totalHours = resultSet.getDouble("total_hours");
-                            String[] record = {String.valueOf(timesheetId), String.valueOf(empId), date.toString(), timeIn.toString(), timeOut.toString(), Double.toString(totalHours)};
+                            String[] record = {String.valueOf(timesheetId), String.valueOf(empId), employeeName, date.toString(), timeIn.toString(), timeOut.toString(), Double.toString(totalHours)};
                             records.add(record);
                         }
 
@@ -228,7 +160,27 @@ public class TimesheetDAO {
         return records;
     }
 
-    
+    // Method to retrieve distinct pay periods (pay_period_start - pay_period_end) for dropdown
+    public List<String> getDistinctPayPeriods() {
+        List<String> payPeriods = new ArrayList<>();
+        try {
+            String sql = "SELECT pay_period_start, pay_period_end FROM payrollsystem_db.payroll_periods";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                LocalDate payPeriodStart = resultSet.getDate("pay_period_start").toLocalDate();
+                LocalDate payPeriodEnd = resultSet.getDate("pay_period_end").toLocalDate();
+                String formattedPeriod = payPeriodStart.toString() + " to " + payPeriodEnd.toString();
+                payPeriods.add(formattedPeriod);
+            }
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return payPeriods;
+    }
+
     // Method to record time in for an employee
     public void recordTimeIn(int empId, LocalDate date, Time timeIn) {
         String sql = "INSERT INTO payrollsystem_db.timesheet (emp_id, date, time_in, time_out) VALUES (?, ?, ?, ?)";
@@ -243,7 +195,6 @@ public class TimesheetDAO {
         }
     }
 
-
     // Method to record time out for an employee
     public void recordTimeOut(int empId) {
         String sql = "UPDATE payrollsystem_db.timesheet SET time_out = ? WHERE emp_id = ? AND DATE(date) = CURDATE() AND time_out IS NULL";
@@ -256,22 +207,56 @@ public class TimesheetDAO {
         }
     }
     
-    /*public static void main(String[] args) {
-        // Initialize the TimesheetDAO
-        TimesheetDAO timesheetDAO = TimesheetDAO.getInstance();
-
-        // Define employee ID, current date, and current time
-        int empId = 1; // Use an arbitrary employee ID for testing
-        LocalDate date = LocalDate.now();
-        Time timeIn = new Time(System.currentTimeMillis());
-
-        // Record time in for the employee
-        timesheetDAO.recordTimeIn(empId, date, timeIn);
-
-        // Retrieve and print the timesheet records to verify
-        System.out.println("Timesheet Records for Employee ID " + empId + ":");
-        for (String[] record : timesheetDAO.getTimesheetRecords(empId)) {
-            System.out.println(String.join(", ", record));
+ // Method to check if there is a time in record for the logged-in employee on the current date
+    public boolean hasTimeInRecordForToday(int empId) {
+        String sql = "SELECT COUNT(*) FROM payrollsystem_db.timesheet WHERE emp_id = ? AND DATE(date) = CURDATE() AND time_in IS NOT NULL";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, empId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    }*/
+        return false;
+    }
+
+    // Method to check if there is a time out record for the logged-in employee on the current date
+    public boolean hasTimeOutRecordForToday(int empId) {
+        String sql = "SELECT COUNT(*) FROM payrollsystem_db.timesheet WHERE emp_id = ? AND DATE(date) = CURDATE() AND time_out IS NOT NULL";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, empId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+ // Method to retrieve timesheet records for the logged-in employee
+    public List<String[]> getLoggedInEmployeeTimesheetRecords(int empId) {
+        List<String[]> records = new ArrayList<>();
+        String sql = "SELECT date, time_in, time_out, total_hours, pay_period_id FROM payrollsystem_db.timesheet WHERE emp_id = ?";
+        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+            statement.setInt(1, empId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String date = resultSet.getDate("date").toString();
+                String timeIn = resultSet.getTime("time_in") != null ? resultSet.getTime("time_in").toString() : "";
+                String timeOut = resultSet.getTime("time_out") != null ? resultSet.getTime("time_out").toString() : "";
+                String totalHours = resultSet.getString("total_hours");
+                int payPeriodId = resultSet.getInt("pay_period_id");
+                records.add(new String[]{date, timeIn, timeOut, totalHours, String.valueOf(payPeriodId)});
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return records;
+    }
+
+    
 }

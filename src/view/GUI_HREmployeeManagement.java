@@ -103,7 +103,7 @@ public class GUI_HREmployeeManagement extends JFrame {
         employeeNameLabel = new JLabel();
         employeeNameLabel.setBounds(707, 30, 400, 33);
         employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        employeeNameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
+        employeeNameLabel.setFont(new Font("Poppins", Font.PLAIN, 16));
         mainPanel.add(employeeNameLabel);
 
         JScrollPane scrollPane = new JScrollPane();
@@ -115,7 +115,7 @@ public class GUI_HREmployeeManagement extends JFrame {
         table = new JTable();
         table.setRowMargin(12);
         table.setRowHeight(28);
-        table.setFont(new Font("Tahoma", Font.PLAIN, 10));
+        table.setFont(new Font("Tahoma", Font.PLAIN, 11));
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         scrollPane.setViewportView(table);
 

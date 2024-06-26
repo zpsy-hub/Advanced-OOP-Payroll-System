@@ -89,7 +89,7 @@ public class GUI_ITCredentialsManagement {
         usermngmntFrame.getContentPane().add(mainPanel);
         mainPanel.setLayout(null);
 		
-     // Use the Sidebar class
+        // Use the Sidebar class
         Sidebar sidebar = new Sidebar(loggedInEmployee);
         sidebar.setBounds(0, 92, 321, 680);
         mainPanel.add(sidebar);
@@ -98,6 +98,17 @@ public class GUI_ITCredentialsManagement {
         SignOutButton signOutButton = new SignOutButton(SignOutButton.getSignOutActionListener(usermngmntFrame));
         signOutButton.setBounds(1125, 24, 111, 40);
         mainPanel.add(signOutButton);
+        
+        JLabel employeeNameLabel = new JLabel();
+        employeeNameLabel.setBounds(706, 28, 400, 33);
+        employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        employeeNameLabel.setFont(new Font("Poppins", Font.PLAIN, 16));
+        mainPanel.add(employeeNameLabel);
+
+        // Set employee name dynamically
+        if (loggedInEmployee != null) {
+            employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
+        }
         
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(408, 147, 790, 412);

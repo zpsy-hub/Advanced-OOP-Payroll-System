@@ -76,7 +76,7 @@ public class GUI_HRLeaveManagement {
         JLabel employeeNameLabel = new JLabel();
         employeeNameLabel.setBounds(706, 28, 400, 33);
         employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        employeeNameLabel.setFont(new Font("Poppins Thin", Font.PLAIN, 22));
+        employeeNameLabel.setFont(new Font("Poppins", Font.PLAIN, 16));
         mainPanel.add(employeeNameLabel);
 
         // Set employee name dynamically
