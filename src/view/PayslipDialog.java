@@ -3,13 +3,32 @@ package view;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.property.TextAlignment;
 import customUI.ImagePanel;
 import model.Payslip;
+import model.Employee;
 import service.PayrollSalaryCalculationService;
+import DAO.EmployeeDAO;
 import DAO.PayslipDAO;
+import util.SessionManager;
 
 public class PayslipDialog extends JDialog {
 
@@ -40,6 +59,7 @@ public class PayslipDialog extends JDialog {
     private PayrollSalaryCalculationService service;
     private JTextField PayslipNumbertextField;
     private JTextField OvertimeHourstextField;
+    private JButton exportButton; // Declare exportButton here
 
     /**
      * Launch the application.
@@ -49,7 +69,7 @@ public class PayslipDialog extends JDialog {
             PayslipDialog dialog = new PayslipDialog(null);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             dialog.setVisible(true);
-            dialog.setLocationRelativeTo(null); // this method displays the screen at the center of the screen.
+            dialog.setLocationRelativeTo(null); 
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -183,7 +203,7 @@ public class PayslipDialog extends JDialog {
         txtfieldTakeHomePay.setEditable(false);
         mainPanel.add(txtfieldTakeHomePay);
 
-        JButton exportButton = new JButton("Export");
+        exportButton = new JButton("Export");
         exportButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
         exportButton.setBackground(Color.WHITE);
         exportButton.setBounds(793, 45, 150, 33);
@@ -205,7 +225,7 @@ public class PayslipDialog extends JDialog {
                 String employeeId = textfieldEmployeeID.getText();
                 Payslip payslip = PayslipDAO.getInstance().getPayslipByEmployeeId(employeeId);
                 if (payslip != null) {
-                    service.writePayslipDetailsToFile(payslip);
+                    exportPayslipToPDF(payslip);
                 } else {
                     JOptionPane.showMessageDialog(null, "Payslip details not found for selected employee.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -239,6 +259,81 @@ public class PayslipDialog extends JDialog {
         PayslipNumbertextField.setText(String.valueOf(payslip.getPayslipId()));
         OvertimeHourstextField.setText(String.valueOf(payslip.getOvertimeHours()));
     }
+
+    private void exportPayslipToPDF(Payslip payslip) {
+        Employee loggedInEmployee = EmployeeDAO.getInstance().getLoggedInUserInfo(SessionManager.getLoggedInUser().getId());
+        System.out.println("Exporting PDF for Employee: " + payslip.getEmployeeName()); // Debug statement
+
+        // Create a file chooser
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Payslip as PDF");
+        fileChooser.setSelectedFile(new java.io.File("Payslip.pdf"));
+
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            java.io.File fileToSave = fileChooser.getSelectedFile();
+            String filePath = fileToSave.getAbsolutePath();
+            if (!filePath.endsWith(".pdf")) {
+                filePath += ".pdf";
+            }
+
+            // Hide the export button before capturing the screenshot
+            exportButton.setVisible(false);
+
+            // Create high-resolution screenshot
+            BufferedImage screenshot = new BufferedImage(contentPanel.getWidth() * 2, contentPanel.getHeight() * 2, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = screenshot.createGraphics();
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.scale(2, 2);
+            contentPanel.paint(g2d);
+            g2d.dispose();
+
+            // Show the export button again
+            exportButton.setVisible(true);
+
+            try {
+                // Save the screenshot as an image file
+                String imagePath = "screenshot.png";
+                ImageIO.write(screenshot, "png", new java.io.File(imagePath));
+
+                // Create PDF
+                PdfWriter writer = new PdfWriter(filePath);
+                PageSize customPageSize = new PageSize(210, 168); // Vertical half of A4 size plus 40 units vertically
+                PdfDocument pdf = new PdfDocument(writer);
+                Document document = new Document(pdf, customPageSize);
+                document.setMargins(5, 5, 5, 5);
+
+                // Add the screenshot to the PDF
+                com.itextpdf.layout.element.Image screenshotImage = new com.itextpdf.layout.element.Image(ImageDataFactory.create(imagePath));
+                screenshotImage.setAutoScale(true);
+                document.add(screenshotImage);
+
+                // Add the logged-in employee information
+                PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+                document.add(new com.itextpdf.layout.element.Paragraph(
+                        "\nGenerated By:\n" +
+                        "Employee ID: " + loggedInEmployee.getEmpId() + "\n" +
+                        "Employee Name: " + loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName() + "\n" +
+                        "Department: " + loggedInEmployee.getDepartment() + "\n" +
+                        "Position: " + loggedInEmployee.getPosition() + "\n" +
+                        "Date Generated: " + java.time.LocalDate.now().toString())
+                        .setFont(font)
+                        .setFontSize(2)
+                        .setTextAlignment(com.itextpdf.layout.properties.TextAlignment.LEFT));
+
+                document.close();
+                System.out.println("PDF Exported Successfully to " + filePath); // Debug statement
+                JOptionPane.showMessageDialog(null, "Payslip exported successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error exporting payslip to PDF.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+
+
+
 
 
     private String formatDecimal(double value) {

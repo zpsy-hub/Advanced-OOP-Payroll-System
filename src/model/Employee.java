@@ -64,7 +64,20 @@ public class Employee {
         this.basicSalary = basicSalary;       
     }
     
-   
+    /// Constructor for logged-in user info (with full name)
+    public Employee(int empId, String employeeName, String department, String position) {
+        this.empId = empId;
+        if (employeeName != null && employeeName.contains(" ")) {
+            String[] nameParts = employeeName.split(" ");
+            this.firstName = nameParts[0];
+            this.lastName = nameParts[1];
+        } else {
+            this.firstName = employeeName;
+            this.lastName = "";
+        }
+        this.department = department;
+        this.position = position;
+    }
     
     // Getters and setters
     public int getEmpId() {

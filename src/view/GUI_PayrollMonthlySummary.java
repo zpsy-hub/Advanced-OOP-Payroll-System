@@ -27,6 +27,7 @@ import model.User;
 import util.SessionManager;
 import util.SignOutButton;
 import DAO.MonthlySummaryReportDAO;
+import DAO.TimesheetDAO;
 import customUI.ImagePanel;
 import customUI.Sidebar;
 import customUI.SidebarButton;
@@ -49,7 +50,8 @@ public class GUI_PayrollMonthlySummary {
     private PayrollSalaryCalculationService service;
     private JTable MonhlySummarytable;
     private MonthlySummaryReportDAO summaryReportDAO;
-    private String selectedMonthYear; // Add this variable to store the selected month-year
+    private TimesheetDAO timesheetDAO;
+    private String selectedMonthYear;
 
     /**
      * Launch the application.
@@ -70,12 +72,12 @@ public class GUI_PayrollMonthlySummary {
 
     /**
      * Create the application.
-     * @param loggedInEmployee2 
      */
     public GUI_PayrollMonthlySummary(User loggedInEmployee) {
         GUI_PayrollMonthlySummary.loggedInEmployee = loggedInEmployee;
         this.service = new PayrollSalaryCalculationService();
-        this.summaryReportDAO = new DAO.MonthlySummaryReportDAO();
+        this.summaryReportDAO = new MonthlySummaryReportDAO();
+        this.timesheetDAO = new TimesheetDAO();
         initialize();
     }
 
@@ -96,7 +98,7 @@ public class GUI_PayrollMonthlySummary {
         payrollmontlysummary.getContentPane().add(mainPanel);
         mainPanel.setLayout(null);
         
-     // Use the Sidebar class
+        // Use the Sidebar class
         Sidebar sidebar = new Sidebar(loggedInEmployee);
         sidebar.setBounds(0, 92, 321, 680);
         mainPanel.add(sidebar);
@@ -109,7 +111,7 @@ public class GUI_PayrollMonthlySummary {
         JLabel lblPayPeriod = new JLabel("Pay Period:");
         lblPayPeriod.setFont(new Font("Poppins", Font.PLAIN, 16));
         lblPayPeriod.setBounds(388, 109, 215, 33);
-        mainPanel.add(lblPayPeriod);        
+        mainPanel.add(lblPayPeriod);
         
         JButton exportButton = new JButton("Export");
         exportButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
@@ -123,7 +125,7 @@ public class GUI_PayrollMonthlySummary {
         });
         
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setBounds(388, 318, 829, 395);
         mainPanel.add(scrollPane);
         
@@ -138,7 +140,7 @@ public class GUI_PayrollMonthlySummary {
         monthComboBox.addItem("Select Month-Year");
         
         // Populate monthComboBox with month-year combinations
-        service.populateMonthComboBox(monthComboBox);
+        populateMonthComboBox(monthComboBox);
         
         // Action listener for monthComboBox
         monthComboBox.addActionListener(new ActionListener() {
@@ -157,8 +159,15 @@ public class GUI_PayrollMonthlySummary {
         });
     }
 
+    private void populateMonthComboBox(JComboBox<String> comboBox) {
+        List<String> payPeriods = timesheetDAO.getDistinctPayPeriods();
+        for (String payPeriod : payPeriods) {
+            comboBox.addItem(payPeriod);
+        }
+    }
+
     private void displayMonthlySummary(String selectedMonth) {
-        List<MonthlySummaryReport> monthlySummaryReports = MonthlySummaryReportDAO.generateMonthlySummaryReport(selectedMonth);
+        List<MonthlySummaryReport> monthlySummaryReports = summaryReportDAO.getAllMonthlySummaryReports(); // Use DAO method
 
         if (monthlySummaryReports.isEmpty()) {
             JOptionPane.showMessageDialog(MonhlySummarytable, "No records available for the selected month-year.", "No Records", JOptionPane.INFORMATION_MESSAGE);
@@ -172,6 +181,7 @@ public class GUI_PayrollMonthlySummary {
         model.addColumn("Employee ID");
         model.addColumn("Employee Name");
         model.addColumn("Position");
+        model.addColumn("Department");
         model.addColumn("Gross Income (PHP)");
         model.addColumn("SSS Number");
         model.addColumn("SSS Contribution (PHP)");
@@ -202,6 +212,7 @@ public class GUI_PayrollMonthlySummary {
                     report.getEmployeeId(),
                     report.getEmployeeName(),
                     report.getPosition(),
+                    report.getDepartment(),
                     formatCurrency(report.getGrossIncome()),
                     report.getSssNumber(),
                     formatCurrency(report.getSssContribution()),
@@ -218,6 +229,7 @@ public class GUI_PayrollMonthlySummary {
         // Add a row for the totals
         model.addRow(new Object[]{
                 "Total",
+                "",
                 "",
                 "",
                 formatCurrency(totalGrossIncome),
@@ -270,7 +282,7 @@ public class GUI_PayrollMonthlySummary {
                 writer.writeNext(new String[]{});
 
                 // Write column headers
-                String[] headers = {"Employee ID", "Employee Name", "Position", "Gross Income (PHP)",
+                String[] headers = {"Employee ID", "Employee Name", "Position", "Department", "Gross Income (PHP)",
                                     "SSS Number", "SSS Contribution (PHP)", "PhilHealth Number",
                                     "PhilHealth Contribution (PHP)", "Pagibig Number", "Pagibig Contribution (PHP)",
                                     "TIN Number", "Withholding Tax (PHP)", "Net Pay (PHP)"};

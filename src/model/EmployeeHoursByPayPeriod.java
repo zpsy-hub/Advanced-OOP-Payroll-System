@@ -2,23 +2,33 @@ package model;
 
 public class EmployeeHoursByPayPeriod {
     private int empId;
+    private String employeeName; // Add this field
     private double totalHours;
     private double overtimeTotalHours;
 
     // Constructor
-    public EmployeeHoursByPayPeriod(int empId, double totalHours, double overtimeTotalHours) {
+    public EmployeeHoursByPayPeriod(int empId, String employeeName, double totalHours, double overtimeTotalHours) {
         this.empId = empId;
+        this.employeeName = employeeName;
         this.totalHours = totalHours;
         this.overtimeTotalHours = overtimeTotalHours;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public int getEmpId() {
         return empId;
     }
 
     public void setEmpId(int empId) {
         this.empId = empId;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
     }
 
     public double getTotalHours() {
@@ -36,19 +46,4 @@ public class EmployeeHoursByPayPeriod {
     public void setOvertimeTotalHours(double overtimeTotalHours) {
         this.overtimeTotalHours = overtimeTotalHours;
     }
-
-    // Override toString() method for debugging or logging purposes
-    @Override
-    public String toString() {
-        return "EmployeeHoursByPayPeriod{" +
-                "empId=" + empId +
-                ", totalHours=" + totalHours +
-                ", overtimeTotalHours=" + overtimeTotalHours +
-                '}';
-    }
-
-	public String getEmployeeName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

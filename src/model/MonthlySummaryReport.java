@@ -4,6 +4,7 @@ public class MonthlySummaryReport {
     private int employeeId;
     private String employeeName;
     private String position;
+    private String department;
     private double grossIncome;
     private String sssNumber;
     private double sssContribution;
@@ -19,13 +20,15 @@ public class MonthlySummaryReport {
     public MonthlySummaryReport() {
     }
 
-    public MonthlySummaryReport(int employeeId, String employeeName, String position, double grossIncome,
-                                String sssNumber, double sssContribution, String philhealthNumber,
-                                double philhealthContribution, String pagibigNumber, double pagibigContribution,
+    public MonthlySummaryReport(int employeeId, String employeeName, String position, String department, 
+                                double grossIncome, String sssNumber, double sssContribution, 
+                                String philhealthNumber, double philhealthContribution, 
+                                String pagibigNumber, double pagibigContribution, 
                                 String tinNumber, double withholdingTax, double netPay) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.position = position;
+        this.department = department;
         this.grossIncome = grossIncome;
         this.sssNumber = sssNumber;
         this.sssContribution = sssContribution;
@@ -61,6 +64,14 @@ public class MonthlySummaryReport {
 
     public void setPosition(String position) {
         this.position = position;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public double getGrossIncome() {

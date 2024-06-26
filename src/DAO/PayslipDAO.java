@@ -414,10 +414,12 @@ public class PayslipDAO {
         return payslips;
     }
     
-    // Method to retrieve employee hours by pay period ID
+ // Method to retrieve employee hours by pay period ID
     public List<EmployeeHoursByPayPeriod> getEmployeeHoursByPayPeriod(int payPeriodId) {
         List<EmployeeHoursByPayPeriod> employeeHoursList = new ArrayList<>();
-        String sql = "SELECT emp_id, total_hours, overtime_total_hours FROM payrollsystem_db.employee_hours_by_pay_period WHERE pay_period_id = ?";
+        String sql = "SELECT emp_id, employee_name, total_hours, overtime_total_hours " +
+                     "FROM payrollsystem_db.employee_hours_by_pay_period " +
+                     "WHERE pay_period_id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, payPeriodId);
@@ -426,6 +428,7 @@ public class PayslipDAO {
             while (resultSet.next()) {
                 EmployeeHoursByPayPeriod employeeHours = new EmployeeHoursByPayPeriod(
                         resultSet.getInt("emp_id"),
+                        resultSet.getString("employee_name"),
                         resultSet.getDouble("total_hours"),
                         resultSet.getDouble("overtime_total_hours")
                 );
@@ -436,6 +439,7 @@ public class PayslipDAO {
         }
         return employeeHoursList;
     }
+
     
     public Payslip getPayslipByEmployeeIdAndPayPeriod(String employeeId, int payPeriodId) {
         Payslip payslip = null;

@@ -149,6 +149,7 @@ public class GUI_PayrollSalaryCalculation {
         employeeattendanceTable.setBorder(new LineBorder(new Color(0, 0, 0)));
 
         JScrollPane scrollPane_1 = new JScrollPane();
+        scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrollPane_1.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane_1.setBounds(384, 495, 826, 203);
         mainPanel.add(scrollPane_1);
@@ -178,6 +179,7 @@ public class GUI_PayrollSalaryCalculation {
                         if (payslip != null) {
                         	PayslipDialog payslipDialog = new PayslipDialog(payrollsalarycalc);
                             payslipDialog.populateTextFieldsWithPayslip(payslip);
+                            payslipDialog.setLocationRelativeTo(null); 
                             payslipDialog.setVisible(true);
                         } else {
                             JOptionPane.showMessageDialog(mainPanel, "No payslip records found for the selected employee and month-year.", "No Payslip Records", JOptionPane.INFORMATION_MESSAGE);
@@ -472,13 +474,14 @@ public class GUI_PayrollSalaryCalculation {
         for (EmployeeHoursByPayPeriod hours : employeeHours) {
             Object[] row = {
                 hours.getEmpId(),
-                hours.getEmployeeName(),
+                hours.getEmployeeName(), 
                 hours.getTotalHours(),
                 hours.getOvertimeTotalHours()
             };
             model.addRow(row);
         }
     }
+
 
     private void clearAttendanceTable() {
         DefaultTableModel model = (DefaultTableModel) employeeattendanceTable.getModel();

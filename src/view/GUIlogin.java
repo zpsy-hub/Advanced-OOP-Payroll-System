@@ -130,7 +130,7 @@ public class GUIlogin {
         loginbgpanel.add(passwordLabel);
         passwordLabel.setFont(new Font("Montserrat", Font.PLAIN, 18));
 
-        // ActionListener for Log In button
+        // ActionListener for Log Igarn button
         loginButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 String username = usernameTextField1.getText();

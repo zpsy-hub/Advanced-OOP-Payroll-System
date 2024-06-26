@@ -157,6 +157,7 @@ public class GUIPayslip {
                 // Create and show the payslip dialog
                 PayslipDialog dialog = new PayslipDialog(payslipScreen);
                 dialog.populateTextFieldsWithPayslip(payslip);
+                dialog.setLocationRelativeTo(null); 
                 dialog.setVisible(true);
             } else {
                 JOptionPane.showMessageDialog(null, "Payslip details not found for selected pay period.", "Error", JOptionPane.ERROR_MESSAGE);

@@ -18,39 +18,29 @@ public class MonthlySummaryReportDAO {
         connection = SQL_client.getInstance().getConnection();
     }
 
-    public static List<MonthlySummaryReport> generateMonthlySummaryReport(String monthYear) {
+    public List<MonthlySummaryReport> getAllMonthlySummaryReports() {
         List<MonthlySummaryReport> monthlySummaryReports = new ArrayList<>();
-        String sql = "SELECT e.emp_id, CONCAT(e.employee_firstname, ' ', e.employee_lastname) AS employee_name, e.position, " +
-                "p.gross_income, e.sss_number, p.sss_contrib, e.philhealth_number, p.philhealth_contrib, " +
-                "e.pagibig_number, p.pagibig_contrib, e.tin_number, p.withholding_tax, p.net_pay " +
-                "FROM payroll_system.employees e " +
-                "INNER JOIN payroll_system.payslip p ON e.emp_id = p.emp_id " +
-                "WHERE YEAR(p.period_startdate) = ? AND MONTH(p.period_startdate) = ?";
+        String sql = "SELECT emp_id, employee_name, position, department, gross_income, sss_no, sss_contrib_amount, " +
+                "philhealth_no, philhealth_contrib_amount, pagibig_no, pagibig_contrib_amount, bir_no, " +
+                "withholding_tax, net_pay, payroll_period_id FROM payrollsystem_db.monthly_summary_report_breakdown";
 
-
-
-        try {
-            PreparedStatement statement = connection.prepareStatement(sql);
-            String[] parts = monthYear.split("-");
-            int year = Integer.parseInt(parts[0]);
-            int month = Integer.parseInt(parts[1]);
-            statement.setInt(1, year);
-            statement.setInt(2, month);
-            ResultSet resultSet = statement.executeQuery();
+        try (PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
                 MonthlySummaryReport monthlySummaryReport = new MonthlySummaryReport();
                 monthlySummaryReport.setEmployeeId(resultSet.getInt("emp_id"));
                 monthlySummaryReport.setEmployeeName(resultSet.getString("employee_name"));
                 monthlySummaryReport.setPosition(resultSet.getString("position"));
+                monthlySummaryReport.setDepartment(resultSet.getString("department"));
                 monthlySummaryReport.setGrossIncome(resultSet.getDouble("gross_income"));
-                monthlySummaryReport.setSssNumber(resultSet.getString("sss_number"));
-                monthlySummaryReport.setSssContribution(resultSet.getDouble("sss_contrib"));
-                monthlySummaryReport.setPhilhealthNumber(resultSet.getString("philhealth_number"));
-                monthlySummaryReport.setPhilhealthContribution(resultSet.getDouble("philhealth_contrib"));
-                monthlySummaryReport.setPagibigNumber(resultSet.getString("pagibig_number"));
-                monthlySummaryReport.setPagibigContribution(resultSet.getDouble("pagibig_contrib"));
-                monthlySummaryReport.setTinNumber(resultSet.getString("tin_number"));
+                monthlySummaryReport.setSssNumber(resultSet.getString("sss_no"));
+                monthlySummaryReport.setSssContribution(resultSet.getDouble("sss_contrib_amount"));
+                monthlySummaryReport.setPhilhealthNumber(resultSet.getString("philhealth_no"));
+                monthlySummaryReport.setPhilhealthContribution(resultSet.getDouble("philhealth_contrib_amount"));
+                monthlySummaryReport.setPagibigNumber(resultSet.getString("pagibig_no"));
+                monthlySummaryReport.setPagibigContribution(resultSet.getDouble("pagibig_contrib_amount"));
+                monthlySummaryReport.setTinNumber(resultSet.getString("bir_no"));
                 monthlySummaryReport.setWithholdingTax(resultSet.getDouble("withholding_tax"));
                 monthlySummaryReport.setNetPay(resultSet.getDouble("net_pay"));
                 monthlySummaryReports.add(monthlySummaryReport);
@@ -60,8 +50,43 @@ public class MonthlySummaryReportDAO {
         }
         return monthlySummaryReports;
     }
-    
-    public MonthlySummaryReportWithTotal generateMonthlySummaryReportWithTotal(String monthYear) {
+
+    public List<MonthlySummaryReport> getMonthlySummaryReportsByPeriod(int payrollPeriodId) {
+        List<MonthlySummaryReport> monthlySummaryReports = new ArrayList<>();
+        String sql = "SELECT emp_id, employee_name, position, department, gross_income, sss_no, sss_contrib_amount, " +
+                "philhealth_no, philhealth_contrib_amount, pagibig_no, pagibig_contrib_amount, bir_no, " +
+                "withholding_tax, net_pay, payroll_period_id FROM payrollsystem_db.monthly_summary_report_breakdown " +
+                "WHERE payroll_period_id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, payrollPeriodId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    MonthlySummaryReport monthlySummaryReport = new MonthlySummaryReport();
+                    monthlySummaryReport.setEmployeeId(resultSet.getInt("emp_id"));
+                    monthlySummaryReport.setEmployeeName(resultSet.getString("employee_name"));
+                    monthlySummaryReport.setPosition(resultSet.getString("position"));
+                    monthlySummaryReport.setDepartment(resultSet.getString("department"));
+                    monthlySummaryReport.setGrossIncome(resultSet.getDouble("gross_income"));
+                    monthlySummaryReport.setSssNumber(resultSet.getString("sss_no"));
+                    monthlySummaryReport.setSssContribution(resultSet.getDouble("sss_contrib_amount"));
+                    monthlySummaryReport.setPhilhealthNumber(resultSet.getString("philhealth_no"));
+                    monthlySummaryReport.setPhilhealthContribution(resultSet.getDouble("philhealth_contrib_amount"));
+                    monthlySummaryReport.setPagibigNumber(resultSet.getString("pagibig_no"));
+                    monthlySummaryReport.setPagibigContribution(resultSet.getDouble("pagibig_contrib_amount"));
+                    monthlySummaryReport.setTinNumber(resultSet.getString("bir_no"));
+                    monthlySummaryReport.setWithholdingTax(resultSet.getDouble("withholding_tax"));
+                    monthlySummaryReport.setNetPay(resultSet.getDouble("net_pay"));
+                    monthlySummaryReports.add(monthlySummaryReport);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return monthlySummaryReports;
+    }
+
+    public MonthlySummaryReportWithTotal getMonthlySummaryReportsWithTotal(int payrollPeriodId) {
         List<MonthlySummaryReport> monthlySummaryReports = new ArrayList<>();
         double totalGrossIncome = 0;
         double totalSssContribution = 0;
@@ -70,46 +95,40 @@ public class MonthlySummaryReportDAO {
         double totalWithholdingTax = 0;
         double totalNetPay = 0;
 
-        String sql = "SELECT e.emp_id, CONCAT(e.employee_firstname, ' ', e.employee_lastname) AS employee_name, e.position, " +
-                "p.gross_income, e.sss_number, p.sss_contrib, e.philhealth_number, p.philhealth_contrib, " +
-                "e.pagibig_number, p.pagibig_contrib, e.tin_number, p.withholding_tax, p.net_pay " +
-                "FROM payroll_system.employees e " +
-                "INNER JOIN payroll_system.payslip p ON e.emp_id = p.emp_id " +
-                "WHERE YEAR(p.period_startdate) = ? AND MONTH(p.period_startdate) = ?";
+        String sql = "SELECT emp_id, employee_name, position, department, gross_income, sss_no, sss_contrib_amount, " +
+                "philhealth_no, philhealth_contrib_amount, pagibig_no, pagibig_contrib_amount, bir_no, " +
+                "withholding_tax, net_pay, payroll_period_id FROM payrollsystem_db.monthly_summary_report_breakdown " +
+                "WHERE payroll_period_id = ?";
 
-        try {
-            PreparedStatement statement = connection.prepareStatement(sql);
-            String[] parts = monthYear.split("-");
-            int year = Integer.parseInt(parts[0]);
-            int month = Integer.parseInt(parts[1]);
-            statement.setInt(1, year);
-            statement.setInt(2, month);
-            ResultSet resultSet = statement.executeQuery();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, payrollPeriodId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    MonthlySummaryReport monthlySummaryReport = new MonthlySummaryReport();
+                    monthlySummaryReport.setEmployeeId(resultSet.getInt("emp_id"));
+                    monthlySummaryReport.setEmployeeName(resultSet.getString("employee_name"));
+                    monthlySummaryReport.setPosition(resultSet.getString("position"));
+                    monthlySummaryReport.setDepartment(resultSet.getString("department"));
+                    monthlySummaryReport.setGrossIncome(resultSet.getDouble("gross_income"));
+                    monthlySummaryReport.setSssNumber(resultSet.getString("sss_no"));
+                    monthlySummaryReport.setSssContribution(resultSet.getDouble("sss_contrib_amount"));
+                    monthlySummaryReport.setPhilhealthNumber(resultSet.getString("philhealth_no"));
+                    monthlySummaryReport.setPhilhealthContribution(resultSet.getDouble("philhealth_contrib_amount"));
+                    monthlySummaryReport.setPagibigNumber(resultSet.getString("pagibig_no"));
+                    monthlySummaryReport.setPagibigContribution(resultSet.getDouble("pagibig_contrib_amount"));
+                    monthlySummaryReport.setTinNumber(resultSet.getString("bir_no"));
+                    monthlySummaryReport.setWithholdingTax(resultSet.getDouble("withholding_tax"));
+                    monthlySummaryReport.setNetPay(resultSet.getDouble("net_pay"));
 
-            while (resultSet.next()) {
-                MonthlySummaryReport monthlySummaryReport = new MonthlySummaryReport();
-                monthlySummaryReport.setEmployeeId(resultSet.getInt("emp_id"));
-                monthlySummaryReport.setEmployeeName(resultSet.getString("employee_name"));
-                monthlySummaryReport.setPosition(resultSet.getString("position"));
-                monthlySummaryReport.setGrossIncome(resultSet.getDouble("gross_income"));
-                monthlySummaryReport.setSssNumber(resultSet.getString("sss_number"));
-                monthlySummaryReport.setSssContribution(resultSet.getDouble("sss_contrib"));
-                monthlySummaryReport.setPhilhealthNumber(resultSet.getString("philhealth_number"));
-                monthlySummaryReport.setPhilhealthContribution(resultSet.getDouble("philhealth_contrib"));
-                monthlySummaryReport.setPagibigNumber(resultSet.getString("pagibig_number"));
-                monthlySummaryReport.setPagibigContribution(resultSet.getDouble("pagibig_contrib"));
-                monthlySummaryReport.setTinNumber(resultSet.getString("tin_number"));
-                monthlySummaryReport.setWithholdingTax(resultSet.getDouble("withholding_tax"));
-                monthlySummaryReport.setNetPay(resultSet.getDouble("net_pay"));
+                    totalGrossIncome += monthlySummaryReport.getGrossIncome();
+                    totalSssContribution += monthlySummaryReport.getSssContribution();
+                    totalPhilhealthContribution += monthlySummaryReport.getPhilhealthContribution();
+                    totalPagibigContribution += monthlySummaryReport.getPagibigContribution();
+                    totalWithholdingTax += monthlySummaryReport.getWithholdingTax();
+                    totalNetPay += monthlySummaryReport.getNetPay();
 
-                totalGrossIncome += monthlySummaryReport.getGrossIncome();
-                totalSssContribution += monthlySummaryReport.getSssContribution();
-                totalPhilhealthContribution += monthlySummaryReport.getPhilhealthContribution();
-                totalPagibigContribution += monthlySummaryReport.getPagibigContribution();
-                totalWithholdingTax += monthlySummaryReport.getWithholdingTax();
-                totalNetPay += monthlySummaryReport.getNetPay();
-
-                monthlySummaryReports.add(monthlySummaryReport);
+                    monthlySummaryReports.add(monthlySummaryReport);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

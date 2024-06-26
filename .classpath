@@ -38,5 +38,7 @@
 	<classpathentry kind="lib" path="lib/svg-8.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/xchart-3.8.8.jar"/>
 	<classpathentry kind="lib" path="lib/xchart-demo-3.8.8.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-2.0.13.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-simple-2.0.13.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

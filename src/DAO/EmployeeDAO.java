@@ -319,6 +319,32 @@ public class EmployeeDAO {
         }
         return -1; // Return -1 if unable to get the value
     }
+    
+    // Method to get logged-in user's information
+    public Employee getLoggedInUserInfo(int empId) {
+        String sql = "SELECT e.emp_id, CONCAT(e.first_name, ' ', e.last_name) AS employee_name, d.dept_name, p.position_name " +
+                     "FROM payrollsystem_db.employee e " +
+                     "JOIN payrollsystem_db.department d ON e.dept_id = d.dept_id " +
+                     "JOIN payrollsystem_db.position p ON e.position_id = p.position_id " +
+                     "WHERE e.emp_id = ?";
+        try (Connection conn = SQL_client.getInstance().getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, empId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return new Employee(
+                    rs.getInt("emp_id"),
+                    rs.getString("employee_name"),
+                    rs.getString("dept_name"),
+                    rs.getString("position_name")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    
+    }
 
 
 }
