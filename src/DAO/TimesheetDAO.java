@@ -230,18 +230,19 @@ public class TimesheetDAO {
 
     
     // Method to record time in for an employee
-    public void recordTimeIn(int empId, String date, String timeIn, String timeOut) {
+    public void recordTimeIn(int empId, LocalDate date, Time timeIn) {
         String sql = "INSERT INTO payrollsystem_db.timesheet (emp_id, date, time_in, time_out) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
             statement.setInt(1, empId);
-            statement.setDate(2, Date.valueOf(date));  // Convert String date to SQL Date
-            statement.setTime(3, Time.valueOf(timeIn)); // Convert String time to SQL Time
-            statement.setTime(4, null); // Time out is initially null
+            statement.setDate(2, Date.valueOf(date)); // Convert LocalDate to SQL Date
+            statement.setTime(3, timeIn); // Use provided Time for timeIn
+            statement.setNull(4, Types.TIME); // Set time_out to NULL initially
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     // Method to record time out for an employee
     public void recordTimeOut(int empId) {
@@ -254,4 +255,23 @@ public class TimesheetDAO {
             e.printStackTrace();
         }
     }
+    
+    /*public static void main(String[] args) {
+        // Initialize the TimesheetDAO
+        TimesheetDAO timesheetDAO = TimesheetDAO.getInstance();
+
+        // Define employee ID, current date, and current time
+        int empId = 1; // Use an arbitrary employee ID for testing
+        LocalDate date = LocalDate.now();
+        Time timeIn = new Time(System.currentTimeMillis());
+
+        // Record time in for the employee
+        timesheetDAO.recordTimeIn(empId, date, timeIn);
+
+        // Retrieve and print the timesheet records to verify
+        System.out.println("Timesheet Records for Employee ID " + empId + ":");
+        for (String[] record : timesheetDAO.getTimesheetRecords(empId)) {
+            System.out.println(String.join(", ", record));
+        }
+    }*/
 }

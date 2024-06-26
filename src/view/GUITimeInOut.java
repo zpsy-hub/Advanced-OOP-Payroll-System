@@ -24,9 +24,9 @@ public class GUITimeInOut {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    GUITimeInOut window = new GUITimeInOut(loggedInEmployee);
-                    window.timeinoutScreen.setVisible(true);
+                    GUITimeInOut window = new GUITimeInOut(loggedInEmployee);                   
                     window.timeinoutScreen.setLocationRelativeTo(null);
+                    window.timeinoutScreen.setVisible(true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -53,7 +53,7 @@ public class GUITimeInOut {
         mainPanel.setLayout(null);
 
         JScrollPane scrollPane = new JScrollPane();
-        scrollPane.setBounds(394, 448, 814, 282);
+        scrollPane.setBounds(394, 360, 814, 370);
         mainPanel.add(scrollPane);
 
         table = new JTable();
@@ -100,9 +100,9 @@ public class GUITimeInOut {
         timeinoutPanel.add(currentstatusLabel);
 
         JLabel employeeNameLabel = new JLabel(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
-        employeeNameLabel.setFont(new Font("Poppins", Font.PLAIN, 20));
+        employeeNameLabel.setFont(new Font("Poppins", Font.PLAIN, 16));
         employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        employeeNameLabel.setBounds(677, 35, 400, 33);
+        employeeNameLabel.setBounds(693, 27, 400, 33);
         mainPanel.add(employeeNameLabel);
     }
 
@@ -116,8 +116,11 @@ public class GUITimeInOut {
     }
 
     private void handleTimeIn(JButton timeInButton, JButton timeOutButton, JLabel empStatus) {
-        if (!TimesheetDAO.getInstance().hasTimeInRecordForToday(loggedInEmployee.getId())) {
-            TimesheetDAO.getInstance().recordTimeIn(loggedInEmployee.getId(), LocalDate.now().toString(), new Time(System.currentTimeMillis()).toString(), null);
+        int empId = loggedInEmployee.getId();
+        System.out.println("Time In - Emp ID: " + empId);
+        
+        if (!TimesheetDAO.getInstance().hasTimeInRecordForToday(empId)) {
+            TimesheetDAO.getInstance().recordTimeIn(empId, LocalDate.now(), new Time(System.currentTimeMillis()));
             empStatus.setText("IN");
             empStatus.setForeground(Color.GREEN);
             timeInButton.setEnabled(false);
@@ -128,9 +131,13 @@ public class GUITimeInOut {
         }
     }
 
+
     private void handleTimeOut(JButton timeOutButton, JLabel empStatus) {
-        if (!TimesheetDAO.getInstance().hasTimeOutRecordForToday(loggedInEmployee.getId())) {
-            TimesheetDAO.getInstance().recordTimeOut(loggedInEmployee.getId());
+        int empId = loggedInEmployee.getId();
+        System.out.println("Time Out - Emp ID: " + empId);
+
+        if (!TimesheetDAO.getInstance().hasTimeOutRecordForToday(empId)) {
+            TimesheetDAO.getInstance().recordTimeOut(empId);
             empStatus.setText("OUT");
             empStatus.setForeground(Color.RED);
             timeOutButton.setEnabled(false);
@@ -142,6 +149,10 @@ public class GUITimeInOut {
 
     public void openWindow() {
         timeinoutScreen.setVisible(true);
+    }
+    
+    public JFrame getFrame() {
+        return timeinoutScreen;
     }
 
     

@@ -37,7 +37,7 @@ public class EmployeeDialog extends JDialog {
     }
 
     private void initialize() {
-        setBounds(100, 100, 450, 700); // Increase the height to accommodate the gap and dropdown
+        setBounds(100, 100, 450, 700); 
         JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(40, 40, 40, 40)); // 40-pixel border
         setContentPane(contentPane);

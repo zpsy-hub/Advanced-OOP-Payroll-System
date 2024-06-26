@@ -59,16 +59,19 @@ public class GUIDashboard {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    // Retrieve the logged-in employee from the session manager
+                	 // Retrieve the logged-in employee from the session manager
                     User loggedInEmployee = SessionManager.getLoggedInUser();
 
                     // Before initializing GUIDashboard, make sure loggedInEmployee is not null
                     if (loggedInEmployee != null) {
                         // Initialize GUIDashboard with the logged-in employee
                         GUIDashboard window = new GUIDashboard(loggedInEmployee);
-                        window.dashboardScreen.setVisible(true);
+                        // Set location relative to null before making it visible to center the window
+                        window.dashboardScreen.setSize(1280, 800);
+                        window.dashboardScreen.pack();
                         window.dashboardScreen.setLocationRelativeTo(null);
-
+                        window.dashboardScreen.setVisible(true);
+                        
                         // Call displayEmployeeInformation() to display the logged-in employee's information
                         window.displayEmployeeInformation();
                     } else {
@@ -106,7 +109,6 @@ public class GUIDashboard {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	@SuppressWarnings("unlikely-arg-type")
 	private void initialize() {
 		dashboardScreen = new JFrame();
 		dashboardScreen.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
@@ -182,7 +184,8 @@ public class GUIDashboard {
 	    empSSSLabel.setFont(new Font("Poppins SemiBold", Font.PLAIN, 15));
 			    												
 	    empAddressLabel = new JLabel("");
-	    empAddressLabel.setBounds(494, 537, 677, 50);
+	    empAddressLabel.setVerticalAlignment(SwingConstants.TOP);
+	    empAddressLabel.setBounds(494, 537, 677, 28);
 	    mainPanel.add(empAddressLabel);
 	    empAddressLabel.setFont(new Font("Poppins SemiBold", Font.PLAIN, 15));			    														
 			    					
@@ -197,7 +200,7 @@ public class GUIDashboard {
 	    empPhilhealthLabel.setFont(new Font("Poppins SemiBold", Font.PLAIN, 15));   
 	    
 	    empPagibigLabel = new JLabel("");
-	    empPagibigLabel.setBounds(898, 632, 171, 23);
+	    empPagibigLabel.setBounds(898, 628, 171, 23);
 	    mainPanel.add(empPagibigLabel);
 	    empPagibigLabel.setFont(new Font("Poppins SemiBold", Font.PLAIN, 15));
 	    

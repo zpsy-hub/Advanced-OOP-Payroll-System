@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import util.PermissionChecker;
 
-
 public class Sidebar extends JPanel {
     private List<SidebarButton> buttons;
     private User loggedInEmployee;
@@ -31,27 +30,24 @@ public class Sidebar extends JPanel {
     private void initializeButtons() {
         addSidebarButton("Dashboard", "/img/001-dashboard.png", e -> {
             GUIDashboard window = new GUIDashboard(loggedInEmployee);
-            window.dashboardScreen.setVisible(true);
-            closeCurrentFrame();
+            centerAndShowFrame(window.dashboardScreen);
         });
 
         addSidebarButton("Time In/Out", "/img/008-clock.png", e -> {
             GUITimeInOut timeInOut = new GUITimeInOut(loggedInEmployee);
+            centerAndShowFrame(timeInOut.getFrame());
             timeInOut.openWindow();
-            closeCurrentFrame();
         });
 
         addSidebarButton("Payslip", "/img/042-document.png", e -> {
             GUIPayslip payslip = new GUIPayslip(loggedInEmployee);
-            payslip.openWindow();
-            closeCurrentFrame();
+            centerAndShowFrame(payslip.getFrame());
         });
 
         addSidebarButton("Leave Request", "/img/022-leave.png", e -> {
             try {
                 GUILeaveRequest window = new GUILeaveRequest(loggedInEmployee);
-                window.leaverequestScreen.setVisible(true);
-                closeCurrentFrame();
+                centerAndShowFrame(window.leaverequestScreen);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -59,21 +55,18 @@ public class Sidebar extends JPanel {
 
         addSidebarButton("Overtime Request", "/img/014-overtime-1.png", e -> {
             GUIOvertimeRequest frame = new GUIOvertimeRequest(loggedInEmployee);
-            frame.setVisible(true);
-            closeCurrentFrame();
+            centerAndShowFrame(frame);
         });
 
         addSidebarButton("Overtime Management", "/img/014-overtime-1.png", e -> {
             GUI_HROvertimemanagement frame = new GUI_HROvertimemanagement(loggedInEmployee);
-            frame.setVisible(true);
-            closeCurrentFrame();
+            centerAndShowFrame(frame);
         });
 
         addSidebarButton("Employee Management", "/img/016-attendance.png", e -> {
             try {
                 GUI_HREmployeeManagement employeeManagement = new GUI_HREmployeeManagement(loggedInEmployee);
-                employeeManagement.setVisible(true);
-                closeCurrentFrame();
+                centerAndShowFrame(employeeManagement);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -81,46 +74,38 @@ public class Sidebar extends JPanel {
 
         addSidebarButton("Attendance Management", "/img/009-calendar.png", e -> {
             GUI_HRAttendanceManagement window = new GUI_HRAttendanceManagement(loggedInEmployee);
-            window.hrattendancemngmnt.setVisible(true);
-            closeCurrentFrame();
+            centerAndShowFrame(window.hrattendancemngmnt);
         });
 
         addSidebarButton("Leave Management", "/img/023-leave-1.png", e -> {
             GUI_HRLeaveManagement window = new GUI_HRLeaveManagement(loggedInEmployee);
-            window.hrleavemngmnt.setVisible(true);
-            closeCurrentFrame();
+            centerAndShowFrame(window.hrleavemngmnt);
         });
 
-        addSidebarButton("Salary Calculation", "/img/026-calculator.png", e -> {
+        addSidebarButton("Payroll", "/img/026-calculator.png", e -> {
             GUI_PayrollSalaryCalculation window = new GUI_PayrollSalaryCalculation(loggedInEmployee);
-            window.payrollsalarycalc.setVisible(true);
-            closeCurrentFrame();
+            centerAndShowFrame(window.payrollsalarycalc);
         });
 
         addSidebarButton("Monthly Summary Reports", "/img/027-report.png", e -> {
             GUI_PayrollMonthlySummary window = new GUI_PayrollMonthlySummary(loggedInEmployee);
-            window.payrollmontlysummary.setVisible(true);
-            closeCurrentFrame();
+            centerAndShowFrame(window.payrollmontlysummary);
         });
 
         addSidebarButton("Permissions Management", "/img/030-secure-shield.png", e -> {
             GUI_ITPermissions window = new GUI_ITPermissions(loggedInEmployee);
-            window.permissionsFrame.setVisible(true);
-            closeCurrentFrame();
+            centerAndShowFrame(window.permissionsFrame);
         });
 
         addSidebarButton("Credentials Management", "/img/032-permission.png", e -> {
             GUI_ITCredentialsManagement window = new GUI_ITCredentialsManagement(loggedInEmployee);
-            window.usermngmntFrame.setVisible(true);
-            closeCurrentFrame();
+            centerAndShowFrame(window.usermngmntFrame);
         });
 
         addSidebarButton("Authentication Logs", "/img/033-permission-1.png", e -> {
             GUI_ITLogs window = new GUI_ITLogs(loggedInEmployee);
-            window.authenticationlogs.setVisible(true);
-            closeCurrentFrame();
+            centerAndShowFrame(window.authenticationlogs);
         });
-        
     }
 
     private void addSidebarButton(String text, String iconPath, ActionListener actionListener) {
@@ -148,5 +133,36 @@ public class Sidebar extends JPanel {
         }
         revalidate();
         repaint();
+    }
+
+    private void centerAndShowFrame(JFrame frame) {
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        closeCurrentFrame();
+    }
+
+    private void centerAndShowFrame(GUITimeInOut timeInOut) {
+        JFrame frame = timeInOut.getFrame();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        closeCurrentFrame();
+    }
+
+    private void centerAndShowFrame(GUIOvertimeRequest frame) {
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        closeCurrentFrame();
+    }
+
+    private void centerAndShowFrame(GUI_HROvertimemanagement frame) {
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        closeCurrentFrame();
+    }
+
+    private void centerAndShowFrame(GUI_HREmployeeManagement frame) throws IOException {
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        closeCurrentFrame();
     }
 }

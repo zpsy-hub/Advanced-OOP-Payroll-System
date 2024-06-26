@@ -127,20 +127,55 @@ public class GUIPayslip {
 		monthComboBox = new JComboBox<>();
 		monthComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
 		monthComboBox.setBounds(489, 111, 250, 30);		
-		monthComboBox.addItem("Select Month-Year");
 		
-		// Populate monthComboBox with month-year combinations
-        service.populateMonthComboBox(monthComboBox);
+		// Populate monthComboBox with pay periods
+        List<String> payPeriods = PayslipDAO.getDistinctPayPeriods();
+        monthComboBox.addItem("Select Pay Period");
+        for (String period : payPeriods) {
+            monthComboBox.addItem(period);
+        }
+
+        mainPanel.add(monthComboBox);
+        monthComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generatePayslip();
+            }
+        });
+    }
+
+    private void generatePayslip() {
+        String selectedPayPeriod = (String) monthComboBox.getSelectedItem();
+        if (!selectedPayPeriod.equals("Select Pay Period")) {
+            int payPeriodId = PayslipDAO.getPayPeriodId(selectedPayPeriod);
+
+            // Retrieve the payslip for the logged-in employee ID and pay period
+            String employeeId = String.valueOf(loggedInEmployee.getId());
+            Payslip payslip = PayslipDAO.getInstance().getPayslipByEmployeeIdAndPayPeriod(employeeId, payPeriodId);
+
+            if (payslip != null) {
+                // Create and show the payslip dialog
+                PayslipDialog dialog = new PayslipDialog(payslipScreen);
+                dialog.populateTextFieldsWithPayslip(payslip);
+                dialog.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Payslip details not found for selected pay period.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a valid pay period.", "Invalid Pay Period", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
+    public void openWindow() {
+		payslipScreen.setVisible(true);
+	    }
+
+	public JFrame getFrame() {
+		return payslipScreen;
+	}
+}
 		
-		mainPanel.add(monthComboBox);
-		monthComboBox.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-		        generatePayslip();
-		    }
-		});
-		
-		JLabel employeeNameLabel = new JLabel("");
+		/*JLabel employeeNameLabel = new JLabel("");
 		employeeNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		employeeNameLabel.setFont(new Font("Tw Cen MT", Font.PLAIN, 32));
 		employeeNameLabel.setBounds(702, 31, 400, 33);
@@ -445,4 +480,8 @@ public class GUIPayslip {
 	public void openWindow() {
 		payslipScreen.setVisible(true);
 	    }
+
+	public JFrame getFrame() {
+		return payslipScreen;
 	}
+	}*/

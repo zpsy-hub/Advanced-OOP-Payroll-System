@@ -37,7 +37,7 @@ public class PermissionChecker {
             visibleButtons.add("Leave Management");
         }
         if (hasPermission(4)) {
-            visibleButtons.add("Salary Calculation");
+            visibleButtons.add("Payroll");
         }
         if (hasPermission(5)) {
             visibleButtons.add("Monthly Summary Reports");
@@ -53,6 +53,9 @@ public class PermissionChecker {
         }
         if (hasPermission(9)) {
             visibleButtons.add("Overtime Management");
+        }
+        if (hasPermission(10)) {
+            visibleButtons.add("Batch Process Payroll");
         }
 
         return visibleButtons;

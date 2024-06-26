@@ -51,7 +51,7 @@ public class GUIlogin {
 
                     GUIlogin window = new GUIlogin();
                     window.loginScreen1.setVisible(true);
-                    window.loginScreen1.setLocationRelativeTo(null); // this method displays the login screen at the center of the screen.
+                    window.loginScreen1.setLocationRelativeTo(null); 
                 } catch (UnsupportedLookAndFeelException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
@@ -172,7 +172,9 @@ public class GUIlogin {
 
     private void openDashboard(User loggedInEmployee) {
         GUIDashboard dashboard = new GUIDashboard(loggedInEmployee);
-        dashboard.getDashboardScreen().setVisible(true);
-        loginScreen1.dispose();
+        JFrame dashboardScreen = dashboard.getDashboardScreen();
+        dashboardScreen.setLocationRelativeTo(null); // Center the frame
+        dashboardScreen.setVisible(true); // Make the frame visible
+        loginScreen1.dispose(); // Close the login screen
     }
 }

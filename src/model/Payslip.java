@@ -1,8 +1,6 @@
 package model;
-import java.text.DecimalFormat;
-import java.time.LocalDate;
 
-import DAO.EmployeeDAO;
+import java.time.LocalDate;
 
 public class Payslip {
     private LocalDate periodStartDate;
@@ -10,40 +8,45 @@ public class Payslip {
     private int employeeId;
     private String employeeName;
     private String employeePosition;
-    private double monthlyRate;
+    private double hourlyRate;
+    private double basicSalary;
     private int totalHours;
     private int overtimeHours;
     private double grossIncome;
     private double riceSubsidy;
     private double phoneAllowance;
     private double clothingAllowance;
-    private double totalBenefits;
+    private double totalAllowances;
     private double sssContribution;
     private double philhealthContribution;
     private double pagibigContribution;
     private double withholdingTax;
     private double totalDeductions;
     private double netPay;
+    private int payslipId;
+    private int payrollPeriodId;
+    private LocalDate dateGenerated;
 
-    // Constructor with parameters
+    // Full constructor including all fields
     public Payslip(LocalDate periodStartDate, LocalDate periodEndDate, int employeeId, String employeeName,
-                   String employeePosition, double hourlyRate, double monthlyRate, int totalHours, int overtimeHours,
+                   String employeePosition, double hourlyRate, double basicSalary, int totalHours, int overtimeHours,
                    double grossIncome, double riceSubsidy, double phoneAllowance, double clothingAllowance,
-                   double totalBenefits, double sssContribution, double philhealthContribution,
+                   double totalAllowances, double sssContribution, double philhealthContribution,
                    double pagibigContribution, double withholdingTax, double totalDeductions, double netPay) {
         this.periodStartDate = periodStartDate;
         this.periodEndDate = periodEndDate;
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.employeePosition = employeePosition;
-        this.monthlyRate = monthlyRate;
+        this.hourlyRate = hourlyRate;
+        this.basicSalary = basicSalary;
         this.totalHours = totalHours;
         this.overtimeHours = overtimeHours;
         this.grossIncome = grossIncome;
         this.riceSubsidy = riceSubsidy;
         this.phoneAllowance = phoneAllowance;
         this.clothingAllowance = clothingAllowance;
-        this.totalBenefits = totalBenefits;
+        this.totalAllowances = totalAllowances;
         this.sssContribution = sssContribution;
         this.philhealthContribution = philhealthContribution;
         this.pagibigContribution = pagibigContribution;
@@ -52,163 +55,229 @@ public class Payslip {
         this.netPay = netPay;
     }
 
-    // Getters and setters
-    public LocalDate getPeriodStartDate() {
-        return periodStartDate;
+    // Additional constructor using employee ID and fetching hourly rate from DAO
+    public Payslip(LocalDate periodStartDate, LocalDate periodEndDate, int employeeId, String employeeName,
+                   String employeePosition, int totalHours, int overtimeHours, double grossIncome,
+                   double riceSubsidy, double phoneAllowance, double clothingAllowance, double totalAllowances,
+                   double sssContribution, double philhealthContribution, double pagibigContribution,
+                   double withholdingTax, double totalDeductions, double netPay) {
+        this(periodStartDate, periodEndDate, employeeId, employeeName, employeePosition,
+                EmployeeDAO.getInstance().getHourlyRateById(employeeId), 0, totalHours, overtimeHours, grossIncome,
+                riceSubsidy, phoneAllowance, clothingAllowance, totalAllowances, sssContribution, philhealthContribution,
+                pagibigContribution, withholdingTax, totalDeductions, netPay);
     }
 
-    public void setPeriodStartDate(LocalDate periodStartDate) {
+    // Constructor for retrieving from payslip_view
+    public Payslip(LocalDate periodStartDate, LocalDate periodEndDate, int employeeId, String employeeName,
+                   String employeePosition, double hourlyRate, double basicSalary, double totalHoursWorked,
+                   double overtimeHours, double grossIncome, double riceSubsidy, double phoneAllowance,
+                   double clothingAllowance, double totalAllowances, double sssContribution,
+                   double philhealthContribution, double pagibigContribution, double withholdingTax,
+                   double totalDeductions, double netPay) {
         this.periodStartDate = periodStartDate;
+        this.periodEndDate = periodEndDate;
+        this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.employeePosition = employeePosition;
+        this.hourlyRate = hourlyRate;
+        this.basicSalary = basicSalary;
+        this.totalHours = (int) totalHoursWorked;
+        this.overtimeHours = (int) overtimeHours;
+        this.grossIncome = grossIncome;
+        this.riceSubsidy = riceSubsidy;
+        this.phoneAllowance = phoneAllowance;
+        this.clothingAllowance = clothingAllowance;
+        this.totalAllowances = totalAllowances;
+        this.sssContribution = sssContribution;
+        this.philhealthContribution = philhealthContribution;
+        this.pagibigContribution = pagibigContribution;
+        this.withholdingTax = withholdingTax;
+        this.totalDeductions = totalDeductions;
+        this.netPay = netPay;
+    }
+
+    // Constructor for retrieving from payslips (newly inserted payslips)
+    public Payslip(int payslipId, int employeeId, LocalDate periodStartDate, LocalDate periodEndDate,
+                   double grossIncome, double totalDeductions, double totalAllowances, double netPay) {
+        this.payslipId = payslipId;
+        this.employeeId = employeeId;
+        this.periodStartDate = periodStartDate;
+        this.periodEndDate = periodEndDate;
+        this.grossIncome = grossIncome;
+        this.totalDeductions = totalDeductions;
+        this.totalAllowances = totalAllowances;
+        this.netPay = netPay;
+    }
+    
+    public Payslip(int employeeId, String employeeName, String employeePosition, double hourlyRate, int totalHours, int overtimeHours, double grossIncome, double riceSubsidy, double phoneAllowance, double clothingAllowance, double totalAllowances, double sssContribution, double philhealthContribution, double pagibigContribution, double withholdingTax, double totalDeductions, double netPay, LocalDate periodStartDate, LocalDate periodEndDate, int payrollPeriodId, LocalDate dateGenerated) {
+        this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.employeePosition = employeePosition;
+        this.hourlyRate = hourlyRate;
+        this.totalHours = totalHours;
+        this.overtimeHours = overtimeHours;
+        this.grossIncome = grossIncome;
+        this.riceSubsidy = riceSubsidy;
+        this.phoneAllowance = phoneAllowance;
+        this.clothingAllowance = clothingAllowance;
+        this.totalAllowances = totalAllowances;
+        this.sssContribution = sssContribution;
+        this.philhealthContribution = philhealthContribution;
+        this.pagibigContribution = pagibigContribution;
+        this.withholdingTax = withholdingTax;
+        this.totalDeductions = totalDeductions;
+        this.netPay = netPay;
+        this.periodStartDate = periodStartDate;
+        this.periodEndDate = periodEndDate;
+        this.payrollPeriodId = payrollPeriodId;
+        this.dateGenerated = dateGenerated;
+    }
+    
+    public Payslip(int payslipId, LocalDate periodStartDate, LocalDate periodEndDate, int employeeId, String employeeName,
+            String employeePosition, double hourlyRate, double basicSalary, int totalHours, int overtimeHours,
+            double grossIncome, double riceSubsidy, double phoneAllowance, double clothingAllowance,
+            double totalAllowances, double sssContribution, double philhealthContribution,
+            double pagibigContribution, double withholdingTax, double totalDeductions, double netPay) {
+ this.payslipId = payslipId;
+ this.periodStartDate = periodStartDate;
+ this.periodEndDate = periodEndDate;
+ this.employeeId = employeeId;
+ this.employeeName = employeeName;
+ this.employeePosition = employeePosition;
+ this.hourlyRate = hourlyRate;
+ this.basicSalary = basicSalary;
+ this.totalHours = totalHours;
+ this.overtimeHours = overtimeHours;
+ this.grossIncome = grossIncome;
+ this.riceSubsidy = riceSubsidy;
+ this.phoneAllowance = phoneAllowance;
+ this.clothingAllowance = clothingAllowance;
+ this.totalAllowances = totalAllowances;
+ this.sssContribution = sssContribution;
+ this.philhealthContribution = philhealthContribution;
+ this.pagibigContribution = pagibigContribution;
+ this.withholdingTax = withholdingTax;
+ this.totalDeductions = totalDeductions;
+ this.netPay = netPay;
+}
+
+    // Getters for all fields
+    public LocalDate getPeriodStartDate() {
+        return periodStartDate;
     }
 
     public LocalDate getPeriodEndDate() {
         return periodEndDate;
     }
 
-    public void setPeriodEndDate(LocalDate periodEndDate) {
-        this.periodEndDate = periodEndDate;
-    }
-
     public int getEmployeeId() {
         return employeeId;
-    }
-
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
     }
 
     public String getEmployeeName() {
         return employeeName;
     }
 
-    public void setEmployeeName(String employeeName) {
-        this.employeeName = employeeName;
-    }
-
     public String getEmployeePosition() {
         return employeePosition;
     }
 
-    public void setEmployeePosition(String employeePosition) {
-        this.employeePosition = employeePosition;
+    public double getHourlyRate() {
+        return hourlyRate;
     }
 
-    public double getMonthlyRate() {
-        return monthlyRate;
-    }
-
-    public void setMonthlyRate(double monthlyRate) {
-        this.monthlyRate = monthlyRate;
+    public double getBasicSalary() {
+        return basicSalary;
     }
 
     public int getTotalHours() {
         return totalHours;
     }
 
-    public void setTotalHours(int totalHours) {
-        this.totalHours = totalHours;
-    }
-
     public int getOvertimeHours() {
         return overtimeHours;
-    }
-
-    public void setOvertimeHours(int overtimeHours) {
-        this.overtimeHours = overtimeHours;
-    }
-
-    public double getRiceSubsidy() {
-        return riceSubsidy;
-    }
-
-    public void setRiceSubsidy(double riceSubsidy) {
-        this.riceSubsidy = riceSubsidy;
-    }
-
-    public double getPhoneAllowance() {
-        return phoneAllowance;
-    }
-
-    public void setPhoneAllowance(double phoneAllowance) {
-        this.phoneAllowance = phoneAllowance;
-    }
-
-    public double getClothingAllowance() {
-        return clothingAllowance;
-    }
-
-    public void setClothingAllowance(double clothingAllowance) {
-        this.clothingAllowance = clothingAllowance;
     }
 
     public double getGrossIncome() {
         return grossIncome;
     }
 
-    public void setGrossIncome(double grossIncome) {
-        this.grossIncome = grossIncome;
+    public double getRiceSubsidy() {
+        return riceSubsidy;
     }
 
-    public double getTotalBenefits() {
-        return totalBenefits;
+    public double getPhoneAllowance() {
+        return phoneAllowance;
     }
 
-    public void setTotalBenefits(double totalBenefits) {
-        this.totalBenefits = totalBenefits;
+    public double getClothingAllowance() {
+        return clothingAllowance;
+    }
+
+    public double getTotalAllowances() {
+        return totalAllowances;
     }
 
     public double getSssContribution() {
         return sssContribution;
     }
 
-    public void setSssContribution(double sssContribution) {
-        this.sssContribution = sssContribution;
-    }
-
     public double getPhilhealthContribution() {
         return philhealthContribution;
-    }
-
-    public void setPhilhealthContribution(double philhealthContribution) {
-        this.philhealthContribution = philhealthContribution;
     }
 
     public double getPagibigContribution() {
         return pagibigContribution;
     }
 
-    public void setPagibigContribution(double pagibigContribution) {
-        this.pagibigContribution = pagibigContribution;
-    }
-
     public double getWithholdingTax() {
         return withholdingTax;
-    }
-
-    public void setWithholdingTax(double withholdingTax) {
-        this.withholdingTax = withholdingTax;
     }
 
     public double getTotalDeductions() {
         return totalDeductions;
     }
 
-    public void setTotalDeductions(double totalDeductions) {
-        this.totalDeductions = totalDeductions;
-    }
-
     public double getNetPay() {
         return netPay;
     }
 
-    public void setNetPay(double netPay) {
-        this.netPay = netPay;
+    public int getPayslipId() {
+        return payslipId;
     }
 
-    public double getHourlyRate() {
-        return DAO.EmployeeDAO.getInstance().getHourlyRateById(this.getEmployeeId());
+    public int getPayrollPeriodId() {
+        return payrollPeriodId;
     }
-    
 
+    public LocalDate getDateGenerated() {
+        return dateGenerated;
+    }
 
+    // Override toString() method for debugging or logging purposes
+    @Override
+    public String toString() {
+        return "Payslip{" +
+                "periodStartDate=" + periodStartDate +
+                ", periodEndDate=" + periodEndDate +
+                ", employeeId=" + employeeId +
+                ", employeeName='" + employeeName + '\'' +
+                ", employeePosition='" + employeePosition + '\'' +
+                ", hourlyRate=" + hourlyRate +
+                ", basicSalary=" + basicSalary +
+                ", totalHours=" + totalHours +
+                ", overtimeHours=" + overtimeHours +
+                ", grossIncome=" + grossIncome +
+                ", riceSubsidy=" + riceSubsidy +
+                ", phoneAllowance=" + phoneAllowance +
+                ", clothingAllowance=" + clothingAllowance +
+                ", totalAllowances=" + totalAllowances +
+                ", sssContribution=" + sssContribution +
+                ", philhealthContribution=" + philhealthContribution +
+                ", pagibigContribution=" + pagibigContribution +
+                ", withholdingTax=" + withholdingTax +
+                ", totalDeductions=" + totalDeductions +
+                ", netPay=" + netPay +
+                '}';
+    }
 }

@@ -8,18 +8,35 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="img"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
-	<classpathentry kind="lib" path="lib/jaxb-runtime-4.0.5.jar"/>
-	<classpathentry kind="lib" path="lib/mysql-connector-j-8.3.0.jar"/>
-	<classpathentry kind="lib" path="lib/opencsv-5.9.jar"/>
-	<classpathentry kind="lib" path="lib/xchart-3.8.8.jar"/>
-	<classpathentry kind="lib" path="lib/xchart-demo-3.8.8.jar"/>
+	<classpathentry kind="lib" path="lib/barcodes-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/bouncy-castle-adapter-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/bouncy-castle-connector-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/bouncy-castle-fips-adapter-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/byte-buddy-1.14.17.jar"/>
+	<classpathentry kind="lib" path="lib/commons-8.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/flatlaf-3.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/flatlaf-intellij-themes-3.4.1.jar"/>
-	<classpathentry kind="lib" path="lib/byte-buddy-1.14.17.jar"/>
-	<classpathentry kind="lib" path="lib/mockito-junit-jupiter-5.12.0.jar"/>
-	<classpathentry kind="lib" path="lib/mockito-core-5.12.0.jar"/>
+	<classpathentry kind="lib" path="lib/font-asian-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/forms-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/hyph-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/io-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-runtime-4.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/jcalendar-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/jgoodies-common-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/jgoodies-looks-2.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/kernel-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/layout-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/mockito-core-5.12.0.jar"/>
+	<classpathentry kind="lib" path="lib/mockito-junit-jupiter-5.12.0.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-j-8.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/opencsv-5.9.jar"/>
+	<classpathentry kind="lib" path="lib/pdfa-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/pdftest-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/pdfua-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/sign-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/styled-xml-parser-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/svg-8.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/xchart-3.8.8.jar"/>
+	<classpathentry kind="lib" path="lib/xchart-demo-3.8.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
