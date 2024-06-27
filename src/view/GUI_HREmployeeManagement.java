@@ -33,6 +33,7 @@ import customUI.ImagePanel;
 import customUI.Sidebar;
 import util.SessionManager;
 import util.SignOutButton;
+import java.awt.Toolkit;
 
 public class GUI_HREmployeeManagement extends JFrame {
 
@@ -43,6 +44,8 @@ public class GUI_HREmployeeManagement extends JFrame {
     private JTable table;
     private JButton updatedataButton;
     private JButton deletedataButton;
+    private DefaultTableModel model;
+    private TableRowSorter<DefaultTableModel> sorter;
 
     /**
      * Launch the application.
@@ -67,9 +70,11 @@ public class GUI_HREmployeeManagement extends JFrame {
      * @throws IOException
      */
     public GUI_HREmployeeManagement(User loggedInEmployee) throws IOException {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(GUI_HREmployeeManagement.class.getResource("/img/logo.png")));
+    	setTitle("MotorPH Payroll System");
         this.loggedInEmployee = loggedInEmployee;
-        table = new JTable();
         initialize();
+        populateEmployeeTable();
     }
 
     /**
@@ -115,32 +120,9 @@ public class GUI_HREmployeeManagement extends JFrame {
         table = new JTable();
         table.setRowMargin(12);
         table.setRowHeight(28);
-        table.setFont(new Font("Tahoma", Font.PLAIN, 11));
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         scrollPane.setViewportView(table);
-
-        // Populate table and set default sorting
-        populateEmployeeTable();
-
-        // Enable/disable buttons based on table selection
-        ListSelectionModel selectionModel = table.getSelectionModel();
-        selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        selectionModel.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent event) {
-                if (!event.getValueIsAdjusting()) {
-                    int selectedRow = table.getSelectedRow();
-                    if (selectedRow >= 0 && selectedRow < table.getRowCount()) {
-                        // Enable the "Update Data" and "Delete Data" buttons
-                        updatedataButton.setEnabled(true);
-                        deletedataButton.setEnabled(true);
-                    } else {
-                        // Disable the "Update Data" and "Delete Data" buttons
-                        updatedataButton.setEnabled(false);
-                        deletedataButton.setEnabled(false);
-                    }
-                }
-            }
-        });
 
         // CRUD buttons
         JButton addemployeeButton = new JButton("Add Employee");
@@ -168,7 +150,6 @@ public class GUI_HREmployeeManagement extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 int selectedRow = table.getSelectedRow();
                 if (selectedRow != -1) {
-                    DefaultTableModel model = (DefaultTableModel) table.getModel();
                     int modelRow = table.convertRowIndexToModel(selectedRow); // Convert view row to model row
                     Integer id = (Integer) model.getValueAt(modelRow, 0);
                     String lastName = (String) model.getValueAt(modelRow, 1);
@@ -213,7 +194,6 @@ public class GUI_HREmployeeManagement extends JFrame {
                 if (selectedRow != -1) {
                     int option = JOptionPane.showConfirmDialog(GUI_HREmployeeManagement.this, "Are you sure you want to delete this employee? Deletion is permanent.", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
                     if (option == JOptionPane.YES_OPTION) {
-                        DefaultTableModel model = (DefaultTableModel) table.getModel();
                         int modelRow = table.convertRowIndexToModel(selectedRow); // Convert view row to model row
                         int idToDelete = (int) model.getValueAt(modelRow, 0);
                         boolean success = EmployeeDAO.deleteEmployee(idToDelete);
@@ -230,26 +210,33 @@ public class GUI_HREmployeeManagement extends JFrame {
             }
         });
 
+        // Enable/disable buttons based on table selection
+        ListSelectionModel selectionModel = table.getSelectionModel();
+        selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        selectionModel.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    int selectedRow = table.getSelectedRow();
+                    if (selectedRow >= 0 && selectedRow < table.getRowCount()) {
+                        // Enable the "Update Data" and "Delete Data" buttons
+                        updatedataButton.setEnabled(true);
+                        deletedataButton.setEnabled(true);
+                    } else {
+                        // Disable the "Update Data" and "Delete Data" buttons
+                        updatedataButton.setEnabled(false);
+                        deletedataButton.setEnabled(false);
+                    }
+                }
+            }
+        });
+
         // Set employee name dynamically
         if (loggedInEmployee != null) {
             employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
         }
 
-        // Default sorting by Employee ID in ascending order
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-        table.setRowSorter(sorter);
-        sorter.setComparator(0, (id1, id2) -> ((Integer) id1).compareTo((Integer) id2));
-        sorter.setSortKeys(List.of(new RowSorter.SortKey(0, SortOrder.ASCENDING)));
-        sorter.sort(); // Ensure sorting is applied immediately
-    }
-
-    private void populateEmployeeTable() {
-        // Get all employees from the database
-        List<Employee> employees = EmployeeDAO.getAllEmployees();
-
-        // Create a table model with column headers and editable cells
-        DefaultTableModel model = new DefaultTableModel(
+        // Initialize table model and row sorter
+        model = new DefaultTableModel(
                 new Object[]{"Employee #", "Last Name", "First Name", "Birthday", "Address", "Phone Number",
                         "SSS #", "Philhealth #", "TIN #", "Pag-ibig #", "Department", "Status", "Position",
                         "Immediate Supervisor", "Basic Salary", "Gross Semi-monthly Rate", "Hourly Rate"},
@@ -258,7 +245,32 @@ public class GUI_HREmployeeManagement extends JFrame {
             public boolean isCellEditable(int row, int column) {
                 return false; // Make all cells non-editable
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 0) {
+                    return Integer.class; // Ensure Employee # is treated as an Integer
+                }
+                return super.getColumnClass(columnIndex);
+            }
         };
+
+        table.setModel(model);
+        sorter = new TableRowSorter<>(model);
+        table.setRowSorter(sorter);
+
+        // Default sorting by Employee ID in ascending order
+        sorter.setComparator(0, (id1, id2) -> ((Integer) id1).compareTo((Integer) id2));
+        sorter.setSortKeys(List.of(new RowSorter.SortKey(0, SortOrder.ASCENDING)));
+        sorter.sort(); // Ensure sorting is applied immediately
+    }
+
+    private void populateEmployeeTable() {
+        // Clear the existing rows
+        model.setRowCount(0);
+
+        // Get all employees from the database
+        List<Employee> employees = EmployeeDAO.getAllEmployees();
 
         // Add each employee to the table model
         for (Employee employee : employees) {
@@ -283,7 +295,7 @@ public class GUI_HREmployeeManagement extends JFrame {
             });
         }
 
-        // Set the table model
-        table.setModel(model);
+        // Apply sorting
+        sorter.sort();
     }
 }

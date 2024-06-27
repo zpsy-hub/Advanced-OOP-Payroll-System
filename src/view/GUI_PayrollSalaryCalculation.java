@@ -33,6 +33,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
 import model.Employee;
 import model.EmployeeHoursByPayPeriod;
 import model.Payslip;
@@ -87,6 +89,7 @@ public class GUI_PayrollSalaryCalculation {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		FlatIntelliJLaf.setup();
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -114,9 +117,10 @@ public class GUI_PayrollSalaryCalculation {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		FlatIntelliJLaf.setup();
 		payrollsalarycalc = new JFrame();
 		payrollsalarycalc.setTitle("MotorPH Payroll System");
-		payrollsalarycalc.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\GitHub\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
+		payrollsalarycalc.setIconImage(Toolkit.getDefaultToolkit().getImage(GUI_PayrollSalaryCalculation.class.getResource("/img/logo.png")));
 		payrollsalarycalc.setBounds(100, 100, 1280, 800);
 		payrollsalarycalc.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		payrollsalarycalc.getContentPane().setLayout(null);
@@ -156,6 +160,8 @@ public class GUI_PayrollSalaryCalculation {
         mainPanel.add(scrollPane);
 
         employeeattendanceTable = new JTable(new DefaultTableModel(new Object[]{"Employee ID", "Employee Name", "Total Hours", "Overtime Hours"}, 0));
+        employeeattendanceTable.setRowMargin(12);
+        employeeattendanceTable.setRowHeight(28);
         scrollPane.setViewportView(employeeattendanceTable);
         employeeattendanceTable.setBorder(new LineBorder(new Color(0, 0, 0)));
 
@@ -166,6 +172,8 @@ public class GUI_PayrollSalaryCalculation {
         mainPanel.add(scrollPane_1);
 
         payslipTable = new JTable(new DefaultTableModel(new Object[]{"Employee ID", "Employee Name", "Position", "Monthly Rate", "Total Hours", "Overtime Hours", "Gross Income", "Rice Subsidy", "Phone Allowance", "Clothing Allowance", "Total Benefits", "SSS", "Philhealth", "Pag-Ibig", "Withholding Tax", "Total Deductions", "Net Pay", "Start Date", "End Date", "Payroll Period ID", "Date Generated"}, 0));
+        payslipTable.setRowMargin(12);
+        payslipTable.setRowHeight(28);
         scrollPane_1.setViewportView(payslipTable);
         payslipTable.setBorder(new LineBorder(new Color(0, 0, 0)));
 

@@ -38,7 +38,7 @@ public class GUIlogin {
     private customUI.PasswordTextField PasswordTextField;
 
     /**
-     * Launch the application.
+     * Launch the application.garman
      */
     public static void main(String[] args) {
         SQL_client sql = SQL_client.getInstance();
@@ -72,10 +72,12 @@ public class GUIlogin {
 
     // Initialize the contents of the frame. GUI starts here.
     private void initialize() {
+    	FlatIntelliJLaf.setup();
+    	
         loginScreen1 = new JFrame();
         loginScreen1.setBackground(new Color(255, 255, 255));
         loginScreen1.setTitle("MotorPH Payroll System");
-        loginScreen1.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
+        loginScreen1.setIconImage(Toolkit.getDefaultToolkit().getImage(GUIlogin.class.getResource("/img/logo.png")));
         loginScreen1.getContentPane().setBackground(new Color(255, 255, 255));
         loginScreen1.setBounds(100, 100, 1280, 800);
         loginScreen1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -2,6 +2,9 @@ package view;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +30,7 @@ public class GUI_HRAttendanceManagement {
      * Launch the application.
      */
     public static void main(String[] args) {
+    	FlatIntelliJLaf.setup();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -52,10 +56,12 @@ public class GUI_HRAttendanceManagement {
      * Initialize the contents of the frame.
      */
     private void initialize() {
+    	FlatIntelliJLaf.setup();
         hrattendancemngmnt = new JFrame();
+        hrattendancemngmnt.setFont(new Font("Montserrat Black", Font.PLAIN, 15));
         hrattendancemngmnt.setBackground(new Color(255, 255, 255));
         hrattendancemngmnt.setTitle("MotorPH Payroll System");
-        hrattendancemngmnt.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\GitHub\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
+        hrattendancemngmnt.setIconImage(Toolkit.getDefaultToolkit().getImage(GUI_HRAttendanceManagement.class.getResource("/img/logo.png")));
         hrattendancemngmnt.setBounds(100, 100, 1280, 800);
         hrattendancemngmnt.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         hrattendancemngmnt.getContentPane().setLayout(null);
@@ -111,7 +117,7 @@ public class GUI_HRAttendanceManagement {
         attendancemanagementTable = new JTable();
         attendancemanagementTable.setRowMargin(12);
         attendancemanagementTable.setRowHeight(28);
-        attendancemanagementTable.setFont(new Font("Tahoma", Font.PLAIN, 11));
+        attendancemanagementTable.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         scrollPane.setViewportView(attendancemanagementTable);
 
         JLabel lblFilterRecordsBy = new JLabel("Filter records by:");

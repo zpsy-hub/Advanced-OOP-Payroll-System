@@ -226,6 +226,7 @@ public class LeaveDAO {
         e.printStackTrace();  // Handle exceptions appropriately
     }
     
+    // Retrieve leave history details
     public List<LeaveDetails> getLeaveHistory() {
         List<LeaveDetails> leaveHistory = new ArrayList<>();
         String sql = "SELECT l.*, e.first_name, e.last_name, lt.leave_type_name FROM payrollsystem_db.emp_leaves l JOIN payrollsystem_db.employee e ON l.emp_id = e.emp_id JOIN payrollsystem_db.leave_types lt ON l.leave_type_id = lt.leave_type_id";
@@ -257,24 +258,7 @@ public class LeaveDAO {
         return leaveHistory;
     }
 
-
-    private Leave mapResultSetToLeaveHistory(ResultSet resultSet) throws SQLException {
-        return new Leave(
-            resultSet.getInt("emp_id"),
-            resultSet.getString("last_name"),
-            resultSet.getString("first_name"),
-            resultSet.getString("leave_type_name"),
-            resultSet.getInt("year"),
-            resultSet.getDate("date_submitted"),
-            resultSet.getDate("start_date"),
-            resultSet.getDate("end_date"),
-            resultSet.getInt("days_taken"),
-            resultSet.getString("status"),
-            resultSet.getDate("date_approved"),
-            resultSet.getInt("leave_days_remaining")
-        );
-    }
-    
+    // Retrieve leave balances for all employees from the view
     public List<LeaveBalance> getAllEmployeeLeaveBalances() {
         List<LeaveBalance> balances = new ArrayList<>();
         String sql = "SELECT * FROM payrollsystem_db.emp_leave_balance_view";
@@ -289,6 +273,23 @@ public class LeaveDAO {
         return balances;
     }
 
+    // Retrieve leave balance by employee ID from the view
+    public LeaveBalance getLeaveBalanceByEmployeeId(int empId) {
+        LeaveBalance leaveBalance = null;
+        String sql = "SELECT * FROM payrollsystem_db.emp_leave_balance_view WHERE emp_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, empId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    leaveBalance = mapResultSetToLeaveBalance(resultSet);
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+        return leaveBalance;
+    }
+
     private LeaveBalance mapResultSetToLeaveBalance(ResultSet resultSet) throws SQLException {
         return new LeaveBalance(
             resultSet.getInt("emp_id"),
@@ -300,7 +301,48 @@ public class LeaveDAO {
         );
     }
 
-
-
+    // Update leave days remaining when leave is approved
+    public void updateLeaveDaysRemaining(int empId, int leaveTypeId, int year, int leaveDaysRemaining) {
+        String sql = "UPDATE payrollsystem_db.emp_leaves SET leave_days_remaining = ? WHERE emp_id = ? AND leave_type_id = ? AND year = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, leaveDaysRemaining);
+            statement.setInt(2, empId);
+            statement.setInt(3, leaveTypeId);
+            statement.setInt(4, year);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+    }
     
+ // Retrieve leave balance for a specific leave type of a specific employee
+    public int getLeaveBalanceByEmployeeIdAndType(int empId, int leaveTypeId) {
+        String leaveTypeColumn = "";
+        switch (leaveTypeId) {
+            case 1:
+                leaveTypeColumn = "vacation_leave";
+                break;
+            case 2:
+                leaveTypeColumn = "emergency_leave";
+                break;
+            case 3:
+                leaveTypeColumn = "sick_leave";
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid leave type ID");
+        }
+
+        String sql = "SELECT " + leaveTypeColumn + " FROM payrollsystem_db.emp_leave_balance_view WHERE emp_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, empId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt(leaveTypeColumn);
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+        return 0;  // Default to 0 if not found
+    }
 }

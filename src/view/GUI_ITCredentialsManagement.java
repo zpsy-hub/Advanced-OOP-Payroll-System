@@ -15,6 +15,8 @@ import java.util.List;
 
 import javax.swing.SwingConstants;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
 import model.Employee;
 import model.Permission;
 import model.User;
@@ -36,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import java.awt.Cursor;
+import java.awt.Toolkit;
 
 public class GUI_ITCredentialsManagement {
 
@@ -50,6 +53,7 @@ public class GUI_ITCredentialsManagement {
 	 * Launch the application.
 	 */
     public static void main(String[] args) {
+    	FlatIntelliJLaf.setup();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -77,7 +81,10 @@ public class GUI_ITCredentialsManagement {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		FlatIntelliJLaf.setup();
 		usermngmntFrame = new JFrame();
+		usermngmntFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(GUI_ITCredentialsManagement.class.getResource("/img/logo.png")));
+		usermngmntFrame.setTitle("MotorPH Payroll System");
 		usermngmntFrame.setBounds(100, 100, 1280, 800);
 		usermngmntFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		usermngmntFrame.getContentPane().setLayout(null);

@@ -35,6 +35,7 @@ import service.PayrollSalaryCalculationService;
 import service.PermissionService;
 import service.SQL_client;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.opencsv.CSVWriter;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -42,6 +43,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import java.awt.Toolkit;
 
 public class GUI_PayrollMonthlySummary {
 
@@ -57,6 +59,7 @@ public class GUI_PayrollMonthlySummary {
      * Launch the application.
      */
     public static void main(String[] args) {
+    	FlatIntelliJLaf.setup();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -85,7 +88,9 @@ public class GUI_PayrollMonthlySummary {
      * Initialize the contents of the frame.
      */
     private void initialize() {
+    	FlatIntelliJLaf.setup();
         payrollmontlysummary = new JFrame();
+        payrollmontlysummary.setIconImage(Toolkit.getDefaultToolkit().getImage(GUI_PayrollMonthlySummary.class.getResource("/img/logo.png")));
         payrollmontlysummary.setTitle("MotorPH Payroll System");
         payrollmontlysummary.setBounds(100, 100, 1280, 800);
         payrollmontlysummary.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -141,6 +146,8 @@ public class GUI_PayrollMonthlySummary {
         mainPanel.add(scrollPane);
         
         MonhlySummarytable = new JTable();
+        MonhlySummarytable.setRowMargin(12);
+        MonhlySummarytable.setRowHeight(28);
         scrollPane.setViewportView(MonhlySummarytable);
         
         JComboBox<String> monthComboBox = new JComboBox<String>();

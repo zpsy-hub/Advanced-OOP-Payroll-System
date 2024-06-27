@@ -39,9 +39,13 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
+import java.awt.Toolkit;
 
 public class GUI_ITPermissions {
     public JFrame permissionsFrame;
@@ -54,6 +58,7 @@ public class GUI_ITPermissions {
      * Launch the application.
      */
     public static void main(String[] args) {
+    	FlatIntelliJLaf.setup();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -81,7 +86,10 @@ public class GUI_ITPermissions {
      * Initialize the contents of the frame.
      */
     private void initialize() {
+    	FlatIntelliJLaf.setup();
         permissionsFrame = new JFrame();
+        permissionsFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(GUI_ITPermissions.class.getResource("/img/logo.png")));
+        permissionsFrame.setTitle("MotorPH Payroll System");
         permissionsFrame.setBounds(100, 100, 1280, 800);
         permissionsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         permissionsFrame.getContentPane().setLayout(null);
@@ -129,6 +137,8 @@ public class GUI_ITPermissions {
         mainPanel.add(scrollPane_1);
 
         userstable = new JTable();
+        userstable.setRowMargin(12);
+        userstable.setRowHeight(28);
         scrollPane_1.setViewportView(userstable);
 
         userstable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -192,6 +202,8 @@ public class GUI_ITPermissions {
                 mainPanel.add(scrollPane);
                 
                         permissionsTable = new JTable();
+                        permissionsTable.setRowMargin(12);
+                        permissionsTable.setRowHeight(28);
                         scrollPane.setViewportView(permissionsTable);
                         
                                 JPanel panel = new JPanel();

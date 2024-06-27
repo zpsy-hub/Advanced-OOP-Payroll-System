@@ -19,6 +19,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
 import model.Payslip;
 import model.Permission;
 import model.User;
@@ -68,6 +71,7 @@ public class GUIPayslip {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		FlatIntelliJLaf.setup();
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -95,9 +99,10 @@ public class GUIPayslip {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		FlatIntelliJLaf.setup();
 		payslipScreen = new JFrame();
 		payslipScreen.setTitle("MotorPH Payroll System");
-		payslipScreen.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
+		payslipScreen.setIconImage(Toolkit.getDefaultToolkit().getImage(GUIPayslip.class.getResource("/img/logo.png")));
 		payslipScreen.setBounds(100, 100, 1280, 800);
 		payslipScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		payslipScreen.getContentPane().setLayout(null);

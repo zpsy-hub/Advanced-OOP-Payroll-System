@@ -21,6 +21,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
 import customUI.ImagePanel;
 import customUI.Sidebar;
 import model.Overtime;
@@ -29,6 +31,7 @@ import service.SQL_client;
 import util.SessionManager;
 import util.SignOutButton;
 import DAO.OvertimeDAO;
+import java.awt.Toolkit;
 
 public class GUI_HROvertimemanagement extends JFrame {
 
@@ -46,6 +49,7 @@ public class GUI_HROvertimemanagement extends JFrame {
      * Launch the application.
      */
     public static void main(String[] args) {
+    	FlatIntelliJLaf.setup();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -63,7 +67,11 @@ public class GUI_HROvertimemanagement extends JFrame {
      * Create the frame.
      */
     public GUI_HROvertimemanagement(User loggedInEmployee) {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(GUI_HROvertimemanagement.class.getResource("/img/logo.png")));
+    	setTitle("MotorPH Payroll System");
         this.loggedInEmployee = loggedInEmployee;
+        
+        FlatIntelliJLaf.setup();
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 1280, 800);
@@ -105,6 +113,8 @@ public class GUI_HROvertimemanagement extends JFrame {
         mainPanel.add(scrollPane);
         
         overtimelogstable = new JTable();
+        overtimelogstable.setRowMargin(12);
+        overtimelogstable.setRowHeight(28);
         overtimelogstableModel = new DefaultTableModel(
             new Object[][] {},
             new String[] {
@@ -146,6 +156,8 @@ public class GUI_HROvertimemanagement extends JFrame {
         mainPanel.add(scrollPane_1);
         
         overtimehistorytable = new JTable();
+        overtimehistorytable.setRowMargin(12);
+        overtimehistorytable.setRowHeight(28);
         overtimehistorytableModel = new DefaultTableModel(
             new Object[][] {},
             new String[] {

@@ -44,8 +44,12 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JTable;
 import javax.swing.text.MaskFormatter;
+
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
 import javax.swing.JFormattedTextField;
 import java.text.ParseException;
+import java.awt.Toolkit;
 
 public class GUIOvertimeRequest extends JFrame {
 
@@ -62,6 +66,7 @@ public class GUIOvertimeRequest extends JFrame {
      * Launch the application.
      */
     public static void main(String[] args) {
+    	FlatIntelliJLaf.setup();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -79,7 +84,10 @@ public class GUIOvertimeRequest extends JFrame {
      * Create the frame.
      */
     public GUIOvertimeRequest(User loggedInEmployee) {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(GUIOvertimeRequest.class.getResource("/img/logo.png")));
         this.loggedInEmployee = loggedInEmployee;
+        
+        FlatIntelliJLaf.setup();
 
         setTitle("MotorPH Payroll System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -219,6 +227,7 @@ public class GUIOvertimeRequest extends JFrame {
         mainPanel.add(scrollPane);
 
         overtimehistorytable = new JTable();
+        overtimehistorytable.setRowHeight(28);
         scrollPane.setViewportView(overtimehistorytable);
 
         // Populate ComboBoxes

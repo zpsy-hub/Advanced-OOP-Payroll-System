@@ -1,5 +1,8 @@
 package view;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -22,10 +25,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import model.Leave;
+import model.LeaveBalance;
 import model.LeaveType;
 import model.User;
 import DAO.LeaveDAO;
@@ -61,19 +68,20 @@ public class GUILeaveRequest {
      * Launch the application.
      */
     public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    User loggedInEmployee = SessionManager.getLoggedInUser();
-                    GUILeaveRequest window = new GUILeaveRequest(loggedInEmployee);
-                    window.leaverequestScreen.setVisible(true);
-                    window.leaverequestScreen.setLocationRelativeTo(null);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    	FlatIntelliJLaf.setup();
+
+        EventQueue.invokeLater(() -> {
+            try {
+                User loggedInEmployee = SessionManager.getLoggedInUser();
+                GUILeaveRequest window = new GUILeaveRequest(loggedInEmployee);
+                window.leaverequestScreen.setVisible(true);
+                window.leaverequestScreen.setLocationRelativeTo(null);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
+
 
     /**
      * Create the application.
@@ -89,13 +97,13 @@ public class GUILeaveRequest {
      * Initialize the contents of the frame.
      */
     private void initialize() {
-        
+    	FlatIntelliJLaf.setup();
         // Initialize DAO instance
         leaveDAO = LeaveDAO.getInstance();
 
         leaverequestScreen = new JFrame();
         leaverequestScreen.setTitle("MotorPH Payroll System");
-        leaverequestScreen.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\GitHub\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
+        leaverequestScreen.setIconImage(Toolkit.getDefaultToolkit().getImage(GUILeaveRequest.class.getResource("/img/logo.png")));
         leaverequestScreen.setBackground(new Color(255, 255, 255));
         leaverequestScreen.setBounds(100, 100, 1280, 800);
         leaverequestScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -256,41 +264,37 @@ public class GUILeaveRequest {
         leaveTypeComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
         mainPanel.add(leaveTypeComboBox);
 
-        startmonthComboBox = new JComboBox<String>();
+        startmonthComboBox = new JComboBox<>();
         startmonthComboBox.setBounds(541, 399, 200, 32);
         startmonthComboBox.setBackground(new Color(255, 255, 255));
-        startmonthComboBox.setMaximumRowCount(13);
         startmonthComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
         mainPanel.add(startmonthComboBox);
 
-        startdayComboBox = new JComboBox<String>();
+        startdayComboBox = new JComboBox<>();
         startdayComboBox.setBounds(541, 441, 69, 32);
         startdayComboBox.setBackground(new Color(255, 255, 255));
-        startdayComboBox.setMaximumRowCount(32);
         startdayComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
         mainPanel.add(startdayComboBox);
 
-        startyearComboBox = new JComboBox<String>();
+        startyearComboBox = new JComboBox<>();
         startyearComboBox.setBounds(659, 441, 82, 32);
         startyearComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
         startyearComboBox.setBackground(Color.WHITE);
         mainPanel.add(startyearComboBox);        
 
-        endmonthComboBox = new JComboBox<String>();
+        endmonthComboBox = new JComboBox<>();
         endmonthComboBox.setBounds(541, 505, 200, 32);
-        endmonthComboBox.setMaximumRowCount(13);
         endmonthComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
         endmonthComboBox.setBackground(Color.WHITE);
         mainPanel.add(endmonthComboBox);
 
-        enddayComboBox = new JComboBox<String>();
+        enddayComboBox = new JComboBox<>();
         enddayComboBox.setBounds(541, 547, 69, 32);
-        enddayComboBox.setMaximumRowCount(32);
         enddayComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
         enddayComboBox.setBackground(Color.WHITE);
         mainPanel.add(enddayComboBox);
 
-        endyearComboBox = new JComboBox<String>();
+        endyearComboBox = new JComboBox<>();
         endyearComboBox.setBounds(659, 547, 82, 32);
         endyearComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
         endyearComboBox.setBackground(Color.WHITE);
@@ -307,12 +311,12 @@ public class GUILeaveRequest {
         leavehistoryPanel.add(scrollPane);
 
         leavehistoryTable_1 = new JTable();
+        leavehistoryTable_1.setRowMargin(12);
+        leavehistoryTable_1.setBorder(null);
         scrollPane.setViewportView(leavehistoryTable_1);
         leavehistoryTable_1.setRowHeight(28);
         leavehistoryTable_1.setBounds(736, 331, 523, 381);
-        leavehistoryTable_1.setRowSelectionAllowed(false);
-        leavehistoryTable_1.setEnabled(false);
-        leavehistoryTable_1.setFont(new Font("Tahoma", Font.PLAIN, 11));
+        leavehistoryTable_1.setFont(new Font("Segoe UI", Font.PLAIN, 12));
 
         // Set the table model using populateLeaveHistoryTable method
         populateLeaveHistoryTable(leavehistoryTable_1);
@@ -337,9 +341,17 @@ public class GUILeaveRequest {
                     Date startDate = Date.valueOf(start);
                     Date endDate = Date.valueOf(end);
 
-                    // Ensure the start date is before the end date
-                    if (!startDate.before(endDate)) {
-                        JOptionPane.showMessageDialog(leaverequestScreen, "Start date must be before end date.", "Date Error", JOptionPane.ERROR_MESSAGE);
+                    // Ensure the start date is before or equal to the end date
+                    if (startDate.after(endDate)) {
+                        JOptionPane.showMessageDialog(leaverequestScreen, "Start date must be before or the same as end date.", "Date Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    // Ensure the start date is not before the current month
+                    LocalDate now = LocalDate.now();
+                    LocalDate firstDayOfCurrentMonth = now.withDayOfMonth(1);
+                    if (startDate.toLocalDate().isBefore(firstDayOfCurrentMonth)) {
+                        JOptionPane.showMessageDialog(leaverequestScreen, "Leave start date cannot be before the current month.", "Date Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
@@ -347,11 +359,12 @@ public class GUILeaveRequest {
                     long daysBetween = ChronoUnit.DAYS.between(startDate.toLocalDate(), endDate.toLocalDate()) + 1;
                     int totalDays = (int) daysBetween;
 
+                    // Ensure total days do not exceed leave balance
                     int leaveTypeId = getLeaveTypeIdFromName((String) leaveTypeComboBox.getSelectedItem());
-                    int remainingDays = calculateRemainingDays(loggedInEmployee.getId(), leaveTypeId, totalDays);
+                    int currentBalance = leaveDAO.getLeaveBalanceByEmployeeIdAndType(loggedInEmployee.getId(), leaveTypeId);
 
-                    if (remainingDays < 0) {
-                        JOptionPane.showMessageDialog(leaverequestScreen, "Insufficient leave balance.", "Leave Balance Error", JOptionPane.ERROR_MESSAGE);
+                    if (totalDays > currentBalance) {
+                        JOptionPane.showMessageDialog(leaverequestScreen, "Total days exceed current leave balance.", "Balance Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
@@ -364,9 +377,9 @@ public class GUILeaveRequest {
                         startDate,
                         endDate,
                         totalDays,
-                        "Pending",
+                        "Pending", // Status is "Pending"
                         null, // Date approved is null initially
-                        remainingDays
+                        currentBalance // Current balance
                     );
 
                     leaveDAO.addLeave(leave);
@@ -381,8 +394,6 @@ public class GUILeaveRequest {
                 }
             }
         });
-
-
 
         JLabel leavehistoryLabel = new JLabel("Leave Request History");
         leavehistoryLabel.setBounds(785, 290, 335, 33);
@@ -410,7 +421,7 @@ public class GUILeaveRequest {
         textField_ComputedDays.setBounds(541, 621, 200, 32);
         textField_ComputedDays.setEditable(false);
         textField_ComputedDays.setHorizontalAlignment(SwingConstants.CENTER);
-        textField_ComputedDays.setFont(new Font("Poppins", Font.BOLD, 16));
+        textField_ComputedDays.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
         mainPanel.add(textField_ComputedDays);
         textField_ComputedDays.setColumns(10);
 
@@ -427,92 +438,54 @@ public class GUILeaveRequest {
         mainPanel.add(ClearFormButton);
         updateLeaveData();    
         // Add ActionListener to ClearFormButton
-        ClearFormButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Reset combo boxes to their default values
-                leaveTypeComboBox.setSelectedIndex(0);
-                startyearComboBox.setSelectedIndex(0);
-                startmonthComboBox.setSelectedIndex(0);
-                startdayComboBox.setSelectedIndex(0);
-                endyearComboBox.setSelectedIndex(0);
-                endmonthComboBox.setSelectedIndex(0);
-                enddayComboBox.setSelectedIndex(0);
-                // Clear computed days text field
-                textField_ComputedDays.setText("");
-            }
+        ClearFormButton.addActionListener(e -> {
+            // Reset combo boxes to their default values
+            leaveTypeComboBox.setSelectedIndex(0);
+            startyearComboBox.setSelectedIndex(0);
+            startmonthComboBox.setSelectedIndex(0);
+            startdayComboBox.setSelectedIndex(0);
+            endyearComboBox.setSelectedIndex(0);
+            endmonthComboBox.setSelectedIndex(0);
+            enddayComboBox.setSelectedIndex(0);
+            // Clear computed days text field
+            textField_ComputedDays.setText("");
         });
-
-        try {
-            populateComboBoxes(); 
-            calculateTotalDays();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         // Add action listeners to combo boxes to trigger calculation of total days upon user input
-        startmonthComboBox.addActionListener(e -> {
-            if (!isAnyComboBoxAtDefaultSelection()) {
-                calculateTotalDays();
-            }
-        });
-
-        startdayComboBox.addActionListener(e -> {
-            if (!isAnyComboBoxAtDefaultSelection()) {
-                calculateTotalDays();
-            }
-        });
-
-        startyearComboBox.addActionListener(e -> {
-            if (!isAnyComboBoxAtDefaultSelection()) {
-                calculateTotalDays();
-            }
-        });
-
-        endmonthComboBox.addActionListener(e -> {
-            if (!isAnyComboBoxAtDefaultSelection()) {
-                calculateTotalDays();
-            }
-        });
-
-        enddayComboBox.addActionListener(e -> {
-            if (!isAnyComboBoxAtDefaultSelection()) {
-                calculateTotalDays();
-            }
-        });
-
-        endyearComboBox.addActionListener(e -> {
-            if (!isAnyComboBoxAtDefaultSelection()) {
-                calculateTotalDays();
-            }
-        });
-
-        leaveTypeComboBox.addActionListener(e -> {
-            if (!isAnyComboBoxAtDefaultSelection()) {
-                calculateTotalDays();
-            }
-        });
-       
+        startmonthComboBox.addActionListener(e -> calculateTotalDays());
+        startdayComboBox.addActionListener(e -> calculateTotalDays());
+        startyearComboBox.addActionListener(e -> calculateTotalDays());
+        endmonthComboBox.addActionListener(e -> calculateTotalDays());
+        enddayComboBox.addActionListener(e -> calculateTotalDays());
+        endyearComboBox.addActionListener(e -> calculateTotalDays());
+        leaveTypeComboBox.addActionListener(e -> calculateTotalDays());
     }
 
     // Method to fetch and update leave data for the logged-in employee
     private void updateLeaveData() {
         try {
-            int vacationLeaves = leaveDAO.getLeaveBalance(loggedInEmployee.getId(), 1);
-            int sickLeaves = leaveDAO.getLeaveBalance(loggedInEmployee.getId(), 3);
-            int emergencyLeaves = leaveDAO.getLeaveBalance(loggedInEmployee.getId(), 2);
+            LeaveBalance leaveBalance = leaveDAO.getLeaveBalanceByEmployeeId(loggedInEmployee.getId());
+
+            int vacationLeaves = leaveBalance.getVacationLeave();
+            int sickLeaves = leaveBalance.getSickLeave();
+            int emergencyLeaves = leaveBalance.getEmergencyLeave();
 
             int totalLeaves = vacationLeaves + sickLeaves + emergencyLeaves;
-            leaveTotal.setText(String.valueOf(totalLeaves));
-            vacationTotal.setText(String.valueOf(vacationLeaves));
-            sickTotal.setText(String.valueOf(sickLeaves));
-            emergencyTotal.setText(String.valueOf(emergencyLeaves));
+            System.out.println("Total Leaves: " + totalLeaves);
+            System.out.println("Vacation Leaves: " + vacationLeaves);
+            System.out.println("Sick Leaves: " + sickLeaves);
+            System.out.println("Emergency Leaves: " + emergencyLeaves);
+
+            SwingUtilities.invokeLater(() -> {
+                leaveTotal.setText(String.valueOf(totalLeaves));
+                vacationTotal.setText(String.valueOf(vacationLeaves));
+                sickTotal.setText(String.valueOf(sickLeaves));
+                emergencyTotal.setText(String.valueOf(emergencyLeaves));
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
-
 
     public void openWindow() {
         leaverequestScreen.setVisible(true);
@@ -552,15 +525,28 @@ public class GUILeaveRequest {
                                          endmonthComboBox.getSelectedIndex() + 1,
                                          Integer.parseInt(enddayComboBox.getSelectedItem().toString()));
 
+        if (endDate.isBefore(startDate)) {
+            textField_ComputedDays.setText("End date must be after start date.");
+            return;
+        }
+
         long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1; // Including start day
         if (daysBetween <= 0) {
             textField_ComputedDays.setText("End date must be after start date.");
             return;
         }
 
+        // Get leave type and validate balance
+        int leaveTypeId = getLeaveTypeIdFromName((String) leaveTypeComboBox.getSelectedItem());
+        int currentBalance = leaveDAO.getLeaveBalanceByEmployeeIdAndType(loggedInEmployee.getId(), leaveTypeId);
+        
+        if (daysBetween > currentBalance) {
+            textField_ComputedDays.setText("Total days exceed leave balance.");
+            return;
+        }
+
         textField_ComputedDays.setText(String.valueOf(daysBetween));
     }
-
 
     private int getLeaveTypeIdFromName(String leaveTypeName) {
         switch (leaveTypeName) {
@@ -621,13 +607,4 @@ public class GUILeaveRequest {
             JOptionPane.showMessageDialog(null, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    private int calculateRemainingDays(int empId, int leaveTypeId, int daysTaken) {
-        // Fetch the current balance from the database
-        int currentBalance = leaveDAO.getLeaveBalance(empId, leaveTypeId);
-
-        // Subtract the days taken from the current balance
-        return currentBalance - daysTaken;
-    }
-
 }

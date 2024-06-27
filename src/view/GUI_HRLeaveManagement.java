@@ -51,6 +51,8 @@ public class GUI_HRLeaveManagement {
 	
     private void initialize() {
         hrleavemngmnt = new JFrame("HR Leave Management System");
+        hrleavemngmnt.setIconImage(Toolkit.getDefaultToolkit().getImage(GUI_HRLeaveManagement.class.getResource("/img/logo.png")));
+        hrleavemngmnt.setTitle("MotorPH Payroll System");
         hrleavemngmnt.setBounds(100, 100, 1280, 800);
         hrleavemngmnt.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         hrleavemngmnt.getContentPane().setLayout(null);
@@ -89,6 +91,8 @@ public class GUI_HRLeaveManagement {
         mainPanel.add(scrollPane);
 
         table_LeaveLog = new JTable();
+        table_LeaveLog.setRowMargin(12);
+        table_LeaveLog.setRowHeight(28);
         table_LeaveLog.setModel(new DefaultTableModel(
             new Object[][] {},
             new String[] {
@@ -123,6 +127,8 @@ public class GUI_HRLeaveManagement {
         mainPanel.add(scrollPaneBalance);
 
         table_EmpLeaveBalance = new JTable();
+        table_EmpLeaveBalance.setRowMargin(12);
+        table_EmpLeaveBalance.setRowHeight(28);
         table_EmpLeaveBalance.setModel(new DefaultTableModel(
             new Object[][] {},
             new String[] {
@@ -150,11 +156,18 @@ public class GUI_HRLeaveManagement {
                 int leaveTypeId = LeaveDAO.getInstance().getLeaveTypeIdFromName(leaveTypeName);
                 int year = LocalDate.now().getYear();
                 java.sql.Date dateApproved = new java.sql.Date(System.currentTimeMillis());
+                int daysTaken = Integer.parseInt(table_LeaveLog.getValueAt(selectedRow, 7).toString());
+
+                // Calculate remaining leave days
+                int currentBalance = LeaveDAO.getInstance().getLeaveBalance(empId, leaveTypeId);
+                int newBalance = currentBalance - daysTaken;
 
                 LeaveDAO.getInstance().updateLeaveStatusAndDate(empId, leaveTypeId, year, "Approved", dateApproved);
+                LeaveDAO.getInstance().updateLeaveDaysRemaining(empId, leaveTypeId, year, newBalance);
 
                 JOptionPane.showMessageDialog(hrleavemngmnt, "Leave request approved successfully.");
-                populateAllLeaveHistoryTable(); // Refresh the table
+                populateAllLeaveHistoryTable(); // Refresh the leave history table
+                populateAllEmployeeLeaveBalanceTable(); // Refresh the leave balance table
             } else {
                 JOptionPane.showMessageDialog(hrleavemngmnt, "This leave request is already approved.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -164,6 +177,7 @@ public class GUI_HRLeaveManagement {
     }
 
 
+
     private void rejectAction(ActionEvent e) {
         int selectedRow = table_LeaveLog.getSelectedRow();
         if (selectedRow != -1) {
@@ -171,14 +185,16 @@ public class GUI_HRLeaveManagement {
             if (!"Rejected".equals(status)) {
                 int empId = Integer.parseInt(table_LeaveLog.getValueAt(selectedRow, 1).toString());
                 String leaveTypeName = table_LeaveLog.getValueAt(selectedRow, 4).toString();
-                int leaveTypeId = LeaveDAO.getInstance().getLeaveTypeIdFromName(leaveTypeName); // Convert leave type name to ID
+                int leaveTypeId = LeaveDAO.getInstance().getLeaveTypeIdFromName(leaveTypeName);
                 int year = LocalDate.now().getYear();
-                java.sql.Date dateApproved = new java.sql.Date(System.currentTimeMillis());
+                java.sql.Date dateRejected = new java.sql.Date(System.currentTimeMillis());
 
-                LeaveDAO.getInstance().updateLeaveStatusAndDate(empId, leaveTypeId, year, "Rejected", dateApproved);
+                // Update the leave status to "Rejected" and set the date rejected
+                LeaveDAO.getInstance().updateLeaveStatusAndDate(empId, leaveTypeId, year, "Rejected", dateRejected);
 
                 JOptionPane.showMessageDialog(hrleavemngmnt, "Leave request rejected successfully.");
-                populateAllLeaveHistoryTable(); // Refresh the table
+                populateAllLeaveHistoryTable(); // Refresh the leave history table
+                populateAllEmployeeLeaveBalanceTable(); // Refresh the leave balance table
             } else {
                 JOptionPane.showMessageDialog(hrleavemngmnt, "This leave request is already rejected.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -186,6 +202,8 @@ public class GUI_HRLeaveManagement {
             JOptionPane.showMessageDialog(hrleavemngmnt, "Please select a leave request to reject.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+
 
 
     private void populateAllLeaveHistoryTable() {

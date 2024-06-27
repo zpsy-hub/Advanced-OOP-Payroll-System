@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
 import model.Employee;
 import model.Permission;
 import model.User;
@@ -56,6 +58,7 @@ public class GUIDashboard {
 
 
     public static void main(String[] args) {
+    	FlatIntelliJLaf.setup();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -110,8 +113,9 @@ public class GUIDashboard {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		FlatIntelliJLaf.setup();
 		dashboardScreen = new JFrame();
-		dashboardScreen.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
+		dashboardScreen.setIconImage(Toolkit.getDefaultToolkit().getImage(GUIDashboard.class.getResource("/img/logo.png")));
 		dashboardScreen.setBackground(new Color(255, 255, 255));
 		dashboardScreen.setTitle("MotorPH Payroll System");
 		dashboardScreen.setBounds(100, 100, 1280, 800);

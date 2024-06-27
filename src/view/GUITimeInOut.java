@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
 import java.sql.Time;
 import java.time.LocalDate;
 import java.util.List;
@@ -21,6 +24,7 @@ public class GUITimeInOut {
     private static User loggedInEmployee;
     
     public static void main(String[] args) {
+    	FlatIntelliJLaf.setup();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -41,8 +45,9 @@ public class GUITimeInOut {
     }
 
     private void initialize() {
+    	FlatIntelliJLaf.setup();
         timeinoutScreen = new JFrame("MotorPH Payroll System");
-        timeinoutScreen.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\shane\\eclipse-workspace\\IT110-OOP-MotorPH-Payroll\\Icons\\MotorPH Icon.png"));
+        timeinoutScreen.setIconImage(Toolkit.getDefaultToolkit().getImage(GUITimeInOut.class.getResource("/img/logo.png")));
         timeinoutScreen.setBounds(100, 100, 1280, 800);
         timeinoutScreen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         timeinoutScreen.getContentPane().setLayout(null);
@@ -57,7 +62,9 @@ public class GUITimeInOut {
         mainPanel.add(scrollPane);
 
         table = new JTable();
-        table.setFont(new Font("Poppins", Font.PLAIN, 14));
+        table.setRowMargin(12);
+        table.setRowHeight(28);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         scrollPane.setViewportView(table);
 
         Sidebar sidebar = new Sidebar(loggedInEmployee);

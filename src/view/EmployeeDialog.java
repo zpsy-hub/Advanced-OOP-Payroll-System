@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.MaskFormatter;
+
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import DAO.EmployeeDAO;
 import model.Employee;
@@ -25,7 +27,7 @@ public class EmployeeDialog extends JDialog {
 
     static {
         // Set the FlatLaf look and feel
-        FlatLightLaf.install();
+    	FlatIntelliJLaf.setup();
     }
 
     public EmployeeDialog(Frame parent, boolean isAddingEmployee, Employee employee) {
@@ -37,6 +39,7 @@ public class EmployeeDialog extends JDialog {
     }
 
     private void initialize() {
+    	FlatIntelliJLaf.setup();
         setBounds(100, 100, 450, 700); 
         JPanel contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(40, 40, 40, 40)); // 40-pixel border

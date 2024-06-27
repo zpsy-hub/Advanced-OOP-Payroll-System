@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.itextpdf.io.font.constants.StandardFonts;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.font.PdfFont;
@@ -65,6 +66,7 @@ public class PayslipDialog extends JDialog {
      * Launch the application.
      */
     public static void main(String[] args) {
+    	FlatIntelliJLaf.setup();
         try {
             PayslipDialog dialog = new PayslipDialog(null);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -80,6 +82,8 @@ public class PayslipDialog extends JDialog {
      */
     public PayslipDialog(JFrame parent) {
         super(parent, "Payslip", true);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(PayslipDialog.class.getResource("/img/logo.png")));
+        FlatIntelliJLaf.setup();
         setBounds(0, 0, 1000, 666);
         getContentPane().setLayout(new BorderLayout());
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -210,11 +214,13 @@ public class PayslipDialog extends JDialog {
         mainPanel.add(exportButton);
         
         PayslipNumbertextField = new JTextField();
+        PayslipNumbertextField.setEditable(false);
         PayslipNumbertextField.setBounds(254, 156, 250, 25);
         mainPanel.add(PayslipNumbertextField);
         PayslipNumbertextField.setColumns(10);
         
         OvertimeHourstextField = new JTextField();
+        OvertimeHourstextField.setEditable(false);
         OvertimeHourstextField.setColumns(10);
         OvertimeHourstextField.setBounds(254, 362, 250, 25);
         mainPanel.add(OvertimeHourstextField);
