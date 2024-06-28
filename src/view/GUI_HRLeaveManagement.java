@@ -1,12 +1,14 @@
 package view;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.time.LocalDate;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.time.LocalDate;
+import java.util.List;
 import model.LeaveDetails;
 import model.User;
 import model.LeaveBalance;
@@ -15,41 +17,36 @@ import customUI.ImagePanel;
 import customUI.Sidebar;
 import util.SessionManager;
 import util.SignOutButton;
-import java.util.List;
-
 
 public class GUI_HRLeaveManagement {
 
     public JFrame hrleavemngmnt;
     private JTable table_LeaveLog;
     private JTable table_EmpLeaveBalance;
-    private static User loggedInEmployee;
+    private User loggedInEmployee;
 
     public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					User loggedInEmployee = SessionManager.getLoggedInUser();
-					GUI_HRLeaveManagement window = new GUI_HRLeaveManagement(loggedInEmployee);
-					window.hrleavemngmnt.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+    	 FlatIntelliJLaf.setup();
+    	 
+        EventQueue.invokeLater(() -> {
+            try {
+                User loggedInEmployee = SessionManager.getLoggedInUser();
+                GUI_HRLeaveManagement window = new GUI_HRLeaveManagement(loggedInEmployee);
+                window.hrleavemngmnt.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
-	/**
-	 * Create the application.
-	 * @param loggedInEmployee2 
-	 */
-	public GUI_HRLeaveManagement(User loggedInEmployee) {
-		GUI_HRLeaveManagement.loggedInEmployee = loggedInEmployee;    
-		initialize();
-	}
-	
-	
+    public GUI_HRLeaveManagement(User loggedInEmployee) {
+        this.loggedInEmployee = loggedInEmployee;
+        initialize();
+    }
+
     private void initialize() {
+    	 FlatIntelliJLaf.setup();
+    	 
         hrleavemngmnt = new JFrame("HR Leave Management System");
         hrleavemngmnt.setIconImage(Toolkit.getDefaultToolkit().getImage(GUI_HRLeaveManagement.class.getResource("/img/logo.png")));
         hrleavemngmnt.setTitle("MotorPH Payroll System");
@@ -57,14 +54,13 @@ public class GUI_HRLeaveManagement {
         hrleavemngmnt.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         hrleavemngmnt.getContentPane().setLayout(null);
 
-        
-    	// Main panel with background image
+        // Main panel with background image
         ImagePanel mainPanel = new ImagePanel("/img/leave  mngmnt.png");
         mainPanel.setBackground(new Color(255, 255, 255));
         mainPanel.setBounds(0, 0, 1280, 800);
         hrleavemngmnt.getContentPane().add(mainPanel);
         mainPanel.setLayout(null);
-		
+
         // Use the Sidebar class
         Sidebar sidebar = new Sidebar(loggedInEmployee);
         sidebar.setBounds(0, 92, 321, 680);
@@ -94,33 +90,32 @@ public class GUI_HRLeaveManagement {
         table_LeaveLog.setRowMargin(12);
         table_LeaveLog.setRowHeight(28);
         table_LeaveLog.setModel(new DefaultTableModel(
-            new Object[][] {},
-            new String[] {
-                "Date Submitted", "Employee ID", "Last Name", "First Name", "Leave Type",
-                "Start Date", "End Date", "Days Taken", "Status", "Date Approved", "Days Remaining"
-            }
+                new Object[][]{},
+                new String[]{
+                        "Date Submitted", "Employee ID", "Last Name", "First Name", "Leave Type",
+                        "Start Date", "End Date", "Days Taken", "Status", "Date Approved", "Days Remaining"
+                }
         ));
         scrollPane.setViewportView(table_LeaveLog);
 
         JButton approveButton = new JButton("Approve");
         approveButton.addActionListener(this::approveAction);
         approveButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
-		approveButton.setBackground(Color.WHITE);
-		approveButton.setBounds(396, 381, 154, 35);
-		mainPanel.add(approveButton);
+        approveButton.setBackground(Color.WHITE);
+        approveButton.setBounds(396, 381, 154, 35);
+        mainPanel.add(approveButton);
 
         JButton rejectButton = new JButton("Reject");
         rejectButton.addActionListener(this::rejectAction);
-        mainPanel.add(rejectButton);
         rejectButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
-		rejectButton.setBackground(Color.WHITE);
-		rejectButton.setBounds(605, 381, 154, 35);
-		mainPanel.add(rejectButton);
+        rejectButton.setBackground(Color.WHITE);
+        rejectButton.setBounds(605, 381, 154, 35);
+        mainPanel.add(rejectButton);
 
-		JLabel lblEmployeeLeaveBalance = new JLabel("Employee Leave Balance");
-		lblEmployeeLeaveBalance.setFont(new Font("Poppins", Font.PLAIN, 20));
-		lblEmployeeLeaveBalance.setBounds(387, 462, 323, 33);
-		mainPanel.add(lblEmployeeLeaveBalance);
+        JLabel lblEmployeeLeaveBalance = new JLabel("Employee Leave Balance");
+        lblEmployeeLeaveBalance.setFont(new Font("Poppins", Font.PLAIN, 20));
+        lblEmployeeLeaveBalance.setBounds(387, 462, 323, 33);
+        mainPanel.add(lblEmployeeLeaveBalance);
 
         JScrollPane scrollPaneBalance = new JScrollPane();
         scrollPaneBalance.setBounds(386, 505, 834, 228);
@@ -130,13 +125,13 @@ public class GUI_HRLeaveManagement {
         table_EmpLeaveBalance.setRowMargin(12);
         table_EmpLeaveBalance.setRowHeight(28);
         table_EmpLeaveBalance.setModel(new DefaultTableModel(
-            new Object[][] {},
-            new String[] {
-                "Employee ID", "Last Name", "First Name", "Sick Leave", "Emergency Leave", "Vacation Leave"
-            }
+                new Object[][]{},
+                new String[]{
+                        "Employee ID", "Last Name", "First Name", "Sick Leave", "Emergency Leave", "Vacation Leave"
+                }
         ));
         scrollPaneBalance.setViewportView(table_EmpLeaveBalance);
-        
+
         JLabel lblEmployeeLeaveRequests = new JLabel("Employee Leave Requests");
         lblEmployeeLeaveRequests.setFont(new Font("Poppins", Font.PLAIN, 20));
         lblEmployeeLeaveRequests.setBounds(386, 129, 323, 33);
@@ -150,24 +145,45 @@ public class GUI_HRLeaveManagement {
         int selectedRow = table_LeaveLog.getSelectedRow();
         if (selectedRow != -1) {
             String status = table_LeaveLog.getValueAt(selectedRow, 8).toString();
-            if (!"Approved".equals(status)) {
-                int empId = Integer.parseInt(table_LeaveLog.getValueAt(selectedRow, 1).toString());
-                String leaveTypeName = table_LeaveLog.getValueAt(selectedRow, 4).toString();
-                int leaveTypeId = LeaveDAO.getInstance().getLeaveTypeIdFromName(leaveTypeName);
-                int year = LocalDate.now().getYear();
-                java.sql.Date dateApproved = new java.sql.Date(System.currentTimeMillis());
-                int daysTaken = Integer.parseInt(table_LeaveLog.getValueAt(selectedRow, 7).toString());
+            if (status != null && !"Approved".equals(status)) {
+                try {
+                    java.sql.Date dateApproved = new java.sql.Date(System.currentTimeMillis());
 
-                // Calculate remaining leave days
-                int currentBalance = LeaveDAO.getInstance().getLeaveBalance(empId, leaveTypeId);
-                int newBalance = currentBalance - daysTaken;
+                    // Identify employee ID, leave type, and days taken
+                    int empId = Integer.parseInt(table_LeaveLog.getValueAt(selectedRow, 1).toString());
+                    String leaveTypeName = (String) table_LeaveLog.getValueAt(selectedRow, 4);
+                    int leaveTypeId = LeaveDAO.getInstance().getLeaveTypeIdFromName(leaveTypeName);
+                    int daysTaken = Integer.parseInt(table_LeaveLog.getValueAt(selectedRow, 7).toString());
 
-                LeaveDAO.getInstance().updateLeaveStatusAndDate(empId, leaveTypeId, year, "Approved", dateApproved);
-                LeaveDAO.getInstance().updateLeaveDaysRemaining(empId, leaveTypeId, year, newBalance);
+                    // Update leave request status and approval date in the database
+                    LeaveDAO leaveDAO = LeaveDAO.getInstance();
+                    boolean success = leaveDAO.updateLeaveStatusAndDateByEmpAndType(empId, leaveTypeId, dateApproved, "Approved");
 
-                JOptionPane.showMessageDialog(hrleavemngmnt, "Leave request approved successfully.");
-                populateAllLeaveHistoryTable(); // Refresh the leave history table
-                populateAllEmployeeLeaveBalanceTable(); // Refresh the leave balance table
+                    if (success) {
+                        // Calculate remaining leave days
+                        int currentBalance = leaveDAO.getLeaveBalanceByEmployeeIdAndType(empId, leaveTypeId);
+                        int newBalance = currentBalance - daysTaken;
+
+                        // Update leave balance
+                        boolean balanceUpdated = leaveDAO.updateEmployeeLeaveBalance(empId, leaveTypeId, LocalDate.now().getYear(), daysTaken, newBalance);
+
+                        if (balanceUpdated) {
+                            JOptionPane.showMessageDialog(hrleavemngmnt, "Leave request approved successfully.");
+                            populateAllLeaveHistoryTable(); // Refresh the leave history table
+                            populateAllEmployeeLeaveBalanceTable(); // Refresh the leave balance table
+                        } else {
+                            JOptionPane.showMessageDialog(hrleavemngmnt, "Failed to update leave balance.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(hrleavemngmnt, "Failed to approve leave request.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(hrleavemngmnt, "Invalid data format.", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (NullPointerException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(hrleavemngmnt, "Some values are missing.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(hrleavemngmnt, "This leave request is already approved.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -183,18 +199,31 @@ public class GUI_HRLeaveManagement {
         if (selectedRow != -1) {
             String status = table_LeaveLog.getValueAt(selectedRow, 8).toString();
             if (!"Rejected".equals(status)) {
-                int empId = Integer.parseInt(table_LeaveLog.getValueAt(selectedRow, 1).toString());
-                String leaveTypeName = table_LeaveLog.getValueAt(selectedRow, 4).toString();
-                int leaveTypeId = LeaveDAO.getInstance().getLeaveTypeIdFromName(leaveTypeName);
-                int year = LocalDate.now().getYear();
-                java.sql.Date dateRejected = new java.sql.Date(System.currentTimeMillis());
+                try {
+                    java.sql.Date dateRejected = new java.sql.Date(System.currentTimeMillis());
 
-                // Update the leave status to "Rejected" and set the date rejected
-                LeaveDAO.getInstance().updateLeaveStatusAndDate(empId, leaveTypeId, year, "Rejected", dateRejected);
+                    // Identify employee ID and leave type
+                    int empId = Integer.parseInt(table_LeaveLog.getValueAt(selectedRow, 1).toString());
+                    String leaveTypeName = (String) table_LeaveLog.getValueAt(selectedRow, 4);
+                    int leaveTypeId = LeaveDAO.getInstance().getLeaveTypeIdFromName(leaveTypeName);
 
-                JOptionPane.showMessageDialog(hrleavemngmnt, "Leave request rejected successfully.");
-                populateAllLeaveHistoryTable(); // Refresh the leave history table
-                populateAllEmployeeLeaveBalanceTable(); // Refresh the leave balance table
+                    // Update leave request status to "Rejected" and set date rejected
+                    LeaveDAO leaveDAO = LeaveDAO.getInstance();
+                    boolean success = leaveDAO.updateLeaveStatusAndDateByEmpAndType(empId, leaveTypeId, dateRejected, "Rejected");
+
+                    if (success) {
+                        JOptionPane.showMessageDialog(hrleavemngmnt, "Leave request rejected successfully.");
+                        populateAllLeaveHistoryTable(); // Refresh the leave history table
+                    } else {
+                        JOptionPane.showMessageDialog(hrleavemngmnt, "Failed to reject leave request.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(hrleavemngmnt, "Invalid data format.", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (NullPointerException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(hrleavemngmnt, "Some values are missing.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(hrleavemngmnt, "This leave request is already rejected.", "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -204,34 +233,32 @@ public class GUI_HRLeaveManagement {
     }
 
 
-
-
     private void populateAllLeaveHistoryTable() {
         List<LeaveDetails> leaveHistory = LeaveDAO.getInstance().getLeaveHistory();
         DefaultTableModel model = (DefaultTableModel) table_LeaveLog.getModel();
         model.setRowCount(0); // Clear existing data
         for (LeaveDetails details : leaveHistory) {
             model.addRow(new Object[]{
-                details.getLeave().getDateSubmitted(),
-                details.getLeave().getEmpId(),
-                details.getLastName(),
-                details.getFirstName(),
-                details.getLeaveTypeName(),
-                details.getLeave().getStartDate(),
-                details.getLeave().getEndDate(),
-                details.getLeave().getDaysTaken(),
-                details.getLeave().getStatus(),
-                details.getLeave().getDateApproved(),
-                details.getLeave().getLeaveDaysRemaining()
+                    details.getLeave().getDateSubmitted(),
+                    details.getLeave().getEmpId(),
+                    details.getLastName(),
+                    details.getFirstName(),
+                    details.getLeaveTypeName(),
+                    details.getLeave().getStartDate(),
+                    details.getLeave().getEndDate(),
+                    details.getLeave().getDaysTaken(),
+                    details.getLeave().getStatus(),
+                    details.getLeave().getDateApproved(),
+                    details.getLeave().getLeaveDaysRemaining()
             });
         }
     }
 
     private void populateAllEmployeeLeaveBalanceTable() {
-        List<LeaveBalance> balances = LeaveDAO.getInstance().getAllEmployeeLeaveBalances();
+        List<LeaveBalance> leaveBalances = LeaveDAO.getInstance().getAllEmployeeLeaveBalances();
         DefaultTableModel model = (DefaultTableModel) table_EmpLeaveBalance.getModel();
         model.setRowCount(0); // Clear existing data
-        for (LeaveBalance balance : balances) {
+        for (LeaveBalance balance : leaveBalances) {
             model.addRow(new Object[]{
                 balance.getEmpId(),
                 balance.getEmployeeLastName(),
@@ -242,4 +269,5 @@ public class GUI_HRLeaveManagement {
             });
         }
     }
+
 }

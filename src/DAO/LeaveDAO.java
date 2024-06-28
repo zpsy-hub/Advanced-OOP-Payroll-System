@@ -30,10 +30,10 @@ public class LeaveDAO {
         return instance;
     }
 
-    // Retrieve leave record by employee ID, leave type, and year
+    // Retrieve leave request by employee ID, leave type, and year
     public Leave getLeaveByEmployeeIdAndYear(int empId, int leaveTypeId, int year) {
         Leave leave = null;
-        String sql = "SELECT * FROM payrollsystem_db.emp_leaves WHERE emp_id = ? AND leave_type_id = ? AND year = ?";
+        String sql = "SELECT * FROM payrollsystem_db.leave_requests WHERE emp_id = ? AND leave_type_id = ? AND year = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, empId);
             statement.setInt(2, leaveTypeId);
@@ -49,10 +49,10 @@ public class LeaveDAO {
         return leave;
     }
 
-    // Retrieve all leave records for an employee
+    // Retrieve all leave requests for an employee
     public List<Leave> getAllLeavesByEmployeeId(int empId) {
         List<Leave> leaves = new ArrayList<>();
-        String sql = "SELECT * FROM payrollsystem_db.emp_leaves WHERE emp_id = ?";
+        String sql = "SELECT * FROM payrollsystem_db.leave_requests WHERE emp_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, empId);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -124,9 +124,9 @@ public class LeaveDAO {
         return leaveType;
     }
 
-    // Add a new leave record including status
+    // Add a new leave request
     public void addLeave(Leave leave) {
-        String sql = "INSERT INTO payrollsystem_db.emp_leaves (emp_id, leave_type_id, year, date_submitted, start_date, end_date, days_taken, status, date_approved, leave_days_remaining) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO payrollsystem_db.leave_requests (emp_id, leave_type_id, year, date_submitted, start_date, end_date, days_taken, status, date_approved, leave_days_remaining) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, leave.getEmpId());
             statement.setInt(2, leave.getLeaveTypeId());
@@ -144,28 +144,29 @@ public class LeaveDAO {
         }
     }
 
-    // Update leave status and approval date
-    public void updateLeaveStatusAndDate(int empId, int leaveTypeId, int year, String status, Date dateApproved) {
-        String sql = "UPDATE payrollsystem_db.emp_leaves SET status = ?, date_approved = ? WHERE emp_id = ? AND leave_type_id = ? AND year = ?";
+ // Update leave status and approval date by employee ID and leave type ID
+    public boolean updateLeaveStatusAndDateByEmpAndType(int empId, int leaveTypeId, Date dateApproved, String status) {
+        String sql = "UPDATE payrollsystem_db.leave_requests SET status = ?, date_approved = ? WHERE emp_id = ? AND leave_type_id = ? AND status != 'Approved'";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, status);
             statement.setDate(2, dateApproved);
             statement.setInt(3, empId);
             statement.setInt(4, leaveTypeId);
-            statement.setInt(5, year);
-            statement.executeUpdate();
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;  // Return true if at least one row was updated
         } catch (SQLException e) {
             handleSQLException(e);
+            return false;  // Return false if an exception occurred
         }
     }
 
-    // Delete a leave record
-    public void deleteLeave(int empId, int leaveTypeId, int year) {
-        String sql = "DELETE FROM payrollsystem_db.emp_leaves WHERE emp_id = ? AND leave_type_id = ? AND year = ?";
+
+
+    // Delete a leave request
+    public void deleteLeave(int leaveRequestId) {
+        String sql = "DELETE FROM payrollsystem_db.leave_requests WHERE leave_request_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, empId);
-            statement.setInt(2, leaveTypeId);
-            statement.setInt(3, year);
+            statement.setInt(1, leaveRequestId);
             statement.executeUpdate();
         } catch (SQLException e) {
             handleSQLException(e);
@@ -175,7 +176,7 @@ public class LeaveDAO {
     // Retrieve leave logs for an employee
     public List<Leave> getLeaveLogsByEmployeeId(int empId) {
         List<Leave> leaveLogs = new ArrayList<>();
-        String sql = "SELECT * FROM payrollsystem_db.emp_leaves WHERE emp_id = ?";
+        String sql = "SELECT * FROM payrollsystem_db.leave_requests WHERE emp_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, empId);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -190,9 +191,10 @@ public class LeaveDAO {
         return leaveLogs;
     }
 
-    // Map a ResultSet to a Leave object, including status
+    // Map a ResultSet to a Leave object
     private Leave mapResultSetToLeave(ResultSet resultSet) throws SQLException {
         return new Leave(
+            resultSet.getInt("leave_request_id"),
             resultSet.getInt("emp_id"),
             resultSet.getInt("leave_type_id"),
             resultSet.getInt("year"),
@@ -222,17 +224,14 @@ public class LeaveDAO {
         return -1;  // Return -1 or throw an exception if the type is not found
     }
 
-    private void handleSQLException(SQLException e) {
-        e.printStackTrace();  // Handle exceptions appropriately
-    }
-    
     // Retrieve leave history details
     public List<LeaveDetails> getLeaveHistory() {
         List<LeaveDetails> leaveHistory = new ArrayList<>();
-        String sql = "SELECT l.*, e.first_name, e.last_name, lt.leave_type_name FROM payrollsystem_db.emp_leaves l JOIN payrollsystem_db.employee e ON l.emp_id = e.emp_id JOIN payrollsystem_db.leave_types lt ON l.leave_type_id = lt.leave_type_id";
+        String sql = "SELECT lr.*, e.first_name, e.last_name, lt.leave_type_name FROM payrollsystem_db.leave_requests lr JOIN payrollsystem_db.employee e ON lr.emp_id = e.emp_id JOIN payrollsystem_db.leave_types lt ON lr.leave_type_id = lt.leave_type_id";
         try (PreparedStatement statement = connection.prepareStatement(sql); ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 Leave leave = new Leave(
+                    resultSet.getInt("leave_request_id"),
                     resultSet.getInt("emp_id"),
                     resultSet.getInt("leave_type_id"),
                     resultSet.getInt("year"),
@@ -303,7 +302,7 @@ public class LeaveDAO {
 
     // Update leave days remaining when leave is approved
     public void updateLeaveDaysRemaining(int empId, int leaveTypeId, int year, int leaveDaysRemaining) {
-        String sql = "UPDATE payrollsystem_db.emp_leaves SET leave_days_remaining = ? WHERE emp_id = ? AND leave_type_id = ? AND year = ?";
+        String sql = "UPDATE payrollsystem_db.leave_requests SET leave_days_remaining = ? WHERE emp_id = ? AND leave_type_id = ? AND year = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, leaveDaysRemaining);
             statement.setInt(2, empId);
@@ -315,7 +314,7 @@ public class LeaveDAO {
         }
     }
     
- // Retrieve leave balance for a specific leave type of a specific employee
+    // Retrieve leave balance for a specific leave type of a specific employee
     public int getLeaveBalanceByEmployeeIdAndType(int empId, int leaveTypeId) {
         String leaveTypeColumn = "";
         switch (leaveTypeId) {
@@ -345,4 +344,26 @@ public class LeaveDAO {
         }
         return 0;  // Default to 0 if not found
     }
+    
+    // Method to handle SQL exceptions
+    private void handleSQLException(SQLException e) {
+        e.printStackTrace();  // Log the exception to console or a log file
+    }
+    
+    public boolean updateEmployeeLeaveBalance(int empId, int leaveTypeId, int year, int leaveDaysTaken, int leaveDaysRemaining) {
+        String sql = "UPDATE payrollsystem_db.emp_leave_balances SET leave_days_taken = ?, leave_days_remaining = ? WHERE emp_id = ? AND leave_type_id = ? AND year = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, leaveDaysTaken);
+            statement.setInt(2, leaveDaysRemaining);
+            statement.setInt(3, empId);
+            statement.setInt(4, leaveTypeId);
+            statement.setInt(5, year);
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;  // Return true if at least one row was updated
+        } catch (SQLException e) {
+            handleSQLException(e);
+            return false;  // Return false if an exception occurred
+        }
+    }
+
 }

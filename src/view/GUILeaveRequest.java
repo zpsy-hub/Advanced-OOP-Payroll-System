@@ -1,8 +1,6 @@
 package view;
 
-import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -26,23 +24,18 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import model.Leave;
 import model.LeaveBalance;
-import model.LeaveType;
 import model.User;
 import DAO.LeaveDAO;
 import customUI.ImagePanel;
 import customUI.Sidebar;
-import customUI.SidebarButton;
-import service.LeaveRequestService;
+import util.SignOutButton;
 import util.LeaveRequestComboPopulator;
 import util.SessionManager;
-import util.SignOutButton;
 
 public class GUILeaveRequest {
 
@@ -68,7 +61,7 @@ public class GUILeaveRequest {
      * Launch the application.
      */
     public static void main(String[] args) {
-    	FlatIntelliJLaf.setup();
+        FlatIntelliJLaf.setup();
 
         EventQueue.invokeLater(() -> {
             try {
@@ -81,7 +74,6 @@ public class GUILeaveRequest {
             }
         });
     }
-
 
     /**
      * Create the application.
@@ -97,7 +89,7 @@ public class GUILeaveRequest {
      * Initialize the contents of the frame.
      */
     private void initialize() {
-    	FlatIntelliJLaf.setup();
+        FlatIntelliJLaf.setup();
         // Initialize DAO instance
         leaveDAO = LeaveDAO.getInstance();
 
@@ -229,7 +221,7 @@ public class GUILeaveRequest {
         JLabel lblDay = new JLabel("Day:");
         lblDay.setBounds(478, 447, 53, 21);
         lblDay.setFont(new Font("Poppins", Font.PLAIN, 14));
-        mainPanel.add(lblDay);        
+        mainPanel.add(lblDay);
 
         JLabel lblYear = new JLabel("Year:");
         lblYear.setBounds(617, 447, 44, 21);
@@ -244,12 +236,12 @@ public class GUILeaveRequest {
         JLabel lblMonth_1 = new JLabel("Month:");
         lblMonth_1.setBounds(478, 512, 53, 21);
         lblMonth_1.setFont(new Font("Poppins", Font.PLAIN, 14));
-        mainPanel.add(lblMonth_1);        
+        mainPanel.add(lblMonth_1);
 
         JLabel lblYear_1 = new JLabel("Year:");
         lblYear_1.setBounds(617, 553, 44, 21);
         lblYear_1.setFont(new Font("Poppins", Font.PLAIN, 14));
-        mainPanel.add(lblYear_1);    
+        mainPanel.add(lblYear_1);
 
         JLabel lblDay_1 = new JLabel("Day:");
         lblDay_1.setHorizontalAlignment(SwingConstants.LEFT);
@@ -280,7 +272,7 @@ public class GUILeaveRequest {
         startyearComboBox.setBounds(659, 441, 82, 32);
         startyearComboBox.setFont(new Font("Poppins", Font.PLAIN, 16));
         startyearComboBox.setBackground(Color.WHITE);
-        mainPanel.add(startyearComboBox);        
+        mainPanel.add(startyearComboBox);
 
         endmonthComboBox = new JComboBox<>();
         endmonthComboBox.setBounds(541, 505, 200, 32);
@@ -311,6 +303,8 @@ public class GUILeaveRequest {
         leavehistoryPanel.add(scrollPane);
 
         leavehistoryTable_1 = new JTable();
+        leavehistoryTable_1.setFillsViewportHeight(true);
+        leavehistoryTable_1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF); 
         leavehistoryTable_1.setRowMargin(12);
         leavehistoryTable_1.setBorder(null);
         scrollPane.setViewportView(leavehistoryTable_1);
@@ -332,10 +326,10 @@ public class GUILeaveRequest {
                 try {
                     // Parse dates from the combo boxes
                     String start = startyearComboBox.getSelectedItem().toString() + "-" +
-                                   String.format("%02d", startmonthComboBox.getSelectedIndex() + 1) + "-" +
+                                   String.format("%02d", startmonthComboBox.getSelectedIndex() + 1) + "-" + // Adjusted index
                                    String.format("%02d", Integer.parseInt((String) startdayComboBox.getSelectedItem()));
                     String end = endyearComboBox.getSelectedItem().toString() + "-" +
-                                 String.format("%02d", endmonthComboBox.getSelectedIndex() + 1) + "-" +
+                                 String.format("%02d", endmonthComboBox.getSelectedIndex() + 1) + "-" + // Adjusted index
                                  String.format("%02d", Integer.parseInt((String) enddayComboBox.getSelectedItem()));
 
                     Date startDate = Date.valueOf(start);
@@ -370,17 +364,17 @@ public class GUILeaveRequest {
 
                     // Create and add the leave record
                     Leave leave = new Leave(
-                        loggedInEmployee.getId(),
-                        leaveTypeId,
-                        LocalDate.now().getYear(),
-                        new Date(System.currentTimeMillis()),
-                        startDate,
-                        endDate,
-                        totalDays,
-                        "Pending", // Status is "Pending"
-                        null, // Date approved is null initially
-                        currentBalance // Current balance
-                    );
+                    	    loggedInEmployee.getId(),
+                    	    leaveTypeId,
+                    	    LocalDate.now().getYear(),
+                    	    new Date(System.currentTimeMillis()),
+                    	    startDate,
+                    	    endDate,
+                    	    totalDays,
+                    	    "Pending", // Status is "Pending"
+                    	    currentBalance - totalDays // Updated balance
+                    	);
+
 
                     leaveDAO.addLeave(leave);
 
@@ -436,7 +430,7 @@ public class GUILeaveRequest {
         ClearFormButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
         ClearFormButton.setBackground(Color.WHITE);
         mainPanel.add(ClearFormButton);
-        updateLeaveData();    
+        updateLeaveData();
         // Add ActionListener to ClearFormButton
         ClearFormButton.addActionListener(e -> {
             // Reset combo boxes to their default values
@@ -471,10 +465,6 @@ public class GUILeaveRequest {
             int emergencyLeaves = leaveBalance.getEmergencyLeave();
 
             int totalLeaves = vacationLeaves + sickLeaves + emergencyLeaves;
-            System.out.println("Total Leaves: " + totalLeaves);
-            System.out.println("Vacation Leaves: " + vacationLeaves);
-            System.out.println("Sick Leaves: " + sickLeaves);
-            System.out.println("Emergency Leaves: " + emergencyLeaves);
 
             SwingUtilities.invokeLater(() -> {
                 leaveTotal.setText(String.valueOf(totalLeaves));
@@ -519,10 +509,10 @@ public class GUILeaveRequest {
         }
 
         LocalDate startDate = LocalDate.of(Integer.parseInt(startyearComboBox.getSelectedItem().toString()),
-                                           startmonthComboBox.getSelectedIndex() + 1,
+                                           startmonthComboBox.getSelectedIndex(), // Adjusted here
                                            Integer.parseInt(startdayComboBox.getSelectedItem().toString()));
         LocalDate endDate = LocalDate.of(Integer.parseInt(endyearComboBox.getSelectedItem().toString()),
-                                         endmonthComboBox.getSelectedIndex() + 1,
+                                         endmonthComboBox.getSelectedIndex(), // Adjusted here
                                          Integer.parseInt(enddayComboBox.getSelectedItem().toString()));
 
         if (endDate.isBefore(startDate)) {
@@ -539,7 +529,7 @@ public class GUILeaveRequest {
         // Get leave type and validate balance
         int leaveTypeId = getLeaveTypeIdFromName((String) leaveTypeComboBox.getSelectedItem());
         int currentBalance = leaveDAO.getLeaveBalanceByEmployeeIdAndType(loggedInEmployee.getId(), leaveTypeId);
-        
+
         if (daysBetween > currentBalance) {
             textField_ComputedDays.setText("Total days exceed leave balance.");
             return;
@@ -568,21 +558,22 @@ public class GUILeaveRequest {
 
             // Create a DefaultTableModel
             DefaultTableModel model = new DefaultTableModel();
-            model.addColumn("Timestamp");
-            model.addColumn("ID");
-            model.addColumn("Leave Type ID");
+            model.addColumn("Leave Request ID");
+            model.addColumn("Employee ID");
+            model.addColumn("Leave Type");
             model.addColumn("Year");
             model.addColumn("Date Submitted");
             model.addColumn("Start Date");
             model.addColumn("End Date");
             model.addColumn("Days Taken");
+            model.addColumn("Status");
             model.addColumn("Date Approved");
             model.addColumn("Leave Days Remaining");
 
             // Populate the model with leave request logs
             for (Leave leaveLog : leaveLogs) {
                 model.addRow(new Object[]{
-                    leaveLog.getDateSubmitted(),
+                    leaveLog.getLeaveRequestId(),
                     leaveLog.getEmpId(),
                     leaveLog.getLeaveTypeId(),
                     leaveLog.getYear(),
@@ -590,6 +581,7 @@ public class GUILeaveRequest {
                     leaveLog.getStartDate(),
                     leaveLog.getEndDate(),
                     leaveLog.getDaysTaken(),
+                    leaveLog.getStatus(),
                     leaveLog.getDateApproved(),
                     leaveLog.getLeaveDaysRemaining()
                 });

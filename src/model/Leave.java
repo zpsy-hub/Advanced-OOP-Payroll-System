@@ -3,6 +3,7 @@ package model;
 import java.sql.Date;
 
 public class Leave {
+    private int leaveRequestId;
     private int empId;
     private int leaveTypeId;
     private int year;
@@ -10,12 +11,13 @@ public class Leave {
     private Date startDate;
     private Date endDate;
     private int daysTaken;
-    private String status;  // Add this line
+    private String status;
     private Date dateApproved;
     private int leaveDaysRemaining;
 
-    // Constructor updated with status
-    public Leave(int empId, int leaveTypeId, int year, Date dateSubmitted, Date startDate, Date endDate, int daysTaken, String status, Date dateApproved, int leaveDaysRemaining) {
+    // Constructor
+    public Leave(int leaveRequestId, int empId, int leaveTypeId, int year, Date dateSubmitted, Date startDate, Date endDate, int daysTaken, String status, Date dateApproved, int leaveDaysRemaining) {
+        this.leaveRequestId = leaveRequestId;
         this.empId = empId;
         this.leaveTypeId = leaveTypeId;
         this.year = year;
@@ -23,12 +25,33 @@ public class Leave {
         this.startDate = startDate;
         this.endDate = endDate;
         this.daysTaken = daysTaken;
-        this.status = status; // Initialize status
+        this.status = status;
         this.dateApproved = dateApproved;
         this.leaveDaysRemaining = leaveDaysRemaining;
     }
+    
+    // Constructor for creating a new leave request (without leaveRequestId and dateApproved)
+    public Leave(int empId, int leaveTypeId, int year, Date dateSubmitted, Date startDate, Date endDate, int daysTaken, String status, int leaveDaysRemaining) {
+        this.empId = empId;
+        this.leaveTypeId = leaveTypeId;
+        this.year = year;
+        this.dateSubmitted = dateSubmitted;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.daysTaken = daysTaken;
+        this.status = status;
+        this.leaveDaysRemaining = leaveDaysRemaining;
+    }
 
-    // Getters and Setters including for status
+    // Getters and Setters
+    public int getLeaveRequestId() {
+        return leaveRequestId;
+    }
+
+    public void setLeaveRequestId(int leaveRequestId) {
+        this.leaveRequestId = leaveRequestId;
+    }
+
     public int getEmpId() {
         return empId;
     }
