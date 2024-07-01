@@ -9,9 +9,8 @@ import java.util.List;
 import model.Permission;
 import service.SQL_client;
 
-
 public class PermissionDAO {
-	private static PermissionDAO instance;
+    private static PermissionDAO instance;
     private static Connection connection;
 
     private PermissionDAO() {
@@ -27,7 +26,7 @@ public class PermissionDAO {
 
     public List<Permission> getAllPermissions() {
         List<Permission> permissions = new ArrayList<>();
-        String query = "SELECT * FROM payroll_system.permissions";
+        String query = "SELECT * FROM payrollsystem_db.permissions";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             ResultSet resultSet = statement.executeQuery();
@@ -44,8 +43,8 @@ public class PermissionDAO {
 
     public List<Permission> getPermissionsByEmployeeId(int empId, Connection connection) {
         List<Permission> permissions = new ArrayList<>();
-        String query = "SELECT p.* FROM payroll_system.permissions p " +
-                       "INNER JOIN payroll_system.employee_permissions ep ON p.permissions_id = ep.permission_id " +
+        String query = "SELECT p.* FROM payrollsystem_db.permissions p " +
+                       "INNER JOIN payrollsystem_db.employee_permissions ep ON p.permissions_id = ep.permission_id " +
                        "WHERE ep.emp_id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -63,7 +62,7 @@ public class PermissionDAO {
     }
     
     public void grantAccess(int empId, int permissionId) {
-        String query = "INSERT INTO payroll_system.employee_permissions (emp_id, permission_id) VALUES (?, ?)";
+        String query = "INSERT INTO payrollsystem_db.employee_permissions (emp_id, permission_id) VALUES (?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, empId);
@@ -75,7 +74,7 @@ public class PermissionDAO {
     }
 
     public void revokeAccess(int empId, int permissionId) {
-        String query = "DELETE FROM payroll_system.employee_permissions WHERE emp_id = ? AND permission_id = ?";
+        String query = "DELETE FROM payrollsystem_db.employee_permissions WHERE emp_id = ? AND permission_id = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, empId);
@@ -85,7 +84,6 @@ public class PermissionDAO {
             e.printStackTrace();
         }
     }
-
 
     public static void main(String[] args) {
         // Fetch permissions for employee with ID 6
@@ -103,5 +101,4 @@ public class PermissionDAO {
             e.printStackTrace();
         }
     }
-
 }

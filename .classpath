@@ -40,5 +40,7 @@
 	<classpathentry kind="lib" path="lib/xchart-demo-3.8.8.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-2.0.13.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-simple-2.0.13.jar"/>
+	<classpathentry kind="lib" path="lib/byte-buddy-agent-1.14.17.jar"/>
+	<classpathentry kind="con" path="org.testng.TESTNG_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

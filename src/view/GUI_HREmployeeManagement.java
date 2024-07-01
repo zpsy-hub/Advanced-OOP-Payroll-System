@@ -5,10 +5,15 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -122,6 +127,8 @@ public class GUI_HREmployeeManagement extends JFrame {
         table.setRowHeight(28);
         table.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
         scrollPane.setViewportView(table);
 
         // CRUD buttons
@@ -140,7 +147,7 @@ public class GUI_HREmployeeManagement extends JFrame {
         });
 
         updatedataButton = new JButton("Update Data");
-        updatedataButton.setBounds(578, 663, 154, 51);
+        updatedataButton.setBounds(836, 663, 154, 51);
         updatedataButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
         updatedataButton.setBackground(Color.WHITE);
         updatedataButton.setEnabled(false);
@@ -183,52 +190,63 @@ public class GUI_HREmployeeManagement extends JFrame {
         });
 
         deletedataButton = new JButton("Delete Data");
-        deletedataButton.setBounds(953, 663, 154, 51);
+        deletedataButton.setBounds(1054, 663, 154, 51);
         deletedataButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
         deletedataButton.setBackground(Color.WHITE);
         deletedataButton.setEnabled(false);
         mainPanel.add(deletedataButton);
+        // Action listener for the "Delete Data" button
         deletedataButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int selectedRow = table.getSelectedRow();
-                if (selectedRow != -1) {
-                    int option = JOptionPane.showConfirmDialog(GUI_HREmployeeManagement.this, "Are you sure you want to delete this employee? Deletion is permanent.", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+                int[] selectedRows = table.getSelectedRows();
+                if (selectedRows.length > 0) {
+                    int option = JOptionPane.showConfirmDialog(GUI_HREmployeeManagement.this, "Are you sure you want to delete " + selectedRows.length + " employees? Deletion is permanent.", "Confirm Deletion", JOptionPane.YES_NO_OPTION);
                     if (option == JOptionPane.YES_OPTION) {
-                        int modelRow = table.convertRowIndexToModel(selectedRow); // Convert view row to model row
-                        int idToDelete = (int) model.getValueAt(modelRow, 0);
-                        boolean success = EmployeeDAO.deleteEmployee(idToDelete);
-                        if (success) {
-                            model.removeRow(modelRow);
-                            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Employee deleted successfully.");
-                        } else {
-                            JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Error deleting employee.", "Error", JOptionPane.ERROR_MESSAGE);
+                        // Delete selected rows in reverse order to avoid index issues
+                        for (int i = selectedRows.length - 1; i >= 0; i--) {
+                            int modelRow = table.convertRowIndexToModel(selectedRows[i]);
+                            int idToDelete = (int) model.getValueAt(modelRow, 0);
+                            boolean success = EmployeeDAO.deleteEmployee(idToDelete);
+                            if (success) {
+                                model.removeRow(modelRow);
+                            } else {
+                                JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Error deleting employee ID: " + idToDelete, "Error", JOptionPane.ERROR_MESSAGE);
+                            }
                         }
+                        JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, selectedRows.length + " employees deleted successfully.");
                     }
                 } else {
-                    JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Please select a row to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Please select employees to delete.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
 
-        // Enable/disable buttons based on table selection
+
+     // ListSelectionListener to enable/disable buttons based on selection
         ListSelectionModel selectionModel = table.getSelectionModel();
-        selectionModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionModel.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
                 if (!event.getValueIsAdjusting()) {
-                    int selectedRow = table.getSelectedRow();
-                    if (selectedRow >= 0 && selectedRow < table.getRowCount()) {
-                        // Enable the "Update Data" and "Delete Data" buttons
-                        updatedataButton.setEnabled(true);
+                    int selectedRowsCount = table.getSelectedRowCount();
+                    if (selectedRowsCount > 0) {
+                        // Enable the "Delete Data" button
                         deletedataButton.setEnabled(true);
+
+                        // Disable the "Update Data" button when multiple rows are selected
+                        if (selectedRowsCount > 1) {
+                            updatedataButton.setEnabled(false);
+                        } else {
+                            updatedataButton.setEnabled(true);
+                        }
                     } else {
-                        // Disable the "Update Data" and "Delete Data" buttons
+                        // No row selected, disable both buttons
                         updatedataButton.setEnabled(false);
                         deletedataButton.setEnabled(false);
                     }
                 }
             }
         });
+
 
         // Set employee name dynamically
         if (loggedInEmployee != null) {
@@ -258,6 +276,31 @@ public class GUI_HREmployeeManagement extends JFrame {
         table.setModel(model);
         sorter = new TableRowSorter<>(model);
         table.setRowSorter(sorter);
+        
+        JButton batchAddButton = new JButton("Batch Add csv");
+        batchAddButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
+        batchAddButton.setBackground(Color.WHITE);
+        batchAddButton.setBounds(614, 663, 154, 51);
+        mainPanel.add(batchAddButton);
+        
+        batchAddButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                int returnValue = fileChooser.showOpenDialog(GUI_HREmployeeManagement.this);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    try {
+                        List<Employee> employees = parseCSVFile(selectedFile);
+                        int addedCount = EmployeeDAO.batchAddEmployees(employees);
+                        JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, addedCount + " employees added successfully.");
+                        populateEmployeeTable(); // Refresh table after batch addition
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, "Error importing employees: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
 
         // Default sorting by Employee ID in ascending order
         sorter.setComparator(0, (id1, id2) -> ((Integer) id1).compareTo((Integer) id2));
@@ -297,5 +340,24 @@ public class GUI_HREmployeeManagement extends JFrame {
 
         // Apply sorting
         sorter.sort();
+    }
+    
+    private List<Employee> parseCSVFile(File file) throws IOException {
+        List<Employee> employees = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                if (values.length != 17) continue; 
+                Employee employee = new Employee(
+                    0, values[0], values[1], values[2], values[3], values[4],
+                    values[5], values[6], values[7], values[8], values[9], 
+                    values[10], values[11], values[12], Double.parseDouble(values[13]),
+                    Double.parseDouble(values[14]), Double.parseDouble(values[15])
+                );
+                employees.add(employee);
+            }
+        }
+        return employees;
     }
 }

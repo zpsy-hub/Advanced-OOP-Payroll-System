@@ -21,14 +21,17 @@ public class GUITimeInOut {
 
     private JFrame timeinoutScreen;
     private JTable table;
+    private JLabel empStatus;
+    private JButton timeInButton;  
+    private JButton timeOutButton;  
     private static User loggedInEmployee;
-    
+
     public static void main(String[] args) {
-    	FlatIntelliJLaf.setup();
+        FlatIntelliJLaf.setup();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    GUITimeInOut window = new GUITimeInOut(loggedInEmployee);                   
+                    GUITimeInOut window = new GUITimeInOut(loggedInEmployee);
                     window.timeinoutScreen.setLocationRelativeTo(null);
                     window.timeinoutScreen.setVisible(true);
                 } catch (Exception e) {
@@ -42,10 +45,11 @@ public class GUITimeInOut {
         this.loggedInEmployee = loggedInEmployee;
         initialize();
         populateTable();
+        updateStatus();  // Check and set the initial status
     }
 
     private void initialize() {
-    	FlatIntelliJLaf.setup();
+        FlatIntelliJLaf.setup();
         timeinoutScreen = new JFrame("MotorPH Payroll System");
         timeinoutScreen.setIconImage(Toolkit.getDefaultToolkit().getImage(GUITimeInOut.class.getResource("/img/logo.png")));
         timeinoutScreen.setBounds(100, 100, 1280, 800);
@@ -81,24 +85,24 @@ public class GUITimeInOut {
         mainPanel.add(timeinoutPanel);
         timeinoutPanel.setLayout(null);
 
-        JButton timeInButton = new JButton("TIME IN");
+        timeInButton = new JButton("TIME IN");
         timeInButton.setFont(new Font("Montserrat ExtraBold", Font.PLAIN, 30));
         timeInButton.setBounds(29, 29, 239, 102);
         timeinoutPanel.add(timeInButton);
 
-        JButton timeOutButton = new JButton("TIME OUT");
+        timeOutButton = new JButton("TIME OUT");
         timeOutButton.setFont(new Font("Montserrat ExtraBold", Font.PLAIN, 30));
         timeOutButton.setBounds(576, 29, 239, 102);
         timeinoutPanel.add(timeOutButton);
 
-        JLabel empStatus = new JLabel("OFF");
+        empStatus = new JLabel("OFF");  // Initialize empStatus
         empStatus.setFont(new Font("Poppins ExtraBold", Font.PLAIN, 30));
         empStatus.setHorizontalAlignment(SwingConstants.CENTER);
         empStatus.setBounds(260, 81, 339, 39);
         timeinoutPanel.add(empStatus);
 
-        timeInButton.addActionListener(e -> handleTimeIn(timeInButton, timeOutButton, empStatus));
-        timeOutButton.addActionListener(e -> handleTimeOut(timeOutButton, empStatus));
+        timeInButton.addActionListener(e -> handleTimeIn());
+        timeOutButton.addActionListener(e -> handleTimeOut());
 
         JLabel currentstatusLabel = new JLabel("Current Status:");
         currentstatusLabel.setFont(new Font("Poppins", Font.PLAIN, 21));
@@ -116,7 +120,6 @@ public class GUITimeInOut {
         if (loggedInEmployee != null) {
             employeeNameLabel.setText(loggedInEmployee.getFirstName() + " " + loggedInEmployee.getLastName());
         }
-
     }
 
     private void populateTable() {
@@ -128,10 +131,32 @@ public class GUITimeInOut {
         table.setModel(model);
     }
 
-    private void handleTimeIn(JButton timeInButton, JButton timeOutButton, JLabel empStatus) {
+    private void updateStatus() {
+        boolean hasTimeIn = TimesheetDAO.getInstance().hasTimeInRecordForToday(loggedInEmployee.getId());
+        boolean hasTimeOut = TimesheetDAO.getInstance().hasTimeOutRecordForToday(loggedInEmployee.getId());
+
+        if (hasTimeIn && !hasTimeOut) {
+            empStatus.setText("IN");
+            empStatus.setForeground(Color.GREEN);
+            timeInButton.setEnabled(false);
+            timeOutButton.setEnabled(true);
+        } else if (hasTimeIn && hasTimeOut) {
+            empStatus.setText("OUT");
+            empStatus.setForeground(Color.RED);
+            timeInButton.setEnabled(true);
+            timeOutButton.setEnabled(false);
+        } else {
+            empStatus.setText("OFF");
+            empStatus.setForeground(Color.BLACK);
+            timeInButton.setEnabled(true);
+            timeOutButton.setEnabled(false);
+        }
+    }
+
+    private void handleTimeIn() {
         int empId = loggedInEmployee.getId();
         System.out.println("Time In - Emp ID: " + empId);
-        
+
         if (!TimesheetDAO.getInstance().hasTimeInRecordForToday(empId)) {
             TimesheetDAO.getInstance().recordTimeIn(empId, LocalDate.now(), new Time(System.currentTimeMillis()));
             empStatus.setText("IN");
@@ -144,8 +169,7 @@ public class GUITimeInOut {
         }
     }
 
-
-    private void handleTimeOut(JButton timeOutButton, JLabel empStatus) {
+    private void handleTimeOut() {
         int empId = loggedInEmployee.getId();
         System.out.println("Time Out - Emp ID: " + empId);
 
@@ -154,6 +178,7 @@ public class GUITimeInOut {
             empStatus.setText("OUT");
             empStatus.setForeground(Color.RED);
             timeOutButton.setEnabled(false);
+            timeInButton.setEnabled(true);
             populateTable();
         } else {
             JOptionPane.showMessageDialog(timeinoutScreen, "Time out has already been recorded for today.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -163,10 +188,8 @@ public class GUITimeInOut {
     public void openWindow() {
         timeinoutScreen.setVisible(true);
     }
-    
+
     public JFrame getFrame() {
         return timeinoutScreen;
     }
-
-    
 }

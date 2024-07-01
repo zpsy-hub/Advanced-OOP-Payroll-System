@@ -2,27 +2,22 @@ package view;
 
 import java.awt.EventQueue;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
-
 import model.Employee;
 import model.Permission;
 import model.User;
+import service.SQL_client;
 import DAO.EmployeeDAO;
 import DAO.PermissionDAO;
 import customUI.ImagePanel;
 import customUI.Sidebar;
-import customUI.SidebarButton;
-import service.SQL_client;
-import service.PermissionService;
-import service.PermissionWithStatus;
 import util.SessionManager;
 import util.SignOutButton;
-
 import javax.swing.JPanel;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,18 +25,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.SwingConstants;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import com.formdev.flatlaf.FlatIntelliJLaf;
-
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
@@ -58,7 +48,7 @@ public class GUI_ITPermissions {
      * Launch the application.
      */
     public static void main(String[] args) {
-    	FlatIntelliJLaf.setup();
+        FlatIntelliJLaf.setup();
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -86,7 +76,7 @@ public class GUI_ITPermissions {
      * Initialize the contents of the frame.
      */
     private void initialize() {
-    	FlatIntelliJLaf.setup();
+        FlatIntelliJLaf.setup();
         permissionsFrame = new JFrame();
         permissionsFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(GUI_ITPermissions.class.getResource("/img/logo.png")));
         permissionsFrame.setTitle("MotorPH Payroll System");
@@ -100,7 +90,7 @@ public class GUI_ITPermissions {
         mainPanel.setBounds(0, 0, 1280, 800);
         permissionsFrame.getContentPane().add(mainPanel);
         mainPanel.setLayout(null);
-		
+        
         // Use the Sidebar class
         Sidebar sidebar = new Sidebar(loggedInEmployee);
         sidebar.setBounds(0, 92, 321, 680);
@@ -142,7 +132,15 @@ public class GUI_ITPermissions {
         scrollPane_1.setViewportView(userstable);
 
         userstable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        userstable.setModel(new DefaultTableModel(new Object[][] {}, new String[] { "Emp ID", "Last Name", "First Name", "Position" }));
+        DefaultTableModel userTableModel = new DefaultTableModel(new Object[][] {}, new String[] { "Emp ID", "Last Name", "First Name", "Position", "Department" }) {
+            Class<?>[] columnTypes = new Class<?>[] {
+                Integer.class, String.class, String.class, String.class, String.class
+            };
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnTypes[columnIndex];
+            }
+        };
+        userstable.setModel(userTableModel);
         userstable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
@@ -157,7 +155,11 @@ public class GUI_ITPermissions {
         });
 
         scrollPane_1.setViewportView(userstable);
-        
+
+        // Set up TableRowSorter for correct sorting
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(userTableModel);
+        userstable.setRowSorter(sorter);
+
         JButton btnNewButton = new JButton("Grant Access");
         btnNewButton.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
         btnNewButton.setBounds(826, 595, 179, 40);
@@ -197,18 +199,18 @@ public class GUI_ITPermissions {
         btnRevokeAccess.setBounds(1025, 595, 179, 40);
         mainPanel.add(btnRevokeAccess);
         
-                JScrollPane scrollPane = new JScrollPane();
-                scrollPane.setBounds(800, 189, 420, 370);
-                mainPanel.add(scrollPane);
-                
-                        permissionsTable = new JTable();
-                        permissionsTable.setRowMargin(12);
-                        permissionsTable.setRowHeight(28);
-                        scrollPane.setViewportView(permissionsTable);
-                        
-                                JPanel panel = new JPanel();
-                                scrollPane.setRowHeaderView(panel);
-                                panel.setLayout(null);
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBounds(800, 189, 420, 370);
+        mainPanel.add(scrollPane);
+        
+        permissionsTable = new JTable();
+        permissionsTable.setRowMargin(12);
+        permissionsTable.setRowHeight(28);
+        scrollPane.setViewportView(permissionsTable);
+        
+        JPanel panel = new JPanel();
+        scrollPane.setRowHeaderView(panel);
+        panel.setLayout(null);
         
         btnRevokeAccess.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -238,7 +240,6 @@ public class GUI_ITPermissions {
                 }
             }
         });
-    
     }
 
     // Update the permissions table
@@ -261,15 +262,18 @@ public class GUI_ITPermissions {
         permissionsTable.setModel(permissionsTableModel);
     }
 
-
-
-
     // Method to populate the user table
     private void populateUserTable() {
         DefaultTableModel userTableModel = (DefaultTableModel) userstable.getModel();
         List<Employee> employees = employeeDAO.getAllEmployees();
         for (Employee employee : employees) {
-            userTableModel.addRow(new Object[] { employee.getEmpId(), employee.getLastName(), employee.getFirstName(), employee.getPosition() });
+            userTableModel.addRow(new Object[] {
+                employee.getEmpId(),
+                employee.getLastName(),
+                employee.getFirstName(),
+                employee.getPosition(),
+                employee.getDepartment()
+            });
         }
     }
 }

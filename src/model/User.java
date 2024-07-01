@@ -6,17 +6,14 @@ public class User {
     private int id;
     private String lastName;
     private String firstName;
-    private String position;
-    private Employee employee;
 
     // Full Constructor
-    public User(String username, String password, int employeeNumber, String lastName, String firstName, String position) {
+    public User(String username, String password, int employeeNumber, String lastName, String firstName) {
         this.username = username;
         this.password = password;
         this.id = employeeNumber;
         this.lastName = lastName;
         this.firstName = firstName;
-        this.position = position;
     }
 
     // Constructor for testing with only id, last name, and first name
@@ -65,21 +62,5 @@ public class User {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
     }
 }

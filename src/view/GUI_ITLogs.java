@@ -127,7 +127,7 @@ public class GUI_ITLogs {
     
     private void populateTable() {
         // Get the login attempts data from the database
-        DAO.LogsDAO logsDAO = DAO.LogsDAO.getInstance();
+        LogsDAO logsDAO = LogsDAO.getInstance();
         List<LoginAttempt> loginAttempts = logsDAO.getLoginAttempts();
 
         // Create a table model with the appropriate columns
@@ -148,12 +148,13 @@ public class GUI_ITLogs {
         // Enable sorting for all columns
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
         tableLogs.setRowSorter(sorter);
-        
-        // Add sort keys for each column
-        for (int i = 0; i < model.getColumnCount(); i++) {
-            List<RowSorter.SortKey> sortKeys = new ArrayList<>();
-            sortKeys.add(new RowSorter.SortKey(i, SortOrder.ASCENDING));
-            sorter.setSortKeys(sortKeys);
-        }
+
+        // Set the default sort order for the timestamp column to descending
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+        int timestampColumnIndex = 2; // Index of the "Timestamp" column
+        sortKeys.add(new RowSorter.SortKey(timestampColumnIndex, SortOrder.DESCENDING));
+        sorter.setSortKeys(sortKeys);
+        sorter.sort();
     }
+
 }

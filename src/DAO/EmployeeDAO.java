@@ -25,7 +25,8 @@ public class EmployeeDAO {
 
     public static boolean createEmployee(Employee employee) {
         String sql = "INSERT INTO payrollsystem_db.employee (last_name, first_name, birthdate, address, phone_no, sss_no, philhealth_no, bir_no, pagibig_no, status_id, dept_id, position_id, emp_supervisor_id, basic_salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             pstmt.setString(1, employee.getLastName());
@@ -70,7 +71,8 @@ public class EmployeeDAO {
                      "LEFT JOIN payrollsystem_db.employee sup ON e.emp_supervisor_id = sup.emp_id " +
                      "JOIN payrollsystem_db.employee_details ed ON e.emp_id = ed.emp_id " +
                      "WHERE e.emp_id = ?";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, empId);
             ResultSet rs = pstmt.executeQuery();
@@ -93,7 +95,8 @@ public class EmployeeDAO {
                      "JOIN payrollsystem_db.position p ON e.position_id = p.position_id " +
                      "LEFT JOIN payrollsystem_db.employee sup ON e.emp_supervisor_id = sup.emp_id " +
                      "JOIN payrollsystem_db.employee_details ed ON e.emp_id = ed.emp_id";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -108,7 +111,8 @@ public class EmployeeDAO {
 
     public static boolean updateEmployee(Employee employee) {
         String sql = "UPDATE payrollsystem_db.employee SET last_name = ?, first_name = ?, birthdate = ?, address = ?, phone_no = ?, sss_no = ?, philhealth_no = ?, bir_no = ?, pagibig_no = ?, status_id = ?, dept_id = ?, position_id = ?, emp_supervisor_id = ?, basic_salary = ? WHERE emp_id = ?";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
             pstmt.setString(1, employee.getLastName());
@@ -137,7 +141,8 @@ public class EmployeeDAO {
 
     public static boolean deleteEmployee(int empId) {
         String sql = "DELETE FROM payrollsystem_db.employee WHERE emp_id = ?";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, empId);
             int rowsDeleted = pstmt.executeUpdate();
@@ -172,7 +177,8 @@ public class EmployeeDAO {
 
     private static int getStatusIdByName(String statusName) {
         String sql = "SELECT status_id FROM payrollsystem_db.status WHERE status_name = ?";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, statusName);
             ResultSet rs = pstmt.executeQuery();
@@ -187,7 +193,8 @@ public class EmployeeDAO {
 
     private static int getDepartmentIdByName(String departmentName) {
         String sql = "SELECT dept_id FROM payrollsystem_db.department WHERE dept_name = ?";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, departmentName);
             ResultSet rs = pstmt.executeQuery();
@@ -202,7 +209,8 @@ public class EmployeeDAO {
 
     private static int getPositionIdByName(String positionName) {
         String sql = "SELECT position_id FROM payrollsystem_db.position WHERE position_name = ?";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, positionName);
             ResultSet rs = pstmt.executeQuery();
@@ -217,7 +225,8 @@ public class EmployeeDAO {
 
     private static int getEmployeeIdByName(String supervisorName) {
         String sql = "SELECT emp_id FROM payrollsystem_db.employee WHERE CONCAT(first_name, ' ', last_name) = ?";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, supervisorName);
             ResultSet rs = pstmt.executeQuery();
@@ -234,7 +243,8 @@ public class EmployeeDAO {
     public Map<Integer, String> getAllStatuses() {
         Map<Integer, String> statuses = new HashMap<>();
         String sql = "SELECT status_id, status_name FROM payrollsystem_db.status";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
@@ -253,7 +263,8 @@ public class EmployeeDAO {
     public Map<Integer, String> getAllPositions() {
         Map<Integer, String> positions = new HashMap<>();
         String sql = "SELECT position_id, position_name FROM payrollsystem_db.position";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
@@ -272,7 +283,8 @@ public class EmployeeDAO {
     public Map<Integer, String> getAllDepartments() {
         Map<Integer, String> departments = new HashMap<>();
         String sql = "SELECT dept_id, dept_name FROM payrollsystem_db.department";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
@@ -291,7 +303,8 @@ public class EmployeeDAO {
     public Map<Integer, String> getAllSupervisors() {
         Map<Integer, String> supervisors = new HashMap<>();
         String sql = "SELECT emp_id, CONCAT(first_name, ' ', last_name) AS supervisor_name FROM payrollsystem_db.employee";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
@@ -308,7 +321,8 @@ public class EmployeeDAO {
     
     public int getNextAutoIncrementValue() {
         String sql = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'payrollsystem_db' AND TABLE_NAME = 'employee'";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -327,7 +341,8 @@ public class EmployeeDAO {
                      "JOIN payrollsystem_db.department d ON e.dept_id = d.dept_id " +
                      "JOIN payrollsystem_db.position p ON e.position_id = p.position_id " +
                      "WHERE e.emp_id = ?";
-        try (Connection conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, empId);
             ResultSet rs = pstmt.executeQuery();
@@ -344,6 +359,43 @@ public class EmployeeDAO {
         }
         return null;
     
+    }
+    
+    public static int batchAddEmployees(List<Employee> employees) {
+        String sql = "INSERT INTO payrollsystem_db.employee (last_name, first_name, birthdate, address, phone_no, sss_no, philhealth_no, bir_no, pagibig_no, status_id, dept_id, position_id, emp_supervisor_id, basic_salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        int addedCount = 0;
+        SQL_client.getInstance();
+		try (Connection conn = SQL_client.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            for (Employee employee : employees) {
+                pstmt.setString(1, employee.getLastName());
+                pstmt.setString(2, employee.getFirstName());
+                pstmt.setDate(3, java.sql.Date.valueOf(employee.getBirthday()));
+                pstmt.setString(4, employee.getAddress());
+                pstmt.setString(5, employee.getPhoneNumber());
+                pstmt.setString(6, employee.getSssNumber());
+                pstmt.setString(7, employee.getPhilhealthNumber());
+                pstmt.setString(8, employee.getTinNumber());
+                pstmt.setString(9, employee.getPagibigNumber());
+                pstmt.setInt(10, getStatusIdByName(employee.getStatus()));
+                pstmt.setInt(11, getDepartmentIdByName(employee.getDepartment()));
+                pstmt.setInt(12, getPositionIdByName(employee.getPosition()));
+                pstmt.setInt(13, getEmployeeIdByName(employee.getImmediateSupervisor()));
+                pstmt.setDouble(14, employee.getBasicSalary());
+                pstmt.addBatch();
+            }
+
+            int[] results = pstmt.executeBatch();
+            for (int result : results) {
+                if (result != PreparedStatement.EXECUTE_FAILED) {
+                    addedCount++;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return addedCount;
     }
 
 

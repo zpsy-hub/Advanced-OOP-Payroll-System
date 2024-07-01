@@ -16,7 +16,7 @@ public class SQL_client {
         return instance;
     }
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         String connectionUrl = "jdbc:mysql://127.0.0.1:3306/?user=root";
         try {
             conn = DriverManager.getConnection(connectionUrl, "root", "DF.w}=;$CLn+84?m]r(M%Q"); 

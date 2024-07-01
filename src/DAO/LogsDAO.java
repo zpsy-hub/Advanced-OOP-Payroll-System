@@ -33,7 +33,7 @@ public class LogsDAO {
 
         try {
             conn = SQL_client.getInstance().getConnection();
-            String query = "SELECT emp_id, username, timestamp, CASE WHEN success = 1 THEN 'Success' ELSE 'Fail' END AS login_status FROM payroll_system.login_attempts";
+            String query = "SELECT emp_id, username, timestamp, CASE WHEN success = 1 THEN 'Success' ELSE 'Fail' END AS login_status FROM payrollsystem_db.login_attempts";
             stmt = conn.prepareStatement(query);
             rs = stmt.executeQuery();
 
