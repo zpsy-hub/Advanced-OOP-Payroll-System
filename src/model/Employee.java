@@ -79,6 +79,16 @@ public class Employee {
         this.position = position;
     }
     
+    // Constructor with necessary parameters
+    public Employee(int empId, String firstName, String lastName, String position, String department) {
+        this.empId = empId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.position = position;
+        this.department = department;
+    }
+
+    
     // Getters and setters
     public int getEmpId() {
         return empId;

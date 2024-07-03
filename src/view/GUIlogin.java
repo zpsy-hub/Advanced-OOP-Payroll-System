@@ -36,6 +36,7 @@ public class GUIlogin {
     private JTextField usernameTextField1;
     private SessionManager sessionManager;
     private customUI.PasswordTextField PasswordTextField;
+    private JButton btnForgotPassword;
 
     /**
      * Launch the application.garman
@@ -105,7 +106,7 @@ public class GUIlogin {
         loginButton.setUI(new RoundedButtonUI());
         
         usernameTextField1 = new JTextField();
-        usernameTextField1.setBounds(734, 300, 360, 54);
+        usernameTextField1.setBounds(735, 279, 360, 54);
         loginbgpanel.add(usernameTextField1);
         usernameTextField1.setForeground(new Color(30, 55, 101));
         usernameTextField1.setFont(new Font("Montserrat Medium", Font.BOLD, 20));
@@ -114,12 +115,12 @@ public class GUIlogin {
         usernameTextField1.setColumns(10);
         
         JLabel usernameLabel = new JLabel("Username");
-        usernameLabel.setBounds(734, 268, 151, 33);
+        usernameLabel.setBounds(735, 247, 151, 33);
         loginbgpanel.add(usernameLabel);
         usernameLabel.setFont(new Font("Montserrat", Font.PLAIN, 18));
         
         PasswordTextField = new customUI.PasswordTextField();
-        PasswordTextField.setBounds(734, 407, 360, 54);
+        PasswordTextField.setBounds(735, 386, 360, 54);
         PasswordTextField.setFont(new Font("Montserrat Medium", Font.BOLD, 20));
         PasswordTextField.setForeground(new Color(30, 55, 101));
         PasswordTextField.setBorder(new RoundedBorder(15));
@@ -128,7 +129,7 @@ public class GUIlogin {
 
         
         JLabel passwordLabel = new JLabel("Password");
-        passwordLabel.setBounds(734, 376, 151, 33);
+        passwordLabel.setBounds(735, 355, 151, 33);
         loginbgpanel.add(passwordLabel);
         passwordLabel.setFont(new Font("Montserrat", Font.PLAIN, 18));
 
@@ -167,6 +168,21 @@ public class GUIlogin {
         
         // Set the default button for the JFrame's root pane
         loginScreen1.getRootPane().setDefaultButton(loginButton);
+        
+        btnForgotPassword = new JButton("Forgot Password?");
+        btnForgotPassword.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btnForgotPassword.setHorizontalAlignment(SwingConstants.LEFT);
+        btnForgotPassword.setFont(new Font("Montserrat", Font.PLAIN, 12));
+        btnForgotPassword.setBounds(735, 443, 151, 26);
+        loginbgpanel.add(btnForgotPassword);
+        
+        btnForgotPassword.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ForgotPasswordForm forgotPasswordForm = new ForgotPasswordForm();
+                forgotPasswordForm.setLocationRelativeTo(null);
+                forgotPasswordForm.setVisible(true);
+            }
+        });
     }
     
     
