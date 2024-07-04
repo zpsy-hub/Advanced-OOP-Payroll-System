@@ -11,7 +11,11 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.font.TextAttribute;
 import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -172,9 +176,24 @@ public class GUIlogin {
         btnForgotPassword = new JButton("Forgot Password?");
         btnForgotPassword.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnForgotPassword.setHorizontalAlignment(SwingConstants.LEFT);
-        btnForgotPassword.setFont(new Font("Montserrat", Font.PLAIN, 12));
-        btnForgotPassword.setBounds(735, 443, 151, 26);
+        btnForgotPassword.setFont(new Font("Montserrat Medium", Font.PLAIN, 12));
+
+        // Make it look like a hyperlink
+        btnForgotPassword.setBorderPainted(false);
+        btnForgotPassword.setContentAreaFilled(false);
+        btnForgotPassword.setFocusPainted(false);
+        btnForgotPassword.setOpaque(false);
+        btnForgotPassword.setForeground(new Color(30, 55, 101)); // Set color to match a typical hyperlink
+
+        // Underline text
+        Font font = btnForgotPassword.getFont();
+        Map<TextAttribute, Object> attributes = new HashMap<>(font.getAttributes());
+        attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+        btnForgotPassword.setFont(font.deriveFont(attributes));
+
+        btnForgotPassword.setBounds(720, 444, 151, 26);
         loginbgpanel.add(btnForgotPassword);
+
         
         btnForgotPassword.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
