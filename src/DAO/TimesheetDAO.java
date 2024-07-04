@@ -4,7 +4,6 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 import service.SQL_client;
 
 public class TimesheetDAO {
@@ -12,7 +11,8 @@ public class TimesheetDAO {
     private Connection conn = null;
 
     public TimesheetDAO() {
-        conn = SQL_client.getInstance().getConnection();
+        SQL_client.getInstance();
+		conn = SQL_client.getConnection();
     }
 
     public static TimesheetDAO getInstance() {
@@ -54,7 +54,15 @@ public class TimesheetDAO {
                 Time timeOut = resultSet.getTime("time_out");
                 double totalHours = resultSet.getDouble("total_hours");
                 int payPeriodId = resultSet.getInt("pay_period_id");
-                String[] record = {String.valueOf(timesheetId), String.valueOf(empId), date.toString(), timeIn.toString(), timeOut.toString(), Double.toString(totalHours), String.valueOf(payPeriodId)};
+                String[] record = {
+                    String.valueOf(timesheetId),
+                    String.valueOf(empId),
+                    date.toString(),
+                    timeIn != null ? timeIn.toString() : "",
+                    timeOut != null ? timeOut.toString() : "",
+                    Double.toString(totalHours),
+                    String.valueOf(payPeriodId)
+                };
                 records.add(record);
             }
             resultSet.close();
@@ -82,7 +90,15 @@ public class TimesheetDAO {
                 Time timeIn = resultSet.getTime("time_in");
                 Time timeOut = resultSet.getTime("time_out");
                 double totalHours = resultSet.getDouble("total_hours");
-                String[] record = {String.valueOf(timesheetId), String.valueOf(empId), employeeName, date.toString(), timeIn.toString(), timeOut.toString(), Double.toString(totalHours)};
+                String[] record = {
+                    String.valueOf(timesheetId),
+                    String.valueOf(empId),
+                    employeeName,
+                    date.toString(),
+                    timeIn != null ? timeIn.toString() : "",
+                    timeOut != null ? timeOut.toString() : "",
+                    Double.toString(totalHours)
+                };
                 records.add(record);
             }
             resultSet.close();
@@ -142,7 +158,15 @@ public class TimesheetDAO {
                             Time timeIn = resultSet.getTime("time_in");
                             Time timeOut = resultSet.getTime("time_out");
                             double totalHours = resultSet.getDouble("total_hours");
-                            String[] record = {String.valueOf(timesheetId), String.valueOf(empId), employeeName, date.toString(), timeIn.toString(), timeOut.toString(), Double.toString(totalHours)};
+                            String[] record = {
+                                String.valueOf(timesheetId),
+                                String.valueOf(empId),
+                                employeeName,
+                                date.toString(),
+                                timeIn != null ? timeIn.toString() : "",
+                                timeOut != null ? timeOut.toString() : "",
+                                Double.toString(totalHours)
+                            };
                             records.add(record);
                         }
 
@@ -207,7 +231,7 @@ public class TimesheetDAO {
         }
     }
     
- // Method to check if there is a time in record for the logged-in employee on the current date
+    // Method to check if there is a time in record for the logged-in employee on the current date
     public boolean hasTimeInRecordForToday(int empId) {
         String sql = "SELECT COUNT(*) FROM payrollsystem_db.timesheet WHERE emp_id = ? AND DATE(date) = CURDATE() AND time_in IS NOT NULL";
         try (PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -237,7 +261,7 @@ public class TimesheetDAO {
         return false;
     }
     
- // Method to retrieve timesheet records for the logged-in employee
+    // Method to retrieve timesheet records for the logged-in employee
     public List<String[]> getLoggedInEmployeeTimesheetRecords(int empId) {
         List<String[]> records = new ArrayList<>();
         String sql = "SELECT date, time_in, time_out, total_hours, pay_period_id FROM payrollsystem_db.timesheet WHERE emp_id = ?";
@@ -258,5 +282,4 @@ public class TimesheetDAO {
         return records;
     }
 
-    
 }

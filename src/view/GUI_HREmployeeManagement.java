@@ -33,6 +33,7 @@ import javax.swing.table.TableRowSorter;
 
 import model.Employee;
 import model.User;
+import service.EmployeeCSVParser;
 import DAO.EmployeeDAO;
 import customUI.ImagePanel;
 import customUI.Sidebar;
@@ -291,7 +292,7 @@ public class GUI_HREmployeeManagement extends JFrame {
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     try {
-                        List<Employee> employees = parseCSVFile(selectedFile);
+                        List<Employee> employees = EmployeeCSVParser.parseEmployeesFromCSV(selectedFile.getAbsolutePath());
                         int addedCount = EmployeeDAO.batchAddEmployees(employees);
                         JOptionPane.showMessageDialog(GUI_HREmployeeManagement.this, addedCount + " employees added successfully.");
                         populateEmployeeTable(); // Refresh table after batch addition
@@ -301,6 +302,10 @@ public class GUI_HREmployeeManagement extends JFrame {
                 }
             }
         });
+
+
+
+
 
         // Default sorting by Employee ID in ascending order
         sorter.setComparator(0, (id1, id2) -> ((Integer) id1).compareTo((Integer) id2));

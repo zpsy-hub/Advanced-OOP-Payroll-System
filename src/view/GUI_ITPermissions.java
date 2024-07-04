@@ -85,7 +85,7 @@ public class GUI_ITPermissions {
         permissionsFrame.getContentPane().setLayout(null);
 
         // Main panel with background image
-        ImagePanel mainPanel = new ImagePanel("/img/credentials  mngmnt.png");
+        ImagePanel mainPanel = new ImagePanel("/img/permissions.png");
         mainPanel.setBackground(new Color(255, 255, 255));
         mainPanel.setBounds(0, 0, 1280, 800);
         permissionsFrame.getContentPane().add(mainPanel);

@@ -228,4 +228,40 @@ public class CredentialsManagementDAO {
             e.printStackTrace();
         }
     }
+    
+    public List<Employee> getEmployeesWithoutAccounts() {
+        List<Employee> employees = new ArrayList<>();
+        try {
+            SQL_client.getInstance();
+            Connection conn = SQL_client.getConnection();
+            if (conn == null) {
+                System.err.println("Database connection is null.");
+                return employees;
+            }
+
+            String sql = "SELECT e.emp_id, e.first_name, e.last_name, p.position_name, d.dept_name " +
+                         "FROM payrollsystem_db.employee e " +
+                         "JOIN payrollsystem_db.position p ON e.position_id = p.position_id " +
+                         "JOIN payrollsystem_db.department d ON e.dept_id = d.dept_id " +
+                         "LEFT JOIN payrollsystem_db.user u ON e.emp_id = u.emp_id " +
+                         "WHERE u.emp_id IS NULL";
+                         
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int id = rs.getInt("emp_id");
+                String firstName = rs.getString("first_name");
+                String lastName = rs.getString("last_name");
+                String position = rs.getString("position_name");
+                String department = rs.getString("dept_name");
+
+                employees.add(new Employee(id, firstName, lastName, position, department));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employees;
+    }
+
 }

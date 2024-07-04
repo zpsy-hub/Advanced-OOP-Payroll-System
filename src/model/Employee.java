@@ -15,6 +15,10 @@ public class Employee {
     private String department;
     private String position;
     private String immediateSupervisor;
+    private int statusId;
+    private int departmentId;
+    private int positionId;
+    private int immediateSupervisorId;
     private double basicSalary;
     private double grossSemiMonthlyRate;
     private double hourlyRate;
@@ -42,11 +46,20 @@ public class Employee {
         this.grossSemiMonthlyRate = grossSemiMonthlyRate;
         this.hourlyRate = hourlyRate;
     }
+    
+    // Constructor with necessary parameters
+    public Employee(int empId, String firstName, String lastName, String position, String department) {
+        this.empId = empId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.position = position;
+        this.department = department;
+    }
 
     // Constructor for convenience (parameters adjusted based on use case)
     public Employee(int empId, String lastName, String firstName, String birthday, String address, String phoneNumber,
                     String sssNumber, String philhealthNumber, String tinNumber, String pagibigNumber, String status,
-                    String department, String position, String immediateSupervisor, float basicSalary) {
+                    String department, String position, String immediateSupervisor, double basicSalary) {
         this.empId = empId;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -63,32 +76,48 @@ public class Employee {
         this.immediateSupervisor = immediateSupervisor;
         this.basicSalary = basicSalary;       
     }
-    
-    /// Constructor for logged-in user info (with full name)
-    public Employee(int empId, String employeeName, String department, String position) {
+
+    // Constructor for convenience with IDs
+    public Employee(int empId, String lastName, String firstName, String birthday, String address, String phoneNumber,
+                    String sssNumber, String philhealthNumber, String tinNumber, String pagibigNumber, int statusId,
+                    int departmentId, int positionId, int immediateSupervisorId, double basicSalary) {
         this.empId = empId;
-        if (employeeName != null && employeeName.contains(" ")) {
-            String[] nameParts = employeeName.split(" ");
-            this.firstName = nameParts[0];
-            this.lastName = nameParts[1];
-        } else {
-            this.firstName = employeeName;
-            this.lastName = "";
-        }
-        this.department = department;
-        this.position = position;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.birthday = birthday;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.sssNumber = sssNumber;
+        this.philhealthNumber = philhealthNumber;
+        this.tinNumber = tinNumber;
+        this.pagibigNumber = pagibigNumber;
+        this.statusId = statusId;
+        this.departmentId = departmentId;
+        this.positionId = positionId;
+        this.immediateSupervisorId = immediateSupervisorId;
+        this.basicSalary = basicSalary;       
     }
     
-    // Constructor with necessary parameters
-    public Employee(int empId, String firstName, String lastName, String position, String department) {
-        this.empId = empId;
-        this.firstName = firstName;
+    // Constructor for CSV parsing
+    public Employee(String lastName, String firstName, String birthday, String address, String phoneNumber,
+                    String sssNumber, String philhealthNumber, String tinNumber, String pagibigNumber, int statusId,
+                    int departmentId, int positionId, int immediateSupervisorId, double basicSalary) {
         this.lastName = lastName;
-        this.position = position;
-        this.department = department;
+        this.firstName = firstName;
+        this.birthday = birthday;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.sssNumber = sssNumber;
+        this.philhealthNumber = philhealthNumber;
+        this.tinNumber = tinNumber;
+        this.pagibigNumber = pagibigNumber;
+        this.statusId = statusId;
+        this.departmentId = departmentId;
+        this.positionId = positionId;
+        this.immediateSupervisorId = immediateSupervisorId;
+        this.basicSalary = basicSalary;
     }
 
-    
     // Getters and setters
     public int getEmpId() {
         return empId;
@@ -202,6 +231,38 @@ public class Employee {
         this.immediateSupervisor = immediateSupervisor;
     }
 
+    public int getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(int statusId) {
+        this.statusId = statusId;
+    }
+
+    public int getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(int departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public int getPositionId() {
+        return positionId;
+    }
+
+    public void setPositionId(int positionId) {
+        this.positionId = positionId;
+    }
+
+    public int getImmediateSupervisorId() {
+        return immediateSupervisorId;
+    }
+
+    public void setImmediateSupervisorId(int immediateSupervisorId) {
+        this.immediateSupervisorId = immediateSupervisorId;
+    }
+
     public double getBasicSalary() {
         return basicSalary;
     }
@@ -239,13 +300,32 @@ public class Employee {
                 ", philhealthNumber='" + philhealthNumber + '\'' +
                 ", tinNumber='" + tinNumber + '\'' +
                 ", pagibigNumber='" + pagibigNumber + '\'' +
+                ", statusId=" + statusId +
+                ", departmentId=" + departmentId +
+                ", positionId=" + positionId +
+                ", immediateSupervisorId=" + immediateSupervisorId +
+                ", basicSalary=" + basicSalary +
+                ", grossSemiMonthlyRate=" + grossSemiMonthlyRate +
+                ", hourlyRate=" + hourlyRate +
+                '}';
+    }
+
+    public String toDebugString() {
+        return "Employee{" +
+                "lastName='" + lastName + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", birthday='" + birthday + '\'' +
+                ", address='" + address + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", sssNumber='" + sssNumber + '\'' +
+                ", philhealthNumber='" + philhealthNumber + '\'' +
+                ", tinNumber='" + tinNumber + '\'' +
+                ", pagibigNumber='" + pagibigNumber + '\'' +
                 ", status='" + status + '\'' +
                 ", department='" + department + '\'' +
                 ", position='" + position + '\'' +
                 ", immediateSupervisor='" + immediateSupervisor + '\'' +
                 ", basicSalary=" + basicSalary +
-                ", grossSemiMonthlyRate=" + grossSemiMonthlyRate +
-                ", hourlyRate=" + hourlyRate +
                 '}';
     }
 }

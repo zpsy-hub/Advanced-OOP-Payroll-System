@@ -9,8 +9,6 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingConstants;
@@ -18,27 +16,21 @@ import javax.swing.SwingConstants;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 
 import model.Employee;
-import model.Permission;
 import model.User;
-import service.PermissionService;
 import service.SQL_client;
 import DAO.CredentialsManagementDAO;
 import customUI.ImagePanel;
 import customUI.Sidebar;
-import customUI.SidebarButton;
 import util.SessionManager;
 import util.SignOutButton;
 
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTabbedPane;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import java.awt.Cursor;
 import java.awt.Toolkit;
 
@@ -50,10 +42,10 @@ public class GUI_ITCredentialsManagement {
     private JComboBox<String> comboBoxSelectUser;
     private JComboBox<String> comboBoxSelectUser_1;
     private DAO.CredentialsManagementDAO credentialsManagementDAO;
-    private JTextField textField_AddEmpId;
     private JTextField textField_AddUsername;
     private JTextField textField_AddPassword;
     private JTextArea textAreaLogs;
+    private JComboBox<String> comboBoxNewEmployees;
 
     /**
      * Launch the application.
@@ -81,6 +73,7 @@ public class GUI_ITCredentialsManagement {
         credentialsManagementDAO = new DAO.CredentialsManagementDAO();
         initialize();
         populateUserComboBoxes();
+        populateNewEmployeesDropdown();
     }
 
     /**
@@ -164,7 +157,7 @@ public class GUI_ITCredentialsManagement {
                 String selectedUser = (String) comboBoxSelectUser.getSelectedItem();
                 String newPassword = textField_NewPassword.getText();
                 int employeeId = extractEmployeeId(selectedUser);
-                boolean passwordUpdated = credentialsManagementDAO.updatePassword(employeeId, newPassword);
+                boolean passwordUpdated = credentialsManagementDAO.updatePassword(employeeId, newPassword, loggedInEmployee.getId());
                 if (passwordUpdated) {
                     JOptionPane.showMessageDialog(null, "Password updated successfully for employee: " + selectedUser);
                 } else {
@@ -193,7 +186,7 @@ public class GUI_ITCredentialsManagement {
             public void actionPerformed(ActionEvent e) {
                 String selectedUserToDelete = (String) comboBoxSelectUser_1.getSelectedItem();
                 int employeeIdToDelete = extractEmployeeId(selectedUserToDelete);
-                boolean userDeleted = credentialsManagementDAO.deleteUser(employeeIdToDelete);
+                boolean userDeleted = credentialsManagementDAO.deleteUser(employeeIdToDelete, employeeIdToDelete);
                 if (userDeleted) {
                     JOptionPane.showMessageDialog(null, "User deleted successfully: " + selectedUserToDelete);
                 } else {
@@ -224,57 +217,66 @@ public class GUI_ITCredentialsManagement {
         tabbedPane.addTab("Add New User", null, addUserPanel, null);
         addUserPanel.setLayout(null);
 
-        JLabel lblAddEmpId = new JLabel("Employee ID:");
-        lblAddEmpId.setFont(new Font("Poppins", Font.PLAIN, 20));
-        lblAddEmpId.setBounds(40, 30, 150, 30);
-        addUserPanel.add(lblAddEmpId);
+        JLabel lblNewEmployee = new JLabel("New Employee:");
+        lblNewEmployee.setFont(new Font("Poppins", Font.PLAIN, 20));
+        lblNewEmployee.setBounds(39, 45, 150, 30);
+        addUserPanel.add(lblNewEmployee);
 
-        textField_AddEmpId = new JTextField();
-        textField_AddEmpId.setFont(new Font("Poppins", Font.PLAIN, 20));
-        textField_AddEmpId.setBounds(200, 30, 250, 30);
-        addUserPanel.add(textField_AddEmpId);
+        comboBoxNewEmployees = new JComboBox<>();
+        comboBoxNewEmployees.setFont(new Font("Poppins", Font.PLAIN, 20));
+        comboBoxNewEmployees.setBounds(199, 45, 250, 30);
+        addUserPanel.add(comboBoxNewEmployees);
 
         JLabel lblAddUsername = new JLabel("Username:");
         lblAddUsername.setFont(new Font("Poppins", Font.PLAIN, 20));
-        lblAddUsername.setBounds(40, 80, 150, 30);
+        lblAddUsername.setBounds(39, 95, 150, 30);
         addUserPanel.add(lblAddUsername);
 
         textField_AddUsername = new JTextField();
         textField_AddUsername.setFont(new Font("Poppins", Font.PLAIN, 20));
-        textField_AddUsername.setBounds(200, 80, 250, 30);
+        textField_AddUsername.setBounds(199, 95, 250, 30);
         addUserPanel.add(textField_AddUsername);
 
         JLabel lblAddPassword = new JLabel("Password:");
         lblAddPassword.setFont(new Font("Poppins", Font.PLAIN, 20));
-        lblAddPassword.setBounds(40, 130, 150, 30);
+        lblAddPassword.setBounds(39, 145, 150, 30);
         addUserPanel.add(lblAddPassword);
 
         textField_AddPassword = new JTextField();
         textField_AddPassword.setFont(new Font("Poppins", Font.PLAIN, 20));
-        textField_AddPassword.setBounds(200, 130, 250, 30);
+        textField_AddPassword.setBounds(199, 145, 250, 30);
         addUserPanel.add(textField_AddPassword);
 
         JButton btnAddUser = new JButton("Add User");
         btnAddUser.setFont(new Font("Poppins Medium", Font.PLAIN, 16));
-        btnAddUser.setBounds(250, 180, 150, 30);
+        btnAddUser.setBounds(299, 209, 150, 30);
         addUserPanel.add(btnAddUser);
 
         btnAddUser.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int empId = Integer.parseInt(textField_AddEmpId.getText());
+                String selectedEmployee = (String) comboBoxNewEmployees.getSelectedItem();
+                if (selectedEmployee == null) {
+                    JOptionPane.showMessageDialog(null, "Please select an employee.");
+                    return;
+                }
+
+                int empId = Integer.parseInt(selectedEmployee.split(" - ")[0]);
                 String username = textField_AddUsername.getText();
                 String password = textField_AddPassword.getText();
 
+                if (username.isEmpty() || password.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please enter both username and password.");
+                    return;
+                }
+
                 Employee employee = credentialsManagementDAO.getEmployeeById(empId);
-                if (employee != null) {
-                    boolean userAdded = credentialsManagementDAO.addUser(employee, username, password);
-                    if (userAdded) {
-                        JOptionPane.showMessageDialog(null, "User added successfully: " + username);
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Failed to add user: " + username);
-                    }
+                boolean isAdded = credentialsManagementDAO.addUser(employee, username, password, loggedInEmployee.getId());
+
+                if (isAdded) {
+                    JOptionPane.showMessageDialog(null, "User added successfully.");
+                    populateNewEmployeesDropdown(); // Refresh the dropdown after adding an account
                 } else {
-                    JOptionPane.showMessageDialog(null, "Invalid Employee ID: " + empId);
+                    JOptionPane.showMessageDialog(null, "Failed to add user. Please try again.");
                 }
             }
         });
@@ -330,6 +332,14 @@ public class GUI_ITCredentialsManagement {
                 comboBoxSelectUser.addItem(employeeInfo);
                 comboBoxSelectUser_1.addItem(employeeInfo);
             }
+        }
+    }
+
+    private void populateNewEmployeesDropdown() {
+        List<Employee> newEmployees = credentialsManagementDAO.getEmployeesWithoutAccounts();
+        comboBoxNewEmployees.removeAllItems();
+        for (Employee employee : newEmployees) {
+            comboBoxNewEmployees.addItem(employee.getEmpId() + " - " + employee.getFirstName() + " " + employee.getLastName());
         }
     }
 }
