@@ -207,6 +207,7 @@ public class CredentialsManagementDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println("Logs retrieved: " + logs.size()); // Debugging statement
         return logs;
     }
 

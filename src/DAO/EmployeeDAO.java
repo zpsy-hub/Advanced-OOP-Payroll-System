@@ -242,28 +242,30 @@ public class EmployeeDAO {
         return -1; // Return a default value if no ID is found
     }
 
+       
     public static int batchAddEmployees(List<Employee> employees) {
-        String sql = "INSERT INTO payrollsystem_db.employee (last_name, first_name, birthdate, address, phone_no, sss_no, philhealth_no, bir_no, pagibig_no, status_id, dept_id, position_id, emp_supervisor_id, basic_salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO payrollsystem_db.employee (emp_id, last_name, first_name, birthdate, address, phone_no, sss_no, philhealth_no, bir_no, pagibig_no, status_id, dept_id, position_id, emp_supervisor_id, basic_salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         int addedCount = 0;
         SQL_client.getInstance();
         try (Connection conn = SQL_client.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             for (Employee employee : employees) {
-                pstmt.setString(1, employee.getLastName());
-                pstmt.setString(2, employee.getFirstName());
-                pstmt.setDate(3, java.sql.Date.valueOf(employee.getBirthday()));
-                pstmt.setString(4, employee.getAddress());
-                pstmt.setString(5, employee.getPhoneNumber());
-                pstmt.setString(6, employee.getSssNumber());
-                pstmt.setString(7, employee.getPhilhealthNumber());
-                pstmt.setString(8, employee.getTinNumber());
-                pstmt.setString(9, employee.getPagibigNumber());
-                pstmt.setInt(10, getStatusIdByName(employee.getStatus()));
-                pstmt.setInt(11, getDepartmentIdByName(employee.getDepartment()));
-                pstmt.setInt(12, getPositionIdByName(employee.getPosition()));
-                pstmt.setObject(13, getEmployeeIdByName(employee.getImmediateSupervisor()), java.sql.Types.INTEGER);
-                pstmt.setDouble(14, employee.getBasicSalary());
+                pstmt.setInt(1, employee.getEmpId());
+                pstmt.setString(2, employee.getLastName());
+                pstmt.setString(3, employee.getFirstName());
+                pstmt.setDate(4, java.sql.Date.valueOf(employee.getBirthday()));
+                pstmt.setString(5, employee.getAddress());
+                pstmt.setString(6, employee.getPhoneNumber());
+                pstmt.setString(7, employee.getSssNumber());
+                pstmt.setString(8, employee.getPhilhealthNumber());
+                pstmt.setString(9, employee.getTinNumber());
+                pstmt.setString(10, employee.getPagibigNumber());
+                pstmt.setInt(11, employee.getStatusId());
+                pstmt.setInt(12, employee.getDepartmentId());
+                pstmt.setInt(13, employee.getPositionId());
+                pstmt.setObject(14, employee.getImmediateSupervisorId(), java.sql.Types.INTEGER);
+                pstmt.setDouble(15, employee.getBasicSalary());
                 pstmt.addBatch();
             }
 
@@ -278,42 +280,6 @@ public class EmployeeDAO {
         }
         return addedCount;
     }
-    
-    public static boolean insertEmployee(Employee employee) {
-        String sql = "INSERT INTO payrollsystem_db.employee (last_name, first_name, birthdate, address, phone_no, sss_no, philhealth_no, bir_no, pagibig_no, status_id, dept_id, position_id, emp_supervisor_id, basic_salary) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        SQL_client.getInstance();
-        try (Connection conn = SQL_client.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            pstmt.setString(1, employee.getLastName());
-            pstmt.setString(2, employee.getFirstName());
-            pstmt.setDate(3, java.sql.Date.valueOf(employee.getBirthday()));
-            pstmt.setString(4, employee.getAddress());
-            pstmt.setString(5, employee.getPhoneNumber());
-            pstmt.setString(6, employee.getSssNumber());
-            pstmt.setString(7, employee.getPhilhealthNumber());
-            pstmt.setString(8, employee.getTinNumber());
-            pstmt.setString(9, employee.getPagibigNumber());
-            pstmt.setInt(10, employee.getStatusId());
-            pstmt.setInt(11, employee.getDepartmentId());
-            pstmt.setInt(12, employee.getPositionId());
-            pstmt.setInt(13, employee.getImmediateSupervisorId());
-            pstmt.setDouble(14, employee.getBasicSalary());
-
-            int rowsInserted = pstmt.executeUpdate();
-
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    int generatedId = generatedKeys.getInt(1);
-                    employee.setEmpId(generatedId);
-                }
-            }
-
-            return rowsInserted > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
 }

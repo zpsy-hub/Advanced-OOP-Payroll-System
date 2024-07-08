@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 
 import com.formdev.flatlaf.FlatIntelliJLaf;
 
@@ -27,6 +28,7 @@ import util.SignOutButton;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
@@ -46,6 +48,8 @@ public class GUI_ITCredentialsManagement {
     private JTextField textField_AddPassword;
     private JTextArea textAreaLogs;
     private JComboBox<String> comboBoxNewEmployees;
+    private JTable logsTable;
+    private DefaultTableModel logsTableModel;
 
     /**
      * Launch the application.
@@ -117,7 +121,7 @@ public class GUI_ITCredentialsManagement {
         }
 
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        tabbedPane.setBounds(408, 147, 790, 412);
+        tabbedPane.setBounds(413, 147, 785, 533);
         mainPanel.add(tabbedPane);
 
         // Set custom font size for tab titles

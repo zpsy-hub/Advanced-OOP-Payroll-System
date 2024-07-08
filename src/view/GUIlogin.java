@@ -176,7 +176,7 @@ public class GUIlogin {
         btnForgotPassword = new JButton("Forgot Password?");
         btnForgotPassword.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         btnForgotPassword.setHorizontalAlignment(SwingConstants.LEFT);
-        btnForgotPassword.setFont(new Font("Montserrat Medium", Font.PLAIN, 12));
+        btnForgotPassword.setFont(new Font("Montserrat Medium", Font.PLAIN, 13));
 
         // Make it look like a hyperlink
         btnForgotPassword.setBorderPainted(false);
@@ -191,7 +191,7 @@ public class GUIlogin {
         attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         btnForgotPassword.setFont(font.deriveFont(attributes));
 
-        btnForgotPassword.setBounds(720, 444, 151, 26);
+        btnForgotPassword.setBounds(720, 444, 185, 26);
         loginbgpanel.add(btnForgotPassword);
 
         

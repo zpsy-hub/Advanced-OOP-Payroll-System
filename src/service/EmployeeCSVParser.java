@@ -35,23 +35,32 @@ public class EmployeeCSVParser {
 
                     double basicSalary = parseDouble(csvRecord.get("Basic Salary"));
 
-                    System.out.println("Parsed CSV Record: " + csvRecord.toString());
-
                     int statusId = EmployeeDAO.getStatusIdByName(status);
-                    int departmentId = EmployeeDAO.getDepartmentIdByName(department);
-                    int positionId = EmployeeDAO.getPositionIdByName(position);
-                    int immediateSupervisorId = immediateSupervisor.equals("N/A") ? -1 : EmployeeDAO.getEmployeeIdByName(immediateSupervisor);
+                    if (statusId == -1) {
+                        System.err.println("Invalid status: " + status);
+                        continue;
+                    }
 
-                    System.out.println("Status ID: " + statusId + ", Department ID: " + departmentId + ", Position ID: " + positionId + ", Immediate Supervisor ID: " + immediateSupervisorId);
+                    int departmentId = EmployeeDAO.getDepartmentIdByName(department);
+                    if (departmentId == -1) {
+                        System.err.println("Invalid department: " + department);
+                        continue;
+                    }
+
+                    int positionId = EmployeeDAO.getPositionIdByName(position);
+                    if (positionId == -1) {
+                        System.err.println("Invalid position: " + position);
+                        continue;
+                    }
+
+                    int immediateSupervisorId = immediateSupervisor == null ? -1 : EmployeeDAO.getEmployeeIdByName(immediateSupervisor);
+                    if (immediateSupervisor != null && immediateSupervisorId == -1) {
+                        System.err.println("Invalid immediate supervisor: " + immediateSupervisor);
+                        continue;
+                    }
 
                     Employee employee = new Employee(0, lastName, firstName, birthday, address, phoneNumber, sssNumber, philhealthNumber, tinNumber, pagibigNumber, statusId, departmentId, positionId, immediateSupervisorId, basicSalary);
-
-                    System.out.println("Created Employee Object: " + employee.toDebugString());
-
                     employees.add(employee);
-
-                    // Insert employee into database
-                    EmployeeDAO.insertEmployee(employee);
 
                 } catch (NumberFormatException e) {
                     System.err.println("Error parsing salary for record: " + csvRecord.toString() + " - " + e.getMessage());
@@ -60,6 +69,10 @@ public class EmployeeCSVParser {
                     System.out.println("Error processing record: " + csvRecord.toString());
                 }
             }
+
+            // Batch insert employees into the database
+            employeeDAO.batchAddEmployees(employees);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
