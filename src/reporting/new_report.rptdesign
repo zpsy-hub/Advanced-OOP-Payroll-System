@@ -224,9 +224,9 @@
                 </ex-property>
             </list-property>
             <property name="odaDriverClass">com.mysql.cj.jdbc.Driver</property>
-            <property name="odaURL">jdbc:mysql://127.0.0.1:3306/?user=root</property>
-            <property name="odaUser">root</property>
-            <encrypted-property name="odaPassword" encryptionID="base64">REYud309OyRDTG4rODQ/bV1yKE0lUQ==</encrypted-property>
+            <property name="odaURL">jdbc:mysql://127.0.0.1:3306/</property>
+            <property name="odaUser"></property>
+            <encrypted-property name="odaPassword" encryptionID="base64"></encrypted-property>
         </oda-data-source>
     </data-sources>
     <data-sets>

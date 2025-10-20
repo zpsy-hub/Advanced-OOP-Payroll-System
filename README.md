@@ -72,9 +72,14 @@ To run the project locally, follow these steps.
       * Ensure your MySQL server is running.
       * Using a MySQL client, create a new database.
       * Import the database schema and data using the provided `.sql` dump file found in the repository.
-      * The application is configured to use the following credentials. Ensure you have a MySQL user that matches:
-          * **Username:** `root`
-          * **Password:** `DF.w}=;$CLn+84?m]r(M%Q`
+      * The application reads database credentials from `config.properties` in the project root. Create or update that file with your local database settings, for example:
+          ```properties
+          db.host=127.0.0.1
+          db.port=3306
+          db.name=your_database_name
+          db.user=root
+          db.password=your_password_here
+          ```
 
 4.  **Run the Application:**
 

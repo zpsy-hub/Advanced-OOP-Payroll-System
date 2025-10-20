@@ -5,11 +5,11 @@
 			"provider": "mysql",
 			"driver": "mysql8",
 			"name": "localhost",
-			"save-password": true,
+			"save-password": false,
 			"configuration": {
 				"host": "localhost",
 				"port": "3306",
-				"url": "jdbc:mysql://127.0.0.1:3306/?user\u003droot",
+				"url": "jdbc:mysql://127.0.0.1:3306/",
 				"configurationType": "URL",
 				"home": "mysql_client",
 				"type": "dev",
