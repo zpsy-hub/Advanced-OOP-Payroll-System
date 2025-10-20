@@ -1,17 +1,14 @@
 package DAO;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import model.User;
 import service.SQL_client;
+import util.PasswordUtil;
 
 public class LoginDAO {
-    private static final String HASH_ALGORITHM = "SHA-256";
 
     public LoginDAO() {
     }
@@ -78,7 +75,7 @@ public class LoginDAO {
                 return false;
             }
             
-            String hashedPassword = hashPassword(newPassword);
+            String hashedPassword = PasswordUtil.hashPassword(newPassword);
             
             PreparedStatement ps = conn.prepareStatement(
                 "UPDATE payrollsystem_db.user SET password = ? WHERE emp_id = ?");
@@ -94,23 +91,6 @@ public class LoginDAO {
     }
 
     private boolean verifyPassword(String password, String storedPassword) {
-        return hashPassword(password).equals(storedPassword);
-    }
-
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
-            byte[] digest = md.digest(password.getBytes());
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : digest) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return PasswordUtil.verifyPassword(password, storedPassword);
     }
 }

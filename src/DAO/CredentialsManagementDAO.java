@@ -1,7 +1,5 @@
 package DAO;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,12 +7,11 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
 import model.Employee;
 import service.SQL_client;
+import util.PasswordUtil;
 
 public class CredentialsManagementDAO {
-    private static final String HASH_ALGORITHM = "SHA-256";
     private SQL_client sqlClient;
 
     public CredentialsManagementDAO(SQL_client sqlClient) {
@@ -57,7 +54,7 @@ public class CredentialsManagementDAO {
                 return false;
             }
 
-            String hashedPassword = hashPassword(newPassword);
+            String hashedPassword = PasswordUtil.hashPassword(newPassword);
 
             PreparedStatement ps = conn.prepareStatement("UPDATE payrollsystem_db.user SET password = ? WHERE emp_id = ?");
             ps.setString(1, hashedPassword);
@@ -84,7 +81,7 @@ public class CredentialsManagementDAO {
                 return false;
             }
 
-            String hashedPassword = hashPassword(password);
+            String hashedPassword = PasswordUtil.hashPassword(password);
 
             PreparedStatement ps = conn.prepareStatement(
                 "INSERT INTO payrollsystem_db.user (emp_id, username, password) VALUES (?, ?, ?)");
@@ -104,21 +101,14 @@ public class CredentialsManagementDAO {
         }
     }
 
+    /**
+     * Hash password using BCrypt (via PasswordUtil).
+     * This method is kept for backward compatibility with tests.
+     * @deprecated Use PasswordUtil.hashPassword() directly
+     */
+    @Deprecated
     public String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance(HASH_ALGORITHM);
-            byte[] digest = md.digest(password.getBytes());
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : digest) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
-                hexString.append(hex);
-            }
-            return hexString.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return PasswordUtil.hashPassword(password);
     }
 
     public Employee getEmployeeById(int empId) {

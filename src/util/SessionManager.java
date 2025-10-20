@@ -1,14 +1,9 @@
 package util;
 
-import model.User;
-import DAO.LoginDAO;
-import service.SQL_client;
-
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Types;
+import model.User;
 
 public class SessionManager {
 	private static User loggedInUser;
@@ -46,7 +41,7 @@ public class SessionManager {
     // Method to log login attempt in the database
     public void logLoginAttempt(Connection conn, Integer empId, String username, boolean success) {
         try {
-            String query = "INSERT INTO payroll_system.login_attempts (emp_id, username, timestamp, success) VALUES (?, ?, CURRENT_TIMESTAMP, ?)";
+            String query = "INSERT INTO payrollsystem_db.login_attempts (emp_id, username, timestamp, success) VALUES (?, ?, CURRENT_TIMESTAMP, ?)";
             
             try (PreparedStatement ps = conn.prepareStatement(query)) {
                 ps.setInt(1, empId != null ? empId : 0); 

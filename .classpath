@@ -21,6 +21,7 @@
 	<classpathentry kind="lib" path="lib/hyph-8.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/io-8.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-runtime-4.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/jbcrypt-0.4.jar"/>
 	<classpathentry kind="lib" path="lib/jcalendar-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/jgoodies-common-1.2.0.jar"/>
 	<classpathentry kind="lib" path="lib/jgoodies-looks-2.4.1.jar"/>
