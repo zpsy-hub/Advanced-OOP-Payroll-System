@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Suite">
-  <test thread-count="5" name="Test">
+  
+  <!-- Security Controls Test Suite -->
+  <test thread-count="1" name="Control 2: Session Management">
+    <classes>
+      <class name="test.SessionManagerTest"/>
+    </classes>
+  </test>
+  
+  <test thread-count="1" name="Control 4: Error Handling & Logging">
+    <classes>
+      <class name="test.SecureLoggerTest"/>
+    </classes>
+  </test>
+  
+  <!-- Original DAO Tests -->
+  <test thread-count="5" name="DAO Tests">
     <classes>
       <class name="DAO.CredentialsManagementDAOTest"/>
     </classes>
-  </test> <!-- Test -->
+  </test>
+  
 </suite> <!-- Suite -->
