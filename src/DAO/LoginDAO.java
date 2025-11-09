@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import model.User;
 import service.SQL_client;
 import util.PasswordUtil;
+import util.SecureLogger;
 
 public class LoginDAO {
 
@@ -40,7 +41,7 @@ public class LoginDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); 
+            SecureLogger.logError("LoginDAO.authenticateUser", e);
         }
         return null; 
     }
@@ -62,7 +63,7 @@ public class LoginDAO {
                 return rs.getInt("emp_id");
             }
         } catch (SQLException e) {
-            e.printStackTrace(); 
+            SecureLogger.logError("LoginDAO.getEmployeeIdByUsername", e);
         }
         return -1; 
     }
@@ -85,7 +86,7 @@ public class LoginDAO {
             
             return rowsAffected > 0;
         } catch (SQLException e) {
-            e.printStackTrace(); 
+            SecureLogger.logError("LoginDAO.updatePassword", e);
             return false;
         }
     }

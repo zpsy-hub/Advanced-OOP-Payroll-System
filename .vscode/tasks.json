@@ -1,0 +1,192 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Clean Build Directory",
+            "type": "shell",
+            "command": "Remove-Item",
+            "args": [
+                "-Path",
+                "build",
+                "-Recurse",
+                "-Force",
+                "-ErrorAction",
+                "SilentlyContinue"
+            ],
+            "windows": {
+                "command": "if (Test-Path build) { Remove-Item -Path build -Recurse -Force }"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean VS Code Java Cache",
+            "type": "shell",
+            "windows": {
+                "command": "Remove-Item -Recurse -Force bin, .settings -ErrorAction SilentlyContinue; Write-Host 'Cleaned bin and .settings folders. Now reload VS Code window!'"
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build Java Project",
+            "type": "shell",
+            "command": "javac",
+            "args": [
+                "-encoding",
+                "UTF-8",
+                "-cp",
+                "\"lib/*\"",
+                "-d",
+                "build/classes",
+                "-sourcepath",
+                "src",
+                "src/**/*.java"
+            ],
+            "windows": {
+                "args": [
+                    "-encoding",
+                    "UTF-8",
+                    "-cp",
+                    "\"lib/*;.\"",
+                    "-d",
+                    "build/classes",
+                    "-sourcepath",
+                    "src",
+                    "@sources.txt"
+                ]
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [
+                "$javaTaskOutputParser"
+            ],
+            "dependsOn": [
+                "Create Build Directory",
+                "Generate Source List"
+            ]
+        },
+        {
+            "label": "Create Build Directory",
+            "type": "shell",
+            "command": "New-Item",
+            "args": [
+                "-ItemType",
+                "Directory",
+                "-Force",
+                "-Path",
+                "build/classes"
+            ],
+            "windows": {
+                "command": "if (!(Test-Path build/classes)) { New-Item -ItemType Directory -Force -Path build/classes }"
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Generate Source List",
+            "type": "shell",
+            "command": "Get-ChildItem",
+            "args": [
+                "-Path",
+                "src",
+                "-Recurse",
+                "-Filter",
+                "*.java",
+                "|",
+                "Select-Object",
+                "-ExpandProperty",
+                "FullName",
+                "|",
+                "Out-File",
+                "-Encoding",
+                "UTF8",
+                "sources.txt"
+            ],
+            "windows": {
+                "command": "Get-ChildItem -Path src -Recurse -Filter *.java | ForEach-Object { $_.FullName } | Out-File -Encoding UTF8 sources.txt"
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Clean and Build",
+            "dependsOn": [
+                "Clean Build Directory",
+                "Build Java Project"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Run Password Migration",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-cp",
+                "\"build/classes;lib/*\"",
+                "MigratePasswordsToBcrypt"
+            ],
+            "windows": {
+                "args": [
+                    "-cp",
+                    "\"build/classes;lib/*\"",
+                    "MigratePasswordsToBcrypt"
+                ]
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true
+            },
+            "problemMatcher": [],
+            "dependsOn": [
+                "Build Java Project"
+            ]
+        },
+        {
+            "label": "Run Main Application",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-cp",
+                "\"build/classes;lib/*\"",
+                "Main"
+            ],
+            "windows": {
+                "args": [
+                    "-cp",
+                    "\"build/classes;lib/*\"",
+                    "Main"
+                ]
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "focus": true
+            },
+            "problemMatcher": [],
+            "dependsOn": [
+                "Build Java Project"
+            ]
+        }
+    ]
+}

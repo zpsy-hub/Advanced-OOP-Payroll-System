@@ -1,0 +1,48 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "AOOP-MotorPH-Payroll"
+        },
+        {
+            "type": "java",
+            "name": "Run Password Migration",
+            "request": "launch",
+            "mainClass": "MigratePasswordsToBcrypt",
+            "projectName": "Advanced-OOP-Payroll-System",
+            "classPaths": [
+                "${workspaceFolder}/build/classes",
+                "${workspaceFolder}/lib/*"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Run Main Application",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "Advanced-OOP-Payroll-System",
+            "classPaths": [
+                "${workspaceFolder}/build/classes",
+                "${workspaceFolder}/lib/*"
+            ],
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "java",
+            "name": "Generate Password Hash",
+            "request": "launch",
+            "mainClass": "GeneratePasswordHash",
+            "projectName": "Advanced-OOP-Payroll-System",
+            "classPaths": [
+                "${workspaceFolder}/build/classes",
+                "${workspaceFolder}/lib/*"
+            ],
+            "console": "integratedTerminal"
+        }
+    ]
+}
